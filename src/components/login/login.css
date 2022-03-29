@@ -1,0 +1,87 @@
+.rectangulo{
+    width: 70%;
+    min-height: 71.3vh;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 62px;
+}
+
+.imgLogin{
+    margin-top: 5%;
+    margin-left: 65%;
+    width: 45%;
+}
+
+.login .texto{
+    font-family: 'Telex';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 36px;
+    letter-spacing: 0.05em;
+    color: #000000;
+    margin-top: 10%;
+    text-align: center;
+    margin-left: 12%;
+}
+
+.login .sub{
+    font-family: 'Telex';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 136.5%;
+    text-align: center;
+    letter-spacing: 0.095em;
+
+    color: #797979;
+}
+
+.login .subtitulo{
+    font-family: 'Telex';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 136.5%;
+    letter-spacing: 0.08em;
+
+    color: #6B6A6A;
+}
+
+.login .subtitulo span{
+    color: var(--celeste);
+    cursor: pointer;
+}
+
+.googleButton{
+    border: 1px solid #D8D3D3;
+    box-sizing: border-box;
+    border-radius: 8px;
+    color: #5C5C5C;
+    
+}
+
+.login{
+    max-width: 99.923%;
+}
+
+@media (max-width: 992px) {
+    .imgLogin{
+        height: 0;
+    }
+    .logoRojo{
+        height: 10rem;
+    }
+    .login .texto{
+        margin-left: 10%;
+        text-align: center;
+        font-size: 28px;
+    }
+    .login .sub{
+        font-size: 20px;
+    }
+    .rectangulo{
+        width: 100%;
+    }
+}

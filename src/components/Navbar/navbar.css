@@ -1,0 +1,21 @@
+.link{
+    color: rgb(65, 64, 64);
+}
+
+.link:hover{
+    color: rgb(43, 41, 41);
+    text-decoration: none;
+}
+
+.active{
+    color: black;
+}
+
+.link .bi{
+    font-size: medium;
+    margin-right: 5px;
+}
+
+.css-i4bv87-MuiSvgIcon-root{
+    color: black;
+}

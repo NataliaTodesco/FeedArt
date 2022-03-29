@@ -1,0 +1,25 @@
+.footer{
+    background-color: var(--bordo);
+    color: #FDF0D5;
+    min-height: 150px;
+    padding: 1%;
+    padding-left: 6%;
+    margin-bottom: 0;
+}
+
+.footer .txt{
+    width: 382px;
+    height: 55px;
+
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 18px;
+
+    display: flex;
+    align-items: flex-end;
+    text-align: center;
+
+    color: #FDF0D5;
+    margin-bottom: 0;
+}
