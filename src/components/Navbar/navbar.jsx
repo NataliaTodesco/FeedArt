@@ -11,10 +11,11 @@ import {
   Menu,
   Container,
   MenuItem,
-  Avatar
+  Avatar,
 } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { logOut } from '../../firebaseConfig';
+import {LogoutOutlined} from '@ant-design/icons'
 
 function Navbar() {
   const navigate = useNavigate();
@@ -90,21 +91,18 @@ function Navbar() {
             >
               <MenuItem onClick={handleCloseNavMenu}>
                 <NavLink className="link" activeClassName="active" to="/home">
-                  Inicio
+                <i className="bi bi-house-fill"></i> Inicio
                 </NavLink>
               </MenuItem>
               <MenuItem onClick={handleCloseNavMenu}>
                 <NavLink className="link" activeClassName="active" to="/list">
+                <i className="bi bi-list-stars"></i> 
                   Mis Listas
                 </NavLink>
                 </MenuItem>
-                <MenuItem onClick={handleCloseNavMenu}>
-                <p className="link" onClick={log_Out}>
-                  Salir
-                </p>
-                </MenuItem>
                 {storage.uid === "qA2c3TwTAKUc9160fsJlMtDSVgl1"? <NavLink className="link" activeClassName="active" to="/admin">
                 <MenuItem onClick={handleCloseNavMenu}>
+                <i className="bi bi-clipboard-data-fill"></i>
                   Gestión
                 </MenuItem>
                 </NavLink> : <span></span>}
@@ -117,6 +115,10 @@ function Navbar() {
                 <NavLink className="link d-flex justify-content-center"  to="/user">
                   <Avatar alt="Profile Picture" src={storage.photoURL} />
                 </NavLink>
+                <button onClick={log_Out} className="btn btn-danger btn-block px-4 mt-3">
+                  Salir
+                  <i className="bi bi-arrow-bar-right ml-1" style={{fontSize:'medium'}}></i>
+                </button>
             </Menu>
           </Box>
           <Typography
@@ -139,22 +141,20 @@ function Navbar() {
             ))} */}
               <MenuItem onClick={handleCloseNavMenu}>
                 <NavLink className="link" activeClassName="active" to="/Home">
+                <i className="bi bi-house-fill"></i>
                   Inicio
                 </NavLink>
               </MenuItem>
               <MenuItem onClick={handleCloseNavMenu}>
                 <NavLink className="link" activeClassName="active" to="/list">
-                  Mis Listas
-                </NavLink>
-                </MenuItem>
-                <MenuItem onClick={handleCloseNavMenu}>
-                <NavLink className="link" activeClassName="active" to="/">
-                  Salir
+                <i className="bi bi-list-stars"></i> 
+                Mis Listas
                 </NavLink>
                 </MenuItem>
                 {storage.uid === "qA2c3TwTAKUc9160fsJlMtDSVgl1"? <NavLink className="link" activeClassName="active" to="/admin">
                 <MenuItem onClick={handleCloseNavMenu}>
-                  Gestión
+                <i className="bi bi-clipboard-data-fill"></i>
+                Gestión
                 </MenuItem>
                 </NavLink> : <span></span>}
                 <MenuItem onClick={handleCloseNavMenu}>
@@ -166,6 +166,10 @@ function Navbar() {
                 <NavLink className="link"  to="/user">
                   <Avatar alt="Profile Picture" src={storage.photoURL} />
                 </NavLink>
+                <button onClick={log_Out} className="btn btn-danger pl-4 pr-3 ml-4">
+                  Salir 
+                  <i className="bi bi-arrow-bar-right ml-1" style={{fontSize:'medium'}}></i>
+                </button>
           </Box>
           </Container>
         </Toolbar>

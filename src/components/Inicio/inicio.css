@@ -66,6 +66,7 @@
     border-radius: 6px;
     background-color: transparent;
     color: var(--blanco);
+    font-size: larger;
 }
 
 .boton:hover{
@@ -88,6 +89,10 @@
     font-size: 18px;
 
     color: var(--blanco);
+}
+
+.margin{
+    margin-top: -10%;
 }
 
 .logo{

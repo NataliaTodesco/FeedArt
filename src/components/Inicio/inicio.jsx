@@ -30,7 +30,7 @@ function Inicio() {
             <h1 className="head">
               Feed<span className="art">Art</span>
             </h1>
-            <p className="texto">
+            <p className="texto margin">
               FeedArt es una página web para que estudiantes de artes visuales y
               otros creadores de contenido compartan sus obras de manera virtual
               al mundo y recibir feedback, ademas de poder vender las mismas.
