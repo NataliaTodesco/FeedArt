@@ -8,7 +8,11 @@ function Gestion() {
         <div className='gestion'>
             <Navbar></Navbar>
             <div className="container my-3">
-                <h1>Gestion</h1>
+            <div className="row">
+                    <div className="col-lg-12 text-center">
+                        <h1 style={{fontWeight: '800'}}>GESTIÓN</h1>
+                    </div>
+                </div>
             </div>
             <Footer></Footer>
         </div>

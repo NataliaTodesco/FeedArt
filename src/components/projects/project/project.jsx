@@ -8,7 +8,11 @@ function Proyecto() {
         <div className='project'>
             <Navbar></Navbar>
             <div className="container my-3">
-                <h1>Proyecto</h1>
+            <div className="row">
+                    <div className="col-lg-12 text-center">
+                        <h1 style={{fontWeight: '800'}}>PROYECTO</h1>
+                    </div>
+                </div>
             </div>
             <Footer></Footer>
         </div>
