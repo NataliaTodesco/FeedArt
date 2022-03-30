@@ -6,7 +6,11 @@ import {
   Route
 } from 'react-router-dom'
 import Login from "./components/login/login"
-import Usuario from "./components/usuario/usuarion";
+import Usuario from "./components/usuario/usuario";
+import Listas from './components/listas/listas'
+import Proyecto from './components/projects/project/project'
+import NewProject from './components/projects/newProject/newProject'
+import Gestion from './components/gestion/gestion'
 
 function App() {
   // let storage = localStorage.getItem('storage')
@@ -14,21 +18,15 @@ function App() {
 
   return (
     <div className="App">
-      {/* {!storage?  <Router>
-        <Switch>
-          
-        </Switch>
-      </Router> : 
-      } */}
       <Router>
         <Switch>
               <Route path="/" element={<Inicio></Inicio>}></Route>
               <Route path="/login" element={<Login></Login>}></Route>
               <Route path="/home" element={<InicioReg></InicioReg>} />
-              <Route  path="/list" element={<Inicio></Inicio>} />
-              <Route path="/project/:id" element={<Inicio></Inicio>} />
-              <Route path="/new-project" element={<Inicio></Inicio>} />
-              <Route path="/admin" element={<Inicio></Inicio>} />
+              <Route path="/list" element={<Listas></Listas>} />
+              <Route path="/project/:id" element={<Proyecto></Proyecto>} />
+              <Route path="/new-project" element={<NewProject></NewProject>} />
+              <Route path="/admin" element={<Gestion></Gestion>} />
               <Route path="/user" element={<Usuario></Usuario>} />
           </Switch>
         </Router>  

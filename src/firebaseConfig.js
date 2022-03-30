@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
-import { collection, setDoc, getDocs, doc, updateDoc  } from "firebase/firestore";
+import { collection, setDoc, getDocs, doc, updateDoc, deleteDoc, where, query  } from "firebase/firestore";
 import {
   getAuth,
   onAuthStateChanged,
@@ -68,7 +68,6 @@ export async function guardarUserConGoogle(user) {
   const querySnapshot = await getDocs(collection(db, "users"));
   if (!querySnapshot.docs.includes(user.uid)){
     guardarUser(user.email, user.photoURL, user.displayName, user.uid)
-    console.log("Guardado")
   }
 }
 
@@ -90,10 +89,11 @@ export async function logUpConMail(email, password, img_url, nombre) {
         displayName: nombre
       }
       saveStorage(save)
+      return ""
     })
     .catch((error) => {
       const errorMessage = error.message;
-      console.log(errorMessage);
+      return errorMessage;
     });
 }
 
@@ -111,9 +111,10 @@ export async function logInConGoogle(){
     }
     saveStorage(save)
     guardarUserConGoogle(user)
+    return ""
   }).catch((error) => {
     const errorMessage = error.message;
-    console.log(errorMessage)
+    return errorMessage
   });
 }
 
@@ -144,10 +145,11 @@ export async function logInConMail(email, password) {
       }
       saveStorage(save)
       recuperarUser(user)
+      return ""
     })
     .catch((error) => {
       const errorMessage = error.message;
-      console.log(errorMessage);
+      return errorMessage;
     });
 }
 
@@ -185,13 +187,23 @@ export async function borrarUser(){
     const user = auth.currentUser;
 
     deleteUser(user).then(() => {
-    // User deleted.
+      deleteDoc(doc(db, "users", user.uid));
+      deleteDoc(doc(db, "favs", user.uid));
+      deleteDoc(doc(db, "likes", user.uid));
+      deleteDoc(doc(db, "proyects", where("uid_creador", "==", user.uid)));
+
     }).catch((error) => {
-    // An error ocurred
-    // ...
+     console.log(error.errorMessage)
     });
 }
 
+export function elminarDoc(){
+  const projectsRef = collection(db, "proyects");
+
+  const q = query(projectsRef, where("uid_creador", "==", "abc123"));
+  
+  deleteDoc(q);
+}
 
 // storage
 
@@ -203,7 +215,7 @@ export function saveStorage(storage){
 
 export function restoreSessionAction() {
   let storage = localStorage.getItem('storage')
-  storage = JSON.stringify(storage)
+  storage = JSON.parse(storage)
   if (storage){
       return storage
   }

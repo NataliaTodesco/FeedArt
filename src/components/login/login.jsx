@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "./login.css"
 import Footer from '../footer/footer'
 import { VisibilityOff, Visibility } from '@mui/icons-material';
@@ -8,6 +8,7 @@ import {storage} from "../../firebaseConfig"
 import { ref,uploadBytes,getDownloadURL,uploadBytesResumable } from "firebase/storage";
 import 'antd/dist/antd.css';
 import { useNavigate } from 'react-router-dom';
+import {Alert} from 'antd'
 
 function Login() {
     const [values, setValues] = React.useState({
@@ -44,22 +45,62 @@ function Login() {
       };
 
       function doLoginGoogle(){
-        logInConGoogle().then((userCredential) => {
-          navigate('/home');
+        logInConGoogle().then(res => {
+          if (res === "") {
+            setShowAlert(false)
+            navigate('/home');
+          }
+          else {
+            setShowAlert(true)
+            setAlerta(res)
+          }
         })
       }
+      
+      const [alerta, setAlerta] = useState("");
+      const [showAlert, setShowAlert] = useState(false);
+
+      const [alerta2, setAlerta2] = useState("");
+      const [showAlert2, setShowAlert2] = useState(false);
 
       function logInConMailyContraseña(){
-          logInConMail(values.mail,values.password).then((userCredential) => {
-            navigate('/home');
+          logInConMail(values.mail,values.password).then(res => {
+            if (res === "") {
+              setShowAlert(false)
+              navigate('/home');
+            }
+            else {
+              setShowAlert(true)
+              if (res === "Firebase: Error (auth/invalid-email).")
+              setAlerta("Email o contraseña incorrecta")
+              else setAlerta(res)
+            }
+          }).catch(e => {
+            setAlerta(e.message)
           })
       }
 
       function logUp(){
-          logUpConMail(values.mail,values.password,values.img_url,values.nombre).then((userCredential) => {
-            navigate('/home');
+        if (values.nombre !== "" && values.mail !== "" && values.img_url !== "" && values.password !== ""){
+          logUpConMail(values.mail,values.password,values.img_url,values.nombre).then(res => {
+            if (res === "") {
+              setShowAlert2(false)
+              navigate('/home');
+            }
+            else {
+              setShowAlert2(true)
+              setAlerta2(res)
+            }
           })
+          setShowAlert2(true)
+        }
+        else {
+          setAlerta2("Complete todos los campos")
+          setShowAlert2(true)
+        }
       }
+
+      const [state, setState] = useState(0);
 
       function onUpload(event) {
         const file = event.target.files[0]
@@ -72,12 +113,14 @@ function Login() {
         uploadTask.on('state_changed', (snapshot) => {
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log('Upload is ' + progress + '% done');
+          setState(progress)
         },
         error => console.log(error),
         () => {
           getDownloadURL(ref(storage, `fotos/${file.name}`))
           .then((url) => {
             setValues({ ...values, 'img_url': url });
+            setState(0)
           })
         })
       }
@@ -98,9 +141,8 @@ function Login() {
                     Elegir Imagen...
                 </label>
                 </div>
-                <div className="input-group-append">
-                </div>
             </div>
+            <progress value={""+state} max="100"></progress>
             <img src={values.img_url} className="img-fluid mt-4" alt="" /> <br />
             </div>
         );
@@ -175,6 +217,13 @@ function Login() {
                                     }
                                 />
                                 </FormControl>
+                                {showAlert? <Alert
+                                  message="Error"
+                                  description={alerta}
+                                  type="error"
+                                  showIcon
+                                  className='mb-4'
+                                /> : <span></span>}
 
                                 <button type='button' onClick={logInConMailyContraseña} className="btn btn-info btn-block btn-lg mb-4">Iniciar Sesion</button>
                                 <p className='subtitulo'>¿Todavía no tienes una cuenta? <span onClick={Registrar}> Registrate </span></p>
@@ -211,7 +260,13 @@ function Login() {
                                     }
                                 />
                                 </FormControl>
-
+                                {showAlert2? <Alert
+                                  message="Error"
+                                  description={alerta2}
+                                  type="error"
+                                  showIcon
+                                  className='mb-4'
+                                /> : <span></span>}
                                 <button type='button' onClick={logUp} className="btn btn-info btn-block btn-lg mb-4">Registrarse</button>
                                 <p className='subtitulo'>¿Ya tienes una cuenta? <span onClick={Registrar}> Inicia Sesion </span></p>
                         </div>
