@@ -190,19 +190,21 @@ export async function borrarUser(){
       deleteDoc(doc(db, "users", user.uid));
       deleteDoc(doc(db, "favs", user.uid));
       deleteDoc(doc(db, "likes", user.uid));
-      deleteDoc(doc(db, "proyects", where("uid_creador", "==", user.uid)));
-
+      eliminarDoc(user.uid)
     }).catch((error) => {
      console.log(error.errorMessage)
     });
 }
 
-export function elminarDoc(){
+async function eliminarDoc(uid){
   const projectsRef = collection(db, "proyects");
 
-  const q = query(projectsRef, where("uid_creador", "==", "abc123"));
-  
-  deleteDoc(q);
+  const q = query(projectsRef, where("uid_creador", "==", uid));
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((documento) => {
+    deleteDoc(doc(db, "proyects", documento.id));
+  });
 }
 
 // storage

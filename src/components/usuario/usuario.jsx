@@ -1,6 +1,6 @@
 import { Avatar, Button, Modal } from 'antd';
 import React, { useState, useEffect } from 'react';
-import { borrarUser, elminarDoc, restoreSessionAction } from '../../firebaseConfig';
+import { borrarUser, restoreSessionAction } from '../../firebaseConfig';
 import Footer from '../footer/footer';
 import Navbar from '../Navbar/navbar';
 import "./usuario.css"
@@ -17,18 +17,17 @@ function Usuario() {
     }, []);
 
     function eliminar() {
-        // Modal.confirm({
-        //     title: '¿Estas seguro de que deseas eliminar esta cuenta?',
-        //     icon: <ExclamationCircleOutlined />,
-        //     content: 'Al eliminar su cuenta tambien se borraran sus proyectos y listas.',
-        //     okText: 'Eliminar',
-        //     cancelText: 'Cancelar',
-        //     onOk() {
-        //         borrarUser()
-        //         navigate('/')
-        //     }
-        // });
-        elminarDoc()
+        Modal.confirm({
+            title: '¿Estas seguro de que deseas eliminar esta cuenta?',
+            icon: <ExclamationCircleOutlined />,
+            content: 'Al eliminar su cuenta tambien se borraran sus proyectos y listas.',
+            okText: 'Eliminar',
+            cancelText: 'Cancelar',
+            onOk() {
+                borrarUser()
+                navigate('/')
+            }
+        });
       }
     
     return (  
@@ -36,7 +35,7 @@ function Usuario() {
             <Navbar></Navbar>
             <div className="container">
             <div className="row">
-                    <div className="col-lg-12 text-center mt-1">
+                    <div className="col-lg-12 text-center mt-3">
                         <h1 style={{fontWeight: '800'}}>MI CUENTA</h1>
                     </div>
                 </div>
