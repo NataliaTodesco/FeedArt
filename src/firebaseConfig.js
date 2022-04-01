@@ -10,6 +10,7 @@ import {
   deleteDoc,
   where,
   query,
+  orderBy
 } from "firebase/firestore";
 import {
   getAuth,
@@ -49,6 +50,7 @@ export async function guardarUser(email, img_url, nombre, uid) {
       img_url: img_url,
       nombre: nombre,
       uid: uid,
+      fecha: new Date()
     });
     console.log(docRef);
   } catch (e) {
@@ -74,10 +76,17 @@ export async function actualizarUser(uid, img_url, nombre) {
 
 export async function obtenerUsers() {
   let users = []
-  const querySnapshot = await getDocs(collection(db, "users"));
+
+  const usersRef = collection(db, "users");
+  
+  const q = query(usersRef, orderBy("fecha"));
+
+  const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    users.push({id: doc.id, Imagen: doc.data().img_url, Nombre: doc.data().nombre, Email: doc.data().email,UID:doc.data().uid})
+    let fec = new Date(doc.data().fecha.toMillis());
+    users.push({id: doc.id, Imagen: doc.data().img_url, Nombre: doc.data().nombre, Email: doc.data().email,UID:doc.data().uid, Fecha: fec})
   });
+
   return users
 }
 
