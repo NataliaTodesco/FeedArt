@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { logOut } from '../../firebaseConfig';
-import {LogoutOutlined} from '@ant-design/icons'
 
 function Navbar() {
   const navigate = useNavigate();
