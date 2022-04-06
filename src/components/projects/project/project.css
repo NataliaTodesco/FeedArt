@@ -1,0 +1,52 @@
+.project .card-user{
+    color: white;
+    background-color: var(--azul);
+}
+
+.project .card-coment{
+    color: white;
+    background-color: var(--celeste);
+}
+
+.project .comentarios{
+    color: black;
+    background-color: white;
+    height: 55vh;
+    overflow-y: scroll;
+    border-radius: 8px;
+}
+
+.project .img-creador{
+    border-radius: 50%;
+}
+
+.project .bi{
+    font-size: x-large;
+    cursor: pointer;
+}
+
+.project img{
+    max-height: 65vh;
+}
+
+.comentarios::-webkit-scrollbar {
+    -webkit-appearance: none;
+}
+
+.comentarios::-webkit-scrollbar:vertical {
+    width:8px;
+}
+
+.comentarios::-webkit-scrollbar-button:increment,.contenedor::-webkit-scrollbar-button {
+    display: none;
+} 
+
+.comentarios::-webkit-scrollbar-thumb {
+    background-color: #797979;
+    border-radius: 20px;
+    border: 2px solid #f1f2f3;
+}
+
+.comentarios::-webkit-scrollbar-track {
+    border-radius: 10px;  
+}

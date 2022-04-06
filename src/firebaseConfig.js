@@ -1,29 +1,14 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
-import {
-  collection,
-  setDoc,
-  getDocs,
-  doc,
-  updateDoc,
-  deleteDoc,
-  where,
-  query,
-  orderBy
-} from "firebase/firestore";
-import {
-  getAuth,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-  deleteUser,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-} from "firebase/auth";
 import { getStorage } from "firebase/storage";
+import { 
+  collection, setDoc, getDocs, doc, updateDoc, deleteDoc, where, query, orderBy, addDoc, getDoc
+} from "firebase/firestore";
+import { 
+  getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
+  updateProfile, deleteUser, GoogleAuthProvider, signInWithPopup, signOut, 
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAs53lxwaD6wZuLqXcpzF-G_yE-E40Funk",
@@ -42,15 +27,16 @@ const analytics = getAnalytics(app);
 // Firestore
 const db = getFirestore();
 
-// USERS
-export async function guardarUser(email, img_url, nombre, uid) {
+// =========================================== GESTION DE USUARIO =========================================== //
+
+export async function guardarUser(email, img_url, nombre, uid,fecha) {
   try {
     const docRef = await setDoc(doc(db, "users", uid), {
       email: email,
       img_url: img_url,
       nombre: nombre,
       uid: uid,
-      fecha: new Date()
+      fecha: fecha
     });
     console.log(docRef);
   } catch (e) {
@@ -92,14 +78,12 @@ export async function obtenerUsers() {
 
 export async function guardarUserConGoogle(user) {
   const querySnapshot = await getDocs(collection(db, "users"));
-  if (!querySnapshot.docs.includes(user.uid)) {
-    guardarUser(user.email, user.photoURL, user.displayName, user.uid);
+  if (querySnapshot.docs.indexOf(user.uid) === -1) {
+    guardarUser(user.email, user.photoURL, user.displayName, user.uid, new Date(auth.currentUser.metadata.creationTime));
   }
 }
 
 // Firebase Auth
-
-//const user = auth.currentUser; OBTIENE AL USUARIO QUE ACCEDIO Y ES NULO SI NO HAY
 
 const auth = getAuth();
 
@@ -107,7 +91,7 @@ export async function logUpConMail(email, password, img_url, nombre) {
   return createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user = userCredential.user;
-      guardarUser(email, img_url, nombre, user.uid);
+      guardarUser(email, img_url, nombre, user.uid, new Date());
       const save = {
         uid: user.uid,
         email: user.email,
@@ -181,6 +165,7 @@ export async function logInConMail(email, password) {
 }
 
 export async function obtenerUsuario() {
+  let fecha = "";
   onAuthStateChanged(auth, (user) => {
     if (user) {
       const uid = user.uid;
@@ -190,6 +175,7 @@ export async function obtenerUsuario() {
       // ...
     }
   });
+  return fecha
 }
 
 export async function obtenerPerfil() {
@@ -231,17 +217,17 @@ export async function borrarUser() {
 }
 
 async function eliminarDoc(uid) {
-  const projectsRef = collection(db, "proyects");
+  const projectsRef = collection(db, "projects");
 
   const q = query(projectsRef, where("uid_creador", "==", uid));
 
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((documento) => {
-    deleteDoc(doc(db, "proyects", documento.id));
+    deleteDoc(doc(db, "projects", documento.id));
   });
 }
 
-// storage
+// =========================================== STORAGE =========================================== //
 
 const storage = getStorage(app);
 
@@ -263,9 +249,161 @@ export function logOut() {
       localStorage.removeItem("storage");
     })
     .catch((error) => {
-      // An error happened.
     });
-  console.log(auth.currentUser);
+}
+
+
+// =========================================== GESTION DE PROYECTO =========================================== //
+
+export async function guardarProyecto(titulo,descripcion,categoria,img_url,tags,precio) {
+  try {
+    const docRef = await addDoc(collection(db, "projects"), {
+      categoria: categoria,
+      comentarios: [],
+      descripcion: descripcion,
+      favs: 0,
+      img_url: img_url,
+      likes: 0,
+      precio: precio,
+      tags: tags,
+      titulo: titulo,
+      uid_creador: restoreSessionAction().uid,
+    });
+    console.log(docRef);
+    return "";
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    return e
+  }
+}
+
+export async function consultarProyecto(id){
+  const docRef = doc(db, "projects", id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return {id: docSnap.id, datos: docSnap.data()}
+  } else {
+    // doc.data() will be undefined in this case
+    console.log("No such document!");
+  }
+}
+
+export async function obtenerCreador(uid) {
+  let respuesta = {};
+  const querySnapshot = await getDocs(collection(db, "users"));
+  querySnapshot.forEach((doc) => {
+    if (doc.id === uid) {
+      let fec = new Date(doc.data().fecha.toMillis()).toLocaleDateString()
+      const save = {
+        uid: uid,
+        email: doc.data().email,
+        img_url: doc.data().img_url,
+        nombre: doc.data().nombre,
+        fecha: fec
+      };
+      respuesta = save
+    }
+  });
+  return respuesta
+}
+
+export function obtenerCategoria(numero){
+  if (numero === 1){
+    return "Arte Tradicional"
+  }
+  else if (numero === 2){
+    return "Dibujos y Pinturas"
+  }
+  else if (numero === 3){
+    return "Fotografía"
+  }
+  else if (numero === 4){
+    return "Arte digital"
+  }
+  else if (numero === 5){
+    return "3D"
+  }
+  else if (numero === 6){
+    return "Esculturas"
+  }
+  else {
+    return "Arte callejero"
+  }
+
+}
+
+export async function proyectosxUID(uid) {
+  let proyectos = [];
+  const projectsRef = collection(db, "projects");
+
+  const q = query(projectsRef, where("uid_creador", "==", uid));
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    const proyecto = {
+      id: doc.id,
+      img: doc.data().img_url,
+      title: doc.data().titulo,
+      author: doc.data().nombre,
+      rows: 2,
+      cols: 2,
+      featured: true,
+    }
+    proyectos.push(proyecto)
+  });
+
+  return proyectos;
+}
+
+// =========================================== GESTION DE LISTAS =========================================== //
+
+export async function actualizarLikes(id,likes){
+  const projectsRef = doc(db, "projects", id);
+  await updateDoc(projectsRef, {
+    likes: likes+1
+  });
+}
+
+export async function restarLikes(id,likes){
+  const projectsRef = doc(db, "projects", id);
+  await updateDoc(projectsRef, {
+    likes: likes-1
+  });
+}
+
+export async function actualizarFavs(id,favs){
+  const projectsRef = doc(db, "projects", id);
+  await updateDoc(projectsRef, {
+    favs: favs+1
+  });
+}
+
+export async function restarFavs(id,favs){
+  const projectsRef = doc(db, "projects", id);
+  await updateDoc(projectsRef, {
+    favs: favs-1
+  });
+}
+
+// ======================================= GESTION DE COMENTARIOS ======================================== //
+export async function obtenerFoto(uid){
+  let user = {foto: "", nombre: ""}
+  const querySnapshot = await getDocs(collection(db, "users"));
+  querySnapshot.forEach((doc) => {
+    if (doc.id === uid) {
+      user = {foto: doc.data().img_url, nombre: doc.data().nombre}
+    }
+  });
+  return user
+}
+
+export function obtenerUserComent(uid){
+  let user = {foto: "", nombre: ""}
+  obtenerFoto(uid).then(res => {
+    user = res
+  })
+  return user
 }
 
 export { analytics, auth, storage };

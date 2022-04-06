@@ -25,7 +25,7 @@ function Inicio() {
       <img src={logo} className="logo" alt="" />
       <div className="container" id="capture">
         <div className="eclipse"></div>
-        <div className="row">
+        <div className="row mb-2">
           <div className="col-lg-6">
             <h1 className="head">
               Feed<span className="art">Art</span>

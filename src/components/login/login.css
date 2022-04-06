@@ -66,6 +66,9 @@
     max-width: 99.923%;
 }
 
+.login .container-fluid{
+    min-height: 100vh;
+}
 @media (max-width: 992px) {
     .imgLogin{
         height: 0;
