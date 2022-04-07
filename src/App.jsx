@@ -12,6 +12,7 @@ import Proyecto from './components/projects/project/project'
 import NewProject from './components/projects/newProject/newProject'
 import Gestion from './components/gestion/gestion'
 import UsuarioUID from "./components/usuario/usuarioUID/usuarioUID";
+import EditProject from "./components/projects/editProject/editProject";
 
 function App() {
   // let storage = localStorage.getItem('storage')
@@ -27,6 +28,7 @@ function App() {
               <Route path="/list" element={<Listas></Listas>} />
               <Route path="/project/:id" element={<Proyecto></Proyecto>} />
               <Route path="/user/:uid" element={<UsuarioUID></UsuarioUID>} />
+              <Route path="project/edit/:id" element={<EditProject></EditProject>} />
               <Route path="/new-project" element={<NewProject></NewProject>} />
               <Route path="/admin" element={<Gestion></Gestion>} />
               <Route path="/user" element={<Usuario></Usuario>} />

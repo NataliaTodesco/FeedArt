@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Footer from "../../footer/footer";
 import Navbar from "../../Navbar/navbar";
-import "./newProject.css";
+import "./editProject.css";
 import { InboxOutlined } from "@ant-design/icons";
 import {
   TextField,
@@ -18,17 +18,12 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import newProject from "../../../img/logoVertical.svg";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { guardarProyecto, storage } from "../../../firebaseConfig";
-import { useNavigate } from 'react-router-dom'
+import { ref, uploadBytes, getDownloadURL, uploadBytesResumable,} from "firebase/storage";
+import { actualizarProyecto, consultarProyecto, storage } from "../../../firebaseConfig";
+import { useNavigate, useParams } from 'react-router-dom'
 
 
-function NewProject() {
+function EditProject() {
   const [foto, setFoto] = useState(newProject);
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -71,6 +66,7 @@ function NewProject() {
   const [categoria, setCategoria] = React.useState(1);
   const [texto, setTexto] = useState("");
   let navigate = useNavigate();
+  let {id} = useParams();
   
   function Tags() {
     const [open, setOpen] = React.useState(false);
@@ -207,7 +203,7 @@ function NewProject() {
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
+          console.log("Upload is " + progress + "% done");
 
         setState(progress);
       },
@@ -224,15 +220,15 @@ function NewProject() {
   }
 
 
-  function subir() {
+  function editar() {
     if (foto !== newProject && foto !== "") {
       if (titulo !== "") {
         if (descripcion !== "") {
           if (precio !== "") {
             setShowAlert(false);
-            guardarProyecto(titulo,descripcion,categoria,foto,etiquetas,precio).then(res =>{
+            actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,precio).then(res =>{
               if (res === ""){
-                navigate('/home')
+                navigate('/project/'+id)
               }
               else {
                 setShowAlert(true)
@@ -257,13 +253,31 @@ function NewProject() {
     }
   }
 
+
+  useEffect(() => {
+    consultarProyecto(id).then(res => {
+        setTitulo(res.datos.titulo);
+        setDescripcion(res.datos.descripcion);
+        setCategoria(res.datos.categoria);
+        setPrecio(res.datos.precio);
+        setEtiquetas(res.datos.tags)
+        let Tags = ""
+        res.datos.tags.forEach(tag => {
+          if (Tags === "") Tags = tag 
+          else Tags += ', '+tag 
+        });
+        setTexto(Tags)
+        setFoto(res.datos.img_url)
+    })    
+  }, []);
+
   return (
-    <div className="newProject">
+    <div className="edit">
       <Navbar></Navbar>
       <div className="container my-3">
         <div className="row">
           <div className="col-lg-12 text-center">
-            <h1 style={{ fontWeight: "800" }}>NUEVO PROYECTO</h1>
+            <h1 style={{ fontWeight: "800" }}>EDITAR PROYECTO</h1>
           </div>
         </div>
         <div className="row" style={{ marginTop: "-1%" }}>
@@ -357,9 +371,9 @@ function NewProject() {
         </div>
         <div className="row mb-5">
           <div className="col-lg-12 d-flex justify-content-end">
-            <button className="btn btn-info px-4 py-2" onClick={subir}>
-              <i className="bi bi-upload mr-3" style={{ fontSize: "medium" }}></i>
-              Subir
+            <button className="btn btn-info px-4 py-2" onClick={editar}>
+              Editar
+              <i class="bi bi-pencil-square ml-2" style={{ fontSize: "medium" }}></i>
             </button>
           </div>
         </div>
@@ -370,4 +384,4 @@ function NewProject() {
   );
 }
 
-export default NewProject;
+export default EditProject;

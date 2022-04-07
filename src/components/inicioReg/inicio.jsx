@@ -22,7 +22,7 @@ function Inicio() {
                 <div className="row">
                     <Link to={"/project/PGBE7PEBI1RWUQaHC6jQ"}>
                     {/* <Link to={"/usuario/" + user.id}> */}
-                    <button className="btn btn-block btn-dark">Ver mas</button>
+                    <button className="btn btn-dark">Ver mas</button>
                     </Link>
                 </div>
             </div>

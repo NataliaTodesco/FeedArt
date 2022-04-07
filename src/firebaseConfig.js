@@ -356,6 +356,24 @@ export async function proyectosxUID(uid) {
   return proyectos;
 }
 
+export async function actualizarProyecto(id,titulo,descripcion,categoria,img_url,tags,precio){
+  try {
+    const docRef = await updateDoc(doc(db, "projects", id), {
+      categoria: categoria,
+      descripcion: descripcion,
+      img_url: img_url,
+      precio: precio,
+      tags: tags,
+      titulo: titulo,
+    });
+    console.log(docRef);
+    return "";
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    return e
+  }
+}
+
 // =========================================== GESTION DE LISTAS =========================================== //
 
 export async function actualizarLikes(id,likes){
