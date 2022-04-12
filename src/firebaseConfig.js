@@ -2,12 +2,29 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { 
-  collection, setDoc, getDocs, doc, updateDoc, deleteDoc, where, query, orderBy, addDoc, getDoc
+import {
+  collection,
+  setDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
+  where,
+  query,
+  orderBy,
+  addDoc,
+  getDoc,
 } from "firebase/firestore";
-import { 
-  getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-  updateProfile, deleteUser, GoogleAuthProvider, signInWithPopup, signOut, 
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+  deleteUser,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -29,14 +46,14 @@ const db = getFirestore();
 
 // =========================================== GESTION DE USUARIO =========================================== //
 
-export async function guardarUser(email, img_url, nombre, uid,fecha) {
+export async function guardarUser(email, img_url, nombre, uid, fecha) {
   try {
     const docRef = await setDoc(doc(db, "users", uid), {
       email: email,
       img_url: img_url,
       nombre: nombre,
       uid: uid,
-      fecha: fecha
+      fecha: fecha,
     });
     console.log(docRef);
   } catch (e) {
@@ -52,7 +69,7 @@ export async function actualizarUser(uid, img_url, nombre) {
     nombre: nombre,
   })
     .then(() => {
-      recuperarUser(auth.currentUser)
+      recuperarUser(auth.currentUser);
       return "";
     })
     .catch((e) => {
@@ -61,25 +78,38 @@ export async function actualizarUser(uid, img_url, nombre) {
 }
 
 export async function obtenerUsers() {
-  let users = []
+  let users = [];
 
   const usersRef = collection(db, "users");
-  
+
   const q = query(usersRef, orderBy("fecha"));
 
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
     let fec = new Date(doc.data().fecha.toMillis());
-    users.push({id: doc.id, Imagen: doc.data().img_url, Nombre: doc.data().nombre, Email: doc.data().email,UID:doc.data().uid, Fecha: fec})
+    users.push({
+      id: doc.id,
+      Imagen: doc.data().img_url,
+      Nombre: doc.data().nombre,
+      Email: doc.data().email,
+      UID: doc.data().uid,
+      Fecha: fec,
+    });
   });
 
-  return users
+  return users;
 }
 
 export async function guardarUserConGoogle(user) {
   const querySnapshot = await getDocs(collection(db, "users"));
   if (querySnapshot.docs.indexOf(user.uid) === -1) {
-    guardarUser(user.email, user.photoURL, user.displayName, user.uid, new Date(auth.currentUser.metadata.creationTime));
+    guardarUser(
+      user.email,
+      user.photoURL,
+      user.displayName,
+      user.uid,
+      new Date(auth.currentUser.metadata.creationTime)
+    );
   }
 }
 
@@ -175,7 +205,7 @@ export async function obtenerUsuario() {
       // ...
     }
   });
-  return fecha
+  return fecha;
 }
 
 export async function obtenerPerfil() {
@@ -248,14 +278,19 @@ export function logOut() {
     .then(() => {
       localStorage.removeItem("storage");
     })
-    .catch((error) => {
-    });
+    .catch((error) => {});
 }
-
 
 // =========================================== GESTION DE PROYECTO =========================================== //
 
-export async function guardarProyecto(titulo,descripcion,categoria,img_url,tags,precio) {
+export async function guardarProyecto(
+  titulo,
+  descripcion,
+  categoria,
+  img_url,
+  tags,
+  precio
+) {
   try {
     const docRef = await addDoc(collection(db, "projects"), {
       categoria: categoria,
@@ -273,16 +308,16 @@ export async function guardarProyecto(titulo,descripcion,categoria,img_url,tags,
     return "";
   } catch (e) {
     console.error("Error adding document: ", e);
-    return e
+    return e;
   }
 }
 
-export async function consultarProyecto(id){
+export async function consultarProyecto(id) {
   const docRef = doc(db, "projects", id);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    return {id: docSnap.id, datos: docSnap.data()}
+    return { id: docSnap.id, datos: docSnap.data() };
   } else {
     // doc.data() will be undefined in this case
     console.log("No such document!");
@@ -294,43 +329,36 @@ export async function obtenerCreador(uid) {
   const querySnapshot = await getDocs(collection(db, "users"));
   querySnapshot.forEach((doc) => {
     if (doc.id === uid) {
-      let fec = new Date(doc.data().fecha.toMillis()).toLocaleDateString()
+      let fec = new Date(doc.data().fecha.toMillis()).toLocaleDateString();
       const save = {
         uid: uid,
         email: doc.data().email,
         img_url: doc.data().img_url,
         nombre: doc.data().nombre,
-        fecha: fec
+        fecha: fec,
       };
-      respuesta = save
+      respuesta = save;
     }
   });
-  return respuesta
+  return respuesta;
 }
 
-export function obtenerCategoria(numero){
-  if (numero === 1){
-    return "Arte Tradicional"
+export function obtenerCategoria(numero) {
+  if (numero === 1) {
+    return "Arte Tradicional";
+  } else if (numero === 2) {
+    return "Dibujos y Pinturas";
+  } else if (numero === 3) {
+    return "Fotografía";
+  } else if (numero === 4) {
+    return "Arte digital";
+  } else if (numero === 5) {
+    return "3D";
+  } else if (numero === 6) {
+    return "Esculturas";
+  } else {
+    return "Arte callejero";
   }
-  else if (numero === 2){
-    return "Dibujos y Pinturas"
-  }
-  else if (numero === 3){
-    return "Fotografía"
-  }
-  else if (numero === 4){
-    return "Arte digital"
-  }
-  else if (numero === 5){
-    return "3D"
-  }
-  else if (numero === 6){
-    return "Esculturas"
-  }
-  else {
-    return "Arte callejero"
-  }
-
 }
 
 export async function proyectosxUID(uid) {
@@ -349,14 +377,22 @@ export async function proyectosxUID(uid) {
       rows: 2,
       cols: 2,
       featured: true,
-    }
-    proyectos.push(proyecto)
+    };
+    proyectos.push(proyecto);
   });
 
   return proyectos;
 }
 
-export async function actualizarProyecto(id,titulo,descripcion,categoria,img_url,tags,precio){
+export async function actualizarProyecto(
+  id,
+  titulo,
+  descripcion,
+  categoria,
+  img_url,
+  tags,
+  precio
+) {
   try {
     const docRef = await updateDoc(doc(db, "projects", id), {
       categoria: categoria,
@@ -370,58 +406,196 @@ export async function actualizarProyecto(id,titulo,descripcion,categoria,img_url
     return "";
   } catch (e) {
     console.error("Error adding document: ", e);
-    return e
+    return e;
   }
+}
+
+export async function borrarProyecto(id) {
+  deleteDoc(doc(db, "projects", id));
+}
+
+export async function obtenerProyectos() {
+  let projects = [];
+
+  const projectsRef = collection(db, "projects");
+
+  const q = query(projectsRef);
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    projects.push({ id: doc.id, datos: doc.data() });
+  });
+
+  return projects;
+}
+
+export async function obtenerProyectosChar() {
+  let projects = [];
+
+  const projectsRef = collection(db, "projects");
+
+  const q = query(projectsRef);
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    let creador = "";
+    obtenerCreador(doc.data().uid_creador).then(res => {
+      creador = res.nombre;
+    })
+    projects.push({
+      id: doc.id,
+      Titulo: doc.data().titulo,
+      Categoria: obtenerCategoria(doc.data().categoria),
+      Descripcion: doc.data().descripcion,
+      Imagen: doc.data().img_url,
+      Precio: doc.data().precio,
+      Creador: creador,
+      Likes: doc.data().likes,
+      Favoritos: doc.data().favs
+    });
+  });
+
+  return projects;
+}
+
+export async function obtenerProyectosXCategoria(num) {
+  let projects = [];
+
+  const projectsRef = collection(db, "projects");
+
+  const q = query(projectsRef, where("categoria", "==", num));
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    projects.push({ id: doc.id, datos: doc.data() });
+  });
+
+  return projects;
+}
+
+export async function usuariosMasProyectos(){
+  let proyectosXUser = [['','']]
+  obtenerUsers().then(res => {
+    res.forEach(element => {
+      proyectosxUID(element.id).then(proyectos => {
+        proyectosXUser.push({nombre: element.Nombre, email: element.Email, img_url: element.Imagen, cantidad: proyectos.length});
+      })
+    });
+  })
+  return proyectosXUser;
 }
 
 // =========================================== GESTION DE LISTAS =========================================== //
 
-export async function actualizarLikes(id,likes){
+export async function actualizarLikes(id, likes) {
   const projectsRef = doc(db, "projects", id);
   await updateDoc(projectsRef, {
-    likes: likes+1
+    likes: likes + 1,
   });
 }
 
-export async function restarLikes(id,likes){
+export async function restarLikes(id, likes) {
   const projectsRef = doc(db, "projects", id);
   await updateDoc(projectsRef, {
-    likes: likes-1
+    likes: likes - 1,
   });
 }
 
-export async function actualizarFavs(id,favs){
+export async function actualizarFavs(id, favs) {
   const projectsRef = doc(db, "projects", id);
   await updateDoc(projectsRef, {
-    favs: favs+1
+    favs: favs + 1,
   });
 }
 
-export async function restarFavs(id,favs){
+export async function restarFavs(id, favs) {
   const projectsRef = doc(db, "projects", id);
   await updateDoc(projectsRef, {
-    favs: favs-1
+    favs: favs - 1,
   });
+}
+
+export async function existeEnLikes(id) {
+  let existe = false;
+  let c = 0;
+  let storage = localStorage.getItem("storage");
+  storage = JSON.parse(storage);
+  let uid = storage.uid;
+
+  const docRef = doc(db, "likes", uid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    docSnap.data().array.forEach((project) => {
+      if (project.id === id) c++;
+    });
+  }
+
+  if (c !== 0) existe = true;
+
+  return existe;
+}
+
+export async function existeEnFavs(id) {
+  let existe = false;
+  let c = 0;
+  let storage = localStorage.getItem("storage");
+  storage = JSON.parse(storage);
+  let uid = storage.uid;
+
+  const docRef = doc(db, "favs", uid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    docSnap.data().array.forEach((project) => {
+      if (project.id === id) c++;
+    });
+  }
+
+  if (c !== 0) existe = true;
+
+  return existe;
+}
+
+export function addFavorites(array, uid) {
+  try {
+    return setDoc(doc(db, "favs", uid), {
+      array,
+    });
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
+
+export async function getFavorites(uid) {
+  const docRef = doc(db, "favs", uid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data().array;
+  } else {
+    return [];
+  }
 }
 
 // ======================================= GESTION DE COMENTARIOS ======================================== //
-export async function obtenerFoto(uid){
-  let user = {foto: "", nombre: ""}
+export async function obtenerFoto(uid) {
+  let user = { foto: "", nombre: "" };
   const querySnapshot = await getDocs(collection(db, "users"));
   querySnapshot.forEach((doc) => {
     if (doc.id === uid) {
-      user = {foto: doc.data().img_url, nombre: doc.data().nombre}
+      user = { foto: doc.data().img_url, nombre: doc.data().nombre };
     }
   });
-  return user
+  return user;
 }
 
-export function obtenerUserComent(uid){
-  let user = {foto: "", nombre: ""}
-  obtenerFoto(uid).then(res => {
-    user = res
-  })
-  return user
+export function obtenerUserComent(uid) {
+  let user = { foto: "", nombre: "" };
+  obtenerFoto(uid).then((res) => {
+    user = res;
+  });
+  return user;
 }
 
 export { analytics, auth, storage };
