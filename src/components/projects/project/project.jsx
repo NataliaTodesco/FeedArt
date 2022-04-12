@@ -2,7 +2,7 @@ import { Avatar as Img, Chip } from "@mui/material";
 import { Avatar, Comment } from "antd";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { consultarProyecto, obtenerCreador, obtenerCategoria, actualizarLikes, actualizarFavs, restarLikes, restarFavs } from "../../../firebaseConfig";
+import { consultarProyecto, obtenerCreador, obtenerCategoria, actualizarLikes, actualizarFavs, restarLikes, restarFavs, existeEnLikes, existeEnFavs } from "../../../firebaseConfig";
 import Footer from "../../footer/footer";
 import Navbar from "../../Navbar/navbar";
 import "./project.css";
@@ -35,7 +35,6 @@ function Proyecto() {
     fecha: new Date().toLocaleDateString(),
   });
 
-  // Si en mi lista likes se encuentra el proyecto con este id like es true sino es false
   const [like, setLike] = useState(false);
   const [fav, setFav] = useState(false);
   let navigate = useNavigate();
@@ -51,15 +50,23 @@ function Proyecto() {
 
   useEffect(() => {
     obtenerProyecto()
+    existeEnLikes(id).then((res) => {
+      setLike(res)
+    })
+    existeEnFavs(id).then((res) => {
+      setFav(res)
+    });
   }, []);
 
 
   function onclickLike(){
       if (like) {
+        // Eliminar de mi lista
         restarLikes(id,proyecto.datos.likes);
         setLike(false);
         obtenerProyecto();
       } else {
+        // Agregar mi lista
         actualizarLikes(id,proyecto.datos.likes);
         setLike(true);
         obtenerProyecto();

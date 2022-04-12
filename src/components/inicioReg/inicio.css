@@ -3,4 +3,32 @@
     min-height: 100vh;
     box-shadow: none;
     border-radius: none;
+    max-width: 100%;
+}
+
+.inicio-foto{
+    border-radius: 8px;
+}
+
+.inicio .proyecto .bi{
+    font-size: x-large;
+    cursor: pointer;
+}
+
+.inicio .btn-dark{
+    background-color: var(--azul);
+    border: none;
+    color: white;
+}
+.inicio .btn-dark:hover{
+    background-color: #003a8c;
+    border: none;
+    color: white;
+}
+.inicio input:focus{
+    box-shadow: none;
+}
+
+.inicio .container{
+    min-height: 62.5vh;
 }

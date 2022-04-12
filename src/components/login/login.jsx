@@ -11,6 +11,11 @@ import { useNavigate } from 'react-router-dom';
 import {Alert} from 'antd'
 
 function Login() {
+    const [alerta, setAlerta] = useState("");
+    const [showAlert, setShowAlert] = useState(false);
+    const [state, setState] = useState(0);
+    const [alerta2, setAlerta2] = useState("");
+    const [showAlert2, setShowAlert2] = useState(false);
     const [values, setValues] = React.useState({
         mail: '',
         password: '',
@@ -52,16 +57,11 @@ function Login() {
           }
           else {
             setShowAlert(true)
-            setAlerta(res)
+            if (res === "Firebase: Error (auth/popup-closed-by-user).") setAlerta("La ventana PopUp fue cerrada por el usuario")
+            else setAlerta(res)
           }
         })
       }
-      
-      const [alerta, setAlerta] = useState("");
-      const [showAlert, setShowAlert] = useState(false);
-
-      const [alerta2, setAlerta2] = useState("");
-      const [showAlert2, setShowAlert2] = useState(false);
 
       function logInConMailyContraseña(){
           logInConMail(values.mail,values.password).then(res => {
@@ -72,7 +72,13 @@ function Login() {
             else {
               setShowAlert(true)
               if (res === "Firebase: Error (auth/invalid-email).")
+              setAlerta("Email invalido")
+              else if (res === "Firebase: Error (auth/internal-error).")
               setAlerta("Email o contraseña incorrecta")
+              else if (res === "Firebase: Error (auth/wrong-password).")
+              setAlerta("Contraseña incorrecta")
+              else if (res === "Firebase: Error (auth/network-request-failed).")
+              setAlerta("Compruebe su conexión ")
               else setAlerta(res)
             }
           }).catch(e => {
@@ -99,8 +105,6 @@ function Login() {
           setShowAlert2(true)
         }
       }
-
-      const [state, setState] = useState(0);
 
       function onUpload(event) {
         const file = event.target.files[0]
