@@ -578,6 +578,27 @@ export async function getFavorites(uid) {
   }
 }
 
+export function addLikes(array, uid) {
+  try {
+    return setDoc(doc(db, "likes", uid), {
+      array,
+    });
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
+
+export async function getLikes(uid) {
+  const docRef = doc(db, "likes", uid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data().array;
+  } else {
+    return [];
+  }
+}
+
 // ======================================= GESTION DE COMENTARIOS ======================================== //
 export async function obtenerFoto(uid) {
   let user = { foto: "", nombre: "" };

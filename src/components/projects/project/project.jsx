@@ -2,7 +2,7 @@ import { Avatar as Img, Chip } from "@mui/material";
 import { Avatar, Comment } from "antd";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { consultarProyecto, obtenerCreador, obtenerCategoria, actualizarLikes, actualizarFavs, restarLikes, restarFavs, existeEnLikes, existeEnFavs } from "../../../firebaseConfig";
+import { consultarProyecto, obtenerCreador, obtenerCategoria, actualizarLikes, actualizarFavs, restarLikes, restarFavs, existeEnLikes, existeEnFavs, getFavorites, addFavorites, getLikes, addLikes } from "../../../firebaseConfig";
 import Footer from "../../footer/footer";
 import Navbar from "../../Navbar/navbar";
 import "./project.css";
@@ -34,6 +34,8 @@ function Proyecto() {
     nombre: "",
     fecha: new Date().toLocaleDateString(),
   });
+  let storage = localStorage.getItem("storage");
+  storage = JSON.parse(storage);
 
   const [like, setLike] = useState(false);
   const [fav, setFav] = useState(false);
@@ -61,15 +63,29 @@ function Proyecto() {
 
   function onclickLike(){
       if (like) {
-        // Eliminar de mi lista
         restarLikes(id,proyecto.datos.likes);
         setLike(false);
         obtenerProyecto();
+        getLikes(storage.uid).then(res => {
+          let likes = res;
+          for (let index = 0; index < likes.length; index++) {
+            if (likes[index].id === id){
+              likes.splice(index,1);
+              addLikes(likes,storage.uid);
+            }
+          }
+        })
       } else {
-        // Agregar mi lista
         actualizarLikes(id,proyecto.datos.likes);
         setLike(true);
         obtenerProyecto();
+        getLikes(storage.uid).then((res) => {
+          let likes = res;
+          let project = proyecto;
+          project.datos.likes = project.datos.likes+1;
+          likes.push(project);
+          addLikes(likes,storage.uid);
+        });
       }
   }
 
@@ -78,10 +94,26 @@ function Proyecto() {
         restarFavs(id,proyecto.datos.favs);
         setFav(false);
         obtenerProyecto();
+        getFavorites(storage.uid).then((res) => {
+          let favs = res;
+          for (let index = 0; index < favs.length; index++) {
+            if (favs[index].id === id){
+              favs.splice(index,1);
+              addFavorites(favs,storage.uid);
+            }
+          }
+        });
     } else {
-        actualizarFavs(id,proyecto.datos.favs);
-        setFav(true);
-        obtenerProyecto();
+      actualizarFavs(id,proyecto.datos.favs);
+      setFav(true);
+      obtenerProyecto();
+      getFavorites(storage.uid).then((res) => {
+        let favs = res;
+        let project = proyecto;
+        project.datos.favs = project.datos.favs+1;
+        favs.push(project);
+        addFavorites(favs,storage.uid);
+      });
     }
   }
 
