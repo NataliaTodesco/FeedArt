@@ -2,6 +2,7 @@
     background-color: var(--bordo);
     color: #FDF0D5;
     min-height: 150px;
+    max-height: 300px;
     padding: 1%;
     padding-left: 6%;
     margin-bottom: 0;
@@ -22,4 +23,24 @@
 
     color: #FDF0D5;
     margin-bottom: 0;
+}
+
+.terminos{
+    color: var(--celeste);
+    font-weight: 800;
+    font-size: 15px;
+}
+
+@media (max-width: 530px) {
+    .footer .txt{
+        width: 100%;
+        height: 55px;
+        font-size: 16px;
+        display: flex;
+        align-items: flex-center;
+        text-align: center;
+    }
+    .terminos{
+        font-size: 14px;
+    }
 }
