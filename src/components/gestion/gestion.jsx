@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import Footer from "../footer/footer";
 import Navbar from "../Navbar/navbar";
 import "./gestion.css";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { obtenerProyectos, obtenerProyectosChar, obtenerUsers, usuariosMasProyectos } from "../../firebaseConfig";
+import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton } from "@mui/x-data-grid";
+import {
+  obtenerProyectos,
+  obtenerProyectosChar,
+  usuariosMasProyectos,
+} from "../../firebaseConfig";
 import {
   Avatar,
   MenuItem,
@@ -22,6 +26,7 @@ import {
   LineSeries,
   BarSeries,
   Title,
+  Legend,
 } from "@devexpress/dx-react-chart-material-ui";
 import {
   Plugin,
@@ -31,89 +36,77 @@ import {
 import domtoimage from "dom-to-image";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Animation } from "@devexpress/dx-react-chart";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { useUsuario } from '../../context/UserContext'
 
 function Gestion() {
-  const [usuarios, setUsuarios] = useState([]);
-  const columns = [
-    {
-      field: "Imagen",
-      width: 70,
-      renderCell: (usuarios) => (
-        <strong>
-          <Avatar alt="Profile Picture" src={usuarios.row.Imagen} />
-        </strong>
-      ),
-    },
-    { field: "Nombre", width: 150 },
-    { field: "Email", width: 250 },
-    {
-      field: "Fecha de Creación",
-      width: 150,
-      renderCell: (usuarios) => (
-        <div>
-          {usuarios.row.Fecha.getDate()}/{usuarios.row.Fecha.getMonth() + 1}/
-          {usuarios.row.Fecha.getFullYear()}
-        </div>
-      ),
-    },
-  ];
-
-  const [data, setData] = useState([
-    { argument: "Mes", value: 0 },
-    { argument: 1, value: 0 },
-    { argument: 2, value: 0 },
-    { argument: 3, value: 0 },
-    { argument: 4, value: 0 },
-    { argument: 5, value: 0 },
-    { argument: 6, value: 0 },
-    { argument: 7, value: 0 },
-    { argument: 8, value: 0 },
-    { argument: 9, value: 0 },
-    { argument: 10, value: 0 },
-    { argument: 11, value: 0 },
-    { argument: 12, value: 0 },
-  ]);
-
-  const [proyectosXcategoria, setProyectosXcategoria] = useState([
-    { categoria: "Arte Tradicional", cantidad: 0 },
-    { categoria: "Dibujos y Pinturas", cantidad: 0 },
-    { categoria: "Fotografia", cantidad: 0 },
-    { categoria: "Arte digital", cantidad: 0 },
-    { categoria: "3D", cantidad: 0 },
-    { categoria: "Esculturas", cantidad: 0 },
-    { categoria: "Arte callejero", cantidad: 0 },
-  ]);
-
-  const [proyectos, setProyectos] = useState([]);
-  const [proyectosXUser, setProyectosXUser] = useState([]);
-
+  const [usuarios, setUsuarios] = useState([]); 
+  const { obtenerUsers } = useUsuario();
+  
   useEffect(() => {
     obtenerUsers().then((array) => {
       setUsuarios(array);
-      cantidadUsers(array);
-    });
-    obtenerProyectos().then(res => {
-      ProyectosXCategoria(res);
-    })
-    obtenerProyectosChar().then(res => {
-      setProyectos(res)
-    })
-    usuariosMasProyectos().then(res => {
-      setProyectosXUser(res)
     });
   }, []);
 
-  const [año, setAño] = React.useState(2022);
-  let year = 2022;
+  function ListadoUsuarios() {
+    const columns = [
+      {
+        field: "Imagen",
+        width: 80,
+        renderCell: (usuarios) => (
+          <strong>
+            <Avatar alt="Profile Picture" src={usuarios.row.Imagen} />
+          </strong>
+        ),
+      },
+      { field: "Nombre", width: 180 },
+      { field: "Email", width: 270 },
+      {
+        field: "Fecha de Creación",
+        width: 150,
+        renderCell: (usuarios) => (
+          <div>
+            {usuarios.row.Fecha.getDate()}/{usuarios.row.Fecha.getMonth() + 1}/
+            {usuarios.row.Fecha.getFullYear()}
+          </div>
+        ),
+      },
+    ];
 
-  const handleChange = (event) => {
-    year = event.target.value;
-    setAño(event.target.value);
-    cantidadUsers(usuarios);
-  };
+    function CustomToolbar() {
+      return (
+        <GridToolbarContainer>
+          <GridToolbarExport />
+          <GridToolbarFilterButton />
+        </GridToolbarContainer>
+      );
+    }
 
-  function cantidadUsers(array) {
-    let element = [
+    return (
+      <div className="col-lg-7 mb-5" style={{ height: 418, width: "100%" }}>
+        <h3 style={{ textAlign: "center" }}>Listado de Usuarios</h3>
+        <DataGrid
+          rows={usuarios}
+          columns={columns}
+          components={{ Toolbar: CustomToolbar }}
+        />
+      </div>
+    );
+  }
+  
+  function CantidadxAño() {
+    const [año, setAño] = React.useState(2022);
+    let year = 2022;
+
+    useEffect(() => {
+      obtenerUsers().then((array) => {
+        cantidadUsers(array);
+      });
+    }, []);
+
+    const [data, setData] = useState([
       { argument: "Mes", value: 0 },
       { argument: 1, value: 0 },
       { argument: 2, value: 0 },
@@ -127,393 +120,587 @@ function Gestion() {
       { argument: 10, value: 0 },
       { argument: 11, value: 0 },
       { argument: 12, value: 0 },
-    ];
+    ]);
 
-    for (let index = 0; index < array.length; index++) {
-      if (year == array[index].Fecha.getFullYear()) {
-        switch (array[index].Fecha.getMonth() + 1) {
+    const handleChange = (event) => {
+      year = event.target.value;
+      setAño(event.target.value);
+      cantidadUsers(usuarios);
+    };
+
+    function cantidadUsers(array) {
+      let element = [
+        { argument: "Mes", value: 0 },
+        { argument: 1, value: 0 },
+        { argument: 2, value: 0 },
+        { argument: 3, value: 0 },
+        { argument: 4, value: 0 },
+        { argument: 5, value: 0 },
+        { argument: 6, value: 0 },
+        { argument: 7, value: 0 },
+        { argument: 8, value: 0 },
+        { argument: 9, value: 0 },
+        { argument: 10, value: 0 },
+        { argument: 11, value: 0 },
+        { argument: 12, value: 0 },
+      ];
+
+      for (let index = 0; index < array.length; index++) {
+        if (year == array[index].Fecha.getFullYear()) {
+          switch (array[index].Fecha.getMonth() + 1) {
+            case 1:
+              element[1].value = element[1].value + 1;
+              break;
+            case 2:
+              element[2].value = element[2].value + 1;
+              break;
+            case 3:
+              element[3].value = element[3].value + 1;
+              break;
+            case 4:
+              element[4].value = element[4].value + 1;
+              break;
+            case 5:
+              element[5].value = element[5].value + 1;
+              break;
+            case 6:
+              element[6].value = element[6].value + 1;
+              break;
+            case 7:
+              element[7].value = element[7].value + 1;
+              break;
+            case 8:
+              element[8].value = element[8].value + 1;
+              break;
+            case 9:
+              element[9].value = element[9].value + 1;
+              break;
+            case 10:
+              element[10].value = element[10].value + 1;
+              break;
+            case 11:
+              element[11].value = element[11].value + 1;
+              break;
+            default:
+              element[12].value = element[12].value + 1;
+              break;
+          }
+        }
+      }
+
+      setData(element);
+    }
+
+    const Export = () => {
+      const exportToImage = async (chart, format, exportFunc) => {
+        try {
+          const dataUrl = await exportFunc(chart, { filter });
+          const link = document.createElement("a");
+          document.body.appendChild(link);
+          link.download = `chart.${format}`;
+          link.href = dataUrl;
+          link.click();
+          link.remove();
+        } catch (err) {
+          console.error("oops, something went wrong!", err);
+        }
+      };
+    
+      const iconButton = "exportIconButton";
+      const filter = (node) => node.id !== iconButton;
+    
+      const exportToPng = (chart) => exportToImage(chart, "png", domtoimage.toPng);
+    
+      const exportToPdf = async (chart) => {
+        const width = chart.offsetWidth;
+        const height = chart.offsetHeight;
+        try {
+          const dataUrl = await domtoimage.toJpeg(chart, { filter });
+          const doc = new JsPDF({
+            orientation: "landscape",
+            unit: "px",
+            format: [width, height],
+          });
+          const pdfWidth = doc.internal.pageSize.getWidth();
+          const pdfHeight = doc.internal.pageSize.getHeight();
+          doc.addImage(dataUrl, "JPEG", 0, 0, pdfWidth, pdfHeight);
+          doc.save("chart");
+        } catch (err) {
+          console.error("oops, something went wrong!", err);
+        }
+      };
+    
+      const options = [
+        { key: "PNG", action: exportToPng, text: "Save as PNG" },
+        { key: "PDF", action: exportToPdf, text: "Save as PDF" },
+      ];
+    
+      const ITEM_HEIGHT = 48;
+      const paperProps = {
+        style: {
+          maxHeight: ITEM_HEIGHT * 4.5,
+          width: 150,
+        },
+      };
+    
+      const [anchorEl, setAnchorEl] = useState(null);
+      const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+      };
+
+      const handleClose = () => {
+        setAnchorEl(null);
+      };
+
+      const handleExport =
+        ({ action }) =>
+        () => {
+          const chart = document.querySelector(`#rootContainerId`);
+          handleClose();
+          action(chart);
+        };
+
+      const open = Boolean(anchorEl);
+      return (
+        <Plugin name="Export" style={{ width: "100%" }}>
+          <Template name="top" className="row">
+            <ValueAxis.Label
+              text="Cant."
+              style={{
+                marginTop: "50px",
+                color: "#747477",
+                marginLeft: "-25.53px",
+                marginBottom: "2%",
+              }}
+            />
+            <TemplatePlaceholder />
+            <IconButton
+              id={iconButton}
+              onClick={handleClick}
+              sx={{
+                width: 50,
+                height: 50,
+              }}
+              size="large"
+              style={{ marginLeft: "-7%" }}
+            >
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              PaperProps={paperProps}
+            >
+              {options.map((option) => (
+                <MenuItem key={option.key} onClick={handleExport(option)}>
+                  {option.text}
+                </MenuItem>
+              ))}
+            </Menu>
+            <FormControl
+              variant="standard"
+              sx={{ m: 1, minWidth: 120 }}
+              className="mb-3 ml-3"
+            >
+              <InputLabel id="demo-simple-select-standard-label">
+                Año
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-standard-label"
+                id="demo-simple-select-standard"
+                value={año}
+                onChange={handleChange}
+                label="Año"
+              >
+                <MenuItem value={2021}>2021</MenuItem>
+                <MenuItem selected value={2022}>
+                  2022
+                </MenuItem>
+                <MenuItem value={2023}>2023</MenuItem>
+              </Select>
+            </FormControl>
+          </Template>
+        </Plugin>
+      );
+    };
+
+    return (
+      <div>
+        <h3 style={{ textAlign: "center" }}>Cant. de Usuarios por Mes y Año</h3>
+
+        <Paper id='rootContainerId'>
+          <Chart data={data} style={{ maxHeight: "415px" }}>
+            <Export />
+            <ArgumentAxis />
+            <ValueAxis />
+
+            <LineSeries valueField="value" argumentField="argument" />
+          </Chart>
+        </Paper>
+      </div>
+    );
+  }
+
+  function ListadoProyectos() {
+    const [proyectos, setProyectos] = useState([]);
+  
+    useEffect(() => {
+      obtenerProyectosChar().then((res) => {
+        setProyectos(res);
+      });
+    }, []);
+
+    function CustomToolbar() {
+      return (
+        <GridToolbarContainer>
+          <GridToolbarExport />
+          <GridToolbarFilterButton />
+        </GridToolbarContainer>
+      );
+    }
+
+    return (
+      <div className="col-lg-12 my-5" style={{ height: 450, width: "100%" }}>
+        <h3 style={{ textAlign: "center" }}>Listado de Proyectos</h3>
+        <DataGrid
+          rows={proyectos}
+          columns={[
+            {
+              field: "Titulo",
+              width: 200,
+            },
+            {
+              field: "Categoria",
+              width: 170,
+            },
+            {
+              field: "Descripcion",
+              width: 390,
+            },
+            {
+              field: "Imagen",
+              width: 150,
+              renderCell: (proyectos) => (
+                <img
+                  className="img-fluid my-5 mr-3"
+                  alt=""
+                  src={proyectos.row.Imagen}
+                />
+              ),
+            },
+            {
+              field: "Precio",
+              width: 130,
+            },
+            {
+              field: "Likes",
+              width: 80,
+            },
+            {
+              field: "Favoritos",
+              width: 80,
+            },
+          ]}
+          components={{ Toolbar: CustomToolbar }}
+        />
+      </div>
+    );
+  }
+
+  function ProyectosxCategoria() {
+    const [proyectosXcategoria, setProyectosXcategoria] = useState([
+        { categoria: "A", cantidad: 0 },
+        { categoria: "B", cantidad: 0 },
+        { categoria: "C", cantidad: 0 },
+        { categoria: "D", cantidad: 0 },
+        { categoria: "E", cantidad: 0 },
+        { categoria: "F", cantidad: 0 },
+        { categoria: "G", cantidad: 0 },
+    ]);
+
+    function ProyectosXCategoria(array) {
+      let element = [
+        { categoria: "A", cantidad: 0 },
+        { categoria: "B", cantidad: 0 },
+        { categoria: "C", cantidad: 0 },
+        { categoria: "D", cantidad: 0 },
+        { categoria: "E", cantidad: 0 },
+        { categoria: "F", cantidad: 0 },
+        { categoria: "G", cantidad: 0 },
+      ];
+
+      for (let index = 0; index < array.length; index++) {
+        switch (array[index].datos.categoria) {
           case 1:
-            element[1].value = element[1].value + 1;
+            element[0].cantidad = element[0].cantidad + 1;
             break;
           case 2:
-            element[2].value = element[2].value + 1;
+            element[1].cantidad = element[1].cantidad + 1;
             break;
           case 3:
-            element[3].value = element[3].value + 1;
+            element[2].cantidad = element[2].cantidad + 1;
             break;
           case 4:
-            element[4].value = element[4].value + 1;
+            element[3].cantidad = element[3].cantidad + 1;
             break;
           case 5:
-            element[5].value = element[5].value + 1;
+            element[4].cantidad = element[4].cantidad + 1;
             break;
           case 6:
-            element[6].value = element[6].value + 1;
-            break;
-          case 7:
-            element[7].value = element[7].value + 1;
-            break;
-          case 8:
-            element[8].value = element[8].value + 1;
-            break;
-          case 9:
-            element[9].value = element[9].value + 1;
-            break;
-          case 10:
-            element[10].value = element[10].value + 1;
-            break;
-          case 11:
-            element[11].value = element[11].value + 1;
+            element[5].cantidad = element[5].cantidad + 1;
             break;
           default:
-            element[12].value = element[12].value + 1;
+            element[6].cantidad = element[6].cantidad + 1;
             break;
         }
       }
+
+      setProyectosXcategoria(element);
     }
 
-    setData(element);
-  }
-
-  function ProyectosXCategoria(array) {
-    let element = [
-      { categoria: "Arte Tradicional", cantidad: 0 },
-      { categoria: "Dibujos y Pinturas", cantidad: 0 },
-      { categoria: "Fotografia", cantidad: 0 },
-      { categoria: "Arte Digital", cantidad: 0 },
-      { categoria: "3D", cantidad: 0 },
-      { categoria: "Esculturas", cantidad: 0 },
-      { categoria: "Arte Callejero", cantidad: 0 },
-    ];
-
-    for (let index = 0; index < array.length; index++) {
-      switch (array[index].datos.categoria) {
-        case 1:
-          element[0].cantidad = element[0].cantidad + 1;
-          break;
-        case 2:
-          element[1].cantidad = element[1].cantidad + 1;
-          break;
-        case 3:
-          element[2].cantidad = element[2].cantidad + 1;
-          break;
-        case 4:
-          element[3].cantidad = element[3].cantidad + 1;
-          break;
-        case 5:
-          element[4].cantidad = element[4].cantidad + 1;
-          break;
-        case 6:
-          element[5].cantidad = element[5].cantidad + 1;
-          break;
-        default:
-          element[6].cantidad = element[6].cantidad + 1;
-          break;
-      }
-    }
-
-    setProyectosXcategoria(element);
-  }
-
-  const exportToImage = async (chart, format, exportFunc) => {
-    try {
-      const dataUrl = await exportFunc(chart, { filter });
-      const link = document.createElement("a");
-      document.body.appendChild(link);
-      link.download = `chart.${format}`;
-      link.href = dataUrl;
-      link.click();
-      link.remove();
-    } catch (err) {
-      console.error("oops, something went wrong!", err);
-    }
-  };
-
-  const rootContainerId = "widget-container";
-  const rootContainerId2 = "widget-container";
-  const iconButton = "exportIconButton";
-  const filter = (node) => node.id !== iconButton;
-
-  const exportToPng = (chart) => exportToImage(chart, "png", domtoimage.toPng);
-
-  const exportToPdf = async (chart) => {
-    const width = chart.offsetWidth;
-    const height = chart.offsetHeight;
-    try {
-      const dataUrl = await domtoimage.toJpeg(chart, { filter });
-      // @ts-ignore
-      const doc = new JsPDF({
-        orientation: "landscape",
-        unit: "px",
-        format: [width, height],
-      });
-      const pdfWidth = doc.internal.pageSize.getWidth();
-      const pdfHeight = doc.internal.pageSize.getHeight();
-      doc.addImage(dataUrl, "JPEG", 0, 0, pdfWidth, pdfHeight);
-      doc.save("chart");
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error("oops, something went wrong!", err);
-    }
-  };
-
-  const options = [
-    { key: "PNG", action: exportToPng, text: "Save as PNG" },
-    { key: "PDF", action: exportToPdf, text: "Save as PDF" },
-  ];
-
-  const ITEM_HEIGHT = 48;
-  const paperProps = {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5,
-      width: 150,
-    },
-  };
-
-  const Export = () => {
-    const [anchorEl, setAnchorEl] = useState(null);
-    const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
-
-    const handleExport =
-      ({ action }) =>
-      () => {
-        const chart = document.querySelector(`#${rootContainerId}`);
-        handleClose();
-        action(chart);
+    const Exports = () => {
+      const exportToImage = async (chart, format, exportFunc) => {
+        try {
+          const dataUrl = await exportFunc(chart, { filter });
+          const link = document.createElement("a");
+          document.body.appendChild(link);
+          link.download = `chart.${format}`;
+          link.href = dataUrl;
+          link.click();
+          link.remove();
+        } catch (err) {
+          console.error("oops, something went wrong!", err);
+        }
       };
-
-    const open = Boolean(anchorEl);
-    return (
-      <Plugin name="Export" style={{ width: "100%" }}>
-        <Template name="top" className="row">
-          <ValueAxis.Label
-            text="Cant."
-            style={{
-              marginTop: "50px",
-              color: "#747477",
-              marginLeft: "-25.53px",
-              marginBottom: "2%",
-            }}
-          />
-          <TemplatePlaceholder />
-          <IconButton
-            id={iconButton}
-            onClick={handleClick}
-            sx={{
-              width: 50,
-              height: 50,
-            }}
-            size="large"
-            style={{ marginLeft: "-7%" }}
-          >
-            <MoreVertIcon />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            PaperProps={paperProps}
-          >
-            {options.map((option) => (
-              <MenuItem key={option.key} onClick={handleExport(option)}>
-                {option.text}
-              </MenuItem>
-            ))}
-          </Menu>
-          <FormControl
-            variant="standard"
-            sx={{ m: 1, minWidth: 120 }}
-            className="mb-3 ml-3"
-          >
-            <InputLabel id="demo-simple-select-standard-label">Año</InputLabel>
-            <Select
-              labelId="demo-simple-select-standard-label"
-              id="demo-simple-select-standard"
-              value={año}
-              onChange={handleChange}
-              label="Año"
+  
+      const iconButton = "exportIconButton";
+      const filter = (node) => node.id !== iconButton;
+    
+      const exportToPng = (chart) => exportToImage(chart, "png", domtoimage.toPng);
+    
+      const exportToPdf = async (chart) => {
+        const width = chart.offsetWidth;
+        const height = chart.offsetHeight;
+        try {
+          const dataUrl = await domtoimage.toJpeg(chart, { filter });
+          const doc = new JsPDF({
+            orientation: "landscape",
+            unit: "px",
+            format: [width, height],
+          });
+          const pdfWidth = doc.internal.pageSize.getWidth();
+          const pdfHeight = doc.internal.pageSize.getHeight();
+          doc.addImage(dataUrl, "JPEG", 0, 0, pdfWidth, pdfHeight);
+          doc.save("chart");
+        } catch (err) {
+          console.error("oops, something went wrong!", err);
+        }
+      };
+    
+      const options = [
+        { key: "PNG", action: exportToPng, text: "Save as PNG" },
+        { key: "PDF", action: exportToPdf, text: "Save as PDF" },
+      ];
+    
+      const ITEM_HEIGHT = 48;
+      const paperProps = {
+        style: {
+          maxHeight: ITEM_HEIGHT * 4.5,
+          width: 150,
+        },
+      };
+    
+      const [anchorEl, setAnchorEl] = useState(null);
+      const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+      };
+  
+      const handleClose = () => {
+        setAnchorEl(null);
+      };
+  
+      const handleExport =
+        ({ action }) =>
+        () => {
+          const chart = document.querySelector(`#rootContainerId2`);
+          handleClose();
+          action(chart);
+        };
+  
+      const open = Boolean(anchorEl);
+      return (
+        <Plugin name="Export" style={{ width: "100%" }}>
+          <Template name="top" className="row">
+            <ValueAxis.Label
+              text="Cant."
+              style={{
+                marginTop: "50px",
+                color: "#747477",
+                marginLeft: "-25.53px",
+                marginBottom: "2%",
+              }}
+            />
+            <TemplatePlaceholder />
+            <IconButton
+              id={iconButton}
+              onClick={handleClick}
+              sx={{
+                width: 50,
+                height: 50,
+              }}
+              size="large"
+              style={{ marginLeft: "-7%" }}
             >
-              <MenuItem value={2021}>2021</MenuItem>
-              <MenuItem selected value={2022}>
-                2022
-              </MenuItem>
-              <MenuItem value={2023}>2023</MenuItem>
-            </Select>
-          </FormControl>
-        </Template>
-      </Plugin>
-    );
-  };
-  const Exports = () => {
-    const [anchorEl, setAnchorEl] = useState(null);
-    const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              PaperProps={paperProps}
+            >
+              {options.map((option) => (
+                <MenuItem key={option.key} onClick={handleExport(option)}>
+                  {option.text}
+                </MenuItem>
+              ))}
+            </Menu>
+          </Template>
+        </Plugin>
+      );
     };
 
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
+    useEffect(() => {
+      obtenerProyectos().then((res) => {
+        ProyectosXCategoria(res);
+      });
+    }, []);
 
-    const handleExport =
-      ({ action }) =>
-      () => {
-        const chart = document.querySelector(`#rootContainerId2`);
-        handleClose();
-        action(chart);
-      };
-
-    const open = Boolean(anchorEl);
     return (
-      <Plugin name="Export" style={{ width: "100%" }}>
-        <Template name="top" className="row">
-          <ValueAxis.Label
-            text="Cant."
-            style={{
-              marginTop: "50px",
-              color: "#747477",
-              marginLeft: "-25.53px",
-              marginBottom: "2%",
-            }}
-          />
-          <TemplatePlaceholder />
-          <IconButton
-            id={iconButton}
-            onClick={handleClick}
-            sx={{
-              width: 50,
-              height: 50,
-            }}
-            size="large"
-            style={{ marginLeft: "-7%" }}
-          >
-            <MoreVertIcon />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            PaperProps={paperProps}
-          >
-            {options.map((option) => (
-              <MenuItem key={option.key} onClick={handleExport(option)}>
-                {option.text}
-              </MenuItem>
-            ))}
-          </Menu>
-        </Template>
-      </Plugin>
+        <div className="col-lg-6 mb-3 char">
+          <Paper id="rootContainerId2">
+            <Chart  data={proyectosXcategoria} className="bar">
+              <ArgumentAxis />
+              <ValueAxis max={7} />
+              <Title text="Cantidad de Proyectos por Categoría" />
+              <Animation />
+              <Exports></Exports>
+              <BarSeries valueField="cantidad" argumentField="categoria" />
+            </Chart>
+          </Paper>
+        </div>
     );
-  };
+  }
+
+  function Top5Usuarios() {
+    const [proyectosXUser, setProyectosXUser] = useState([]);
+
+    function SortArray(x, y) {
+      if (x.cantidad < y.cantidad) {
+        return 1;
+      }
+      if (x.cantidad > y.cantidad) {
+        return -1;
+      }
+      return 0;
+    }
+
+    const _exportPdf = () => {
+      html2canvas(document.querySelector("#capture")).then((canvas) => {
+        document.body.appendChild(canvas);
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF();
+        pdf.addImage(imgData, "PNG", 0, 0);
+        pdf.save("Top5UsuariosConMasProyectos.pdf");
+      });
+    };
+
+    useEffect(() => {
+      usuariosMasProyectos().then((res) => {
+        setProyectosXUser(res.sort(SortArray));
+      });
+    }, []);
+
+    return (
+      <div>
+        {/* <div className="row">
+          <a className="float-right" onClick={() => _exportPdf()}>
+            <i
+              className="bi bi-download mr-2"
+              style={{ fontSize: "large" }}
+            ></i>
+            Guardar como PDF
+          </a>{" "}
+          <br />
+        </div>
+        <ul id="capture" className="list-group">
+          <h4 style={{ textAlign: "center", fontWeight: "400" }}>
+            Top 5 Usuarios con más Proyectos Registrados
+          </h4>
+          {proyectosXUser.map((user, index) => {
+            return (
+              <div key={index}>
+                {index < 5 ? (
+                  <li
+                    key={index + 1}
+                    className="list-group-item list-group-item-dark"
+                  >
+                    <div className="d-flex justify-content-left">
+                      <Avatar alt="" src={user.img_url}></Avatar>
+                      <p className="ml-2">
+                        {user.nombre} - {user.email}. <br />
+                        Cant. de proyectos: <strong>{user.cantidad}</strong>
+                      </p>
+                    </div>
+                  </li>
+                ) : (
+                  <div></div>
+                )}
+              </div>
+            );
+          })}
+        </ul> */}
+      </div>
+    );
+  }
 
   return (
     <div className="gestion">
       <Navbar></Navbar>
-      <div className="container my-3">
+      <div className="container-fluid px-5 my-3">
         <div className="row">
           <div className="col-lg-12 text-center">
             <h1 style={{ fontWeight: "800" }}>GESTIÓN</h1>
           </div>
         </div>
         <div className="row">
-          <div className="col-lg-7 mb-5" style={{ height: 418, width: "100%" }}>
-            <h4>Listado de Usuarios</h4>
-            <DataGrid
-              rows={usuarios}
-              columns={columns}
-              components={{ Toolbar: GridToolbar }}
-            />
-          </div>
+            <ListadoUsuarios></ListadoUsuarios>
           <div className="col-lg-5">
-            <h4>Cantidad de Usuarios por Mes y Año:</h4>
-
-            <Paper id={rootContainerId}>
-              <Chart data={data} style={{ maxHeight: "415px" }}>
-                <Export />
-                <ArgumentAxis />
-                <ValueAxis />
-
-                <LineSeries valueField="value" argumentField="argument" />
-              </Chart>
-            </Paper>
+            <CantidadxAño></CantidadxAño>
           </div>
         </div>
         <div className="row">
-          <div className="col-lg-12 my-5" style={{ height: 450, width: "100%" }}>
-              <h4>Listado de Proyectos</h4>
-              <DataGrid
-                rows={proyectos}
-                columns={[
-                  {
-                    field: "Titulo",
-                    width: 200,
-                  },
-                  {
-                    field: "Categoria",
-                    width: 150,
-                  },
-                  {
-                    field: "Descripcion",
-                    width: 330,
-                  },
-                  {
-                    field: "Imagen",
-                    width: 110,
-                    renderCell: (proyectos) => (
-                        <img className="img-fluid my-5" alt="" src={proyectos.row.Imagen} />
-                    ),
-                  },
-                  {
-                    field: "Precio",
-                    width: 100,
-                  },
-                  {
-                    field: "Likes",
-                    width: 80,
-                  },
-                  {
-                    field: "Favoritos",
-                    width: 80,
-                  },
-                  
-                ]}
-                components={{ Toolbar: GridToolbar }}
-              />
-            </div>
+          <ListadoProyectos></ListadoProyectos>
         </div>
         <div className="row my-5">
-          <div className="col-lg-8">
-            <Paper id='rootContainerId2'>
-              <Chart data={proyectosXcategoria}>
-                <ArgumentAxis />
-                <ValueAxis max={7} />
-
-                <BarSeries valueField="cantidad" argumentField="categoria" />
-                <Title text="Cantidad de Proyectos por Categoría" />
-                <Animation />
-                <Exports></Exports>
-              </Chart>
-            </Paper>
+          <ProyectosxCategoria></ProyectosxCategoria>
+          <div className="col-lg-2 mb-3">
+            <h6> <span className="text-info">A -</span> Arte Tradicional </h6>
+            <h6> <span className="text-info">B -</span> Dibujos y Pinturas </h6>
+            <h6> <span className="text-info">C -</span> Fotografia </h6>
+            <h6> <span className="text-info">D -</span> Arte digital </h6>
+            <h6> <span className="text-info">E -</span> 3D </h6>
+            <h6> <span className="text-info">F -</span> Esculturas </h6>
+            <h6> <span className="text-info">G -</span> Arte callejero </h6>
           </div>
-          {/* Limit 10, orderBy el array mas grande obtengo el uid y lo justo con ubtener userxuid */}
-          {/* <div className="col-lg-4">
-            <h4>Top 10 Usuarios con más Proyectos Registrados</h4>
-            <ul class="list-group">
-              {proyectosXUser.map((user,index) => {
-                return <li key={index+1} class="list-group-item list-group-item-dark">
-                  <Avatar alt="" src={user.img_url}></Avatar> {user.nombre} - {user.email}. Cant. de proyectos: {user.cantidad}
-                </li>
-              })}
-            </ul>
-          </div> */}
+          <div className="col-lg-4">
+            <Top5Usuarios></Top5Usuarios>
+          </div>
         </div>
       </div>
       <Footer></Footer>
+      {/* <button className='btn btn-info' onClick={() => window.print()}>Imprimir</button> */}
     </div>
   );
 }

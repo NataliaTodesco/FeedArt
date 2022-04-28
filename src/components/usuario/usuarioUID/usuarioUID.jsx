@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { obtenerCreador, proyectosxUID } from "../../../firebaseConfig";
 import Footer from "../../footer/footer";
@@ -7,6 +7,7 @@ import {
   ImageListItem,
   ImageListItemBar,
   IconButton,
+  ImageList,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import { Avatar } from "antd";
@@ -46,8 +47,20 @@ function UsuarioUID() {
     });
   }, []);
 
+  const myContainer = useRef(null);
+
+  function FuntionResize() {
+    if (myContainer.current){
+    var widthBrowser = myContainer.current.offsetWidth;
+    if (widthBrowser < 1024) 
+     return 1
+    else return 3
+   }
+   else return 2
+  }
+
   return (
-    <div>
+    <div id="proyectos" ref={myContainer} style={{backgroundColor: 'rgb(237, 237, 241)'}}>
       <Navbar></Navbar>
       <div className="container my-3" style={{ minHeight: "62.5vh" }}>
         <div className="row">
@@ -83,39 +96,49 @@ function UsuarioUID() {
             <h3>
               <b>PROYECTOS</b>
             </h3>
-              {itemData.length > 0 ? (
-                <div className="row">
-                  {itemData.map((item) => (
-                    <div className="col-lg-4 col-md-6" key={item.img}>
-                      <ImageListItem key={item.img}>
-                        <img
-                          src={`${item.img}?w=248&fit=crop&auto=format`}
-                          srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                          alt={item.title}
-                          loading="lazy"
-                        />
-                        <ImageListItemBar
-                          title={item.title}
-                          subtitle={item.author}
-                          actionIcon={
-                            <IconButton
-                              sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                              aria-label={`info about ${item.title}`}
-                              onClick={(e) => verProyecto(item.id)}
-                            >
-                              <InfoIcon style={{ color: "white" }} />
-                            </IconButton>
-                          }
-                        />
-                      </ImageListItem>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="alert alert-secondary" role="alert">
-                  El usuario <b>{creador.nombre}</b> no tiene ningún proyecto.
-                </div>
-              )}
+            {itemData.length > 0 ? (
+              <div className="list" style={{
+                maxWidth: "100%",
+                maxHeight: 450,
+                overflowY: "scroll",
+              }}>
+                <ImageList
+                variant="masonry"
+                cols={FuntionResize()}
+                gap={8}
+              >
+                {itemData.map((item) => (
+                  <ImageListItem key={item.img}>
+                    <img
+                      src={`${item.img}?w=248&fit=crop&auto=format`}
+                      srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=4 2x`}
+                      alt={item.title}
+                      loading="lazy"
+                      style={{ maxHeight: "250px", borderRadius: "8px" }}
+                    />
+                    <ImageListItemBar
+                      style={{ borderRadius: "8px" }}
+                      title={item.title}
+                      subtitle={item.author}
+                      actionIcon={
+                        <IconButton
+                          sx={{ color: "rgba(255, 255, 255, 0.54)" }}
+                          aria-label={`info about ${item.title}`}
+                          onClick={(e) => verProyecto(item.id)}
+                        >
+                          <InfoIcon style={{ color: "white" }} />
+                        </IconButton>
+                      }
+                    />
+                  </ImageListItem>
+                ))}
+              </ImageList>
+              </div>
+            ) : (
+              <div className="alert alert-secondary" role="alert">
+                El usuario <b>{creador.nombre}</b> no tiene ningún proyecto.
+              </div>
+            )}
           </div>
         </div>
       </div>

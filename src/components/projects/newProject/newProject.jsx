@@ -25,10 +25,12 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { guardarProyecto, storage } from "../../../firebaseConfig";
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useUsuario } from "../../../context/UserContext";
 
 
 function NewProject() {
+  const { usuario } = useUsuario()
   const [foto, setFoto] = useState(newProject);
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -230,7 +232,7 @@ function NewProject() {
         if (descripcion !== "") {
           if (precio !== "") {
             setShowAlert(false);
-            guardarProyecto(titulo,descripcion,categoria,foto,etiquetas,precio).then(res =>{
+            guardarProyecto(titulo,descripcion,categoria,foto,etiquetas,precio, usuario).then(res =>{
               if (res === ""){
                 navigate('/home')
               }
@@ -357,6 +359,12 @@ function NewProject() {
         </div>
         <div className="row mb-5">
           <div className="col-lg-12 d-flex justify-content-end">
+           <Link to='/home'>
+              <button className="btn btn-danger px-4 py-2 mr-3">
+                Cancelar
+                <i className="bi bi-x-circle ml-2"  style={{ fontSize: "medium" }}></i>
+              </button>
+            </Link>
             <button className="btn btn-info px-4 py-2" onClick={subir}>
               <i className="bi bi-upload mr-3" style={{ fontSize: "medium" }}></i>
               Subir
