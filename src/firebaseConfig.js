@@ -11,21 +11,10 @@ import {
   deleteDoc,
   where,
   query,
-  orderBy,
   addDoc,
   getDoc,
 } from "firebase/firestore";
-import {
-  getAuth,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-  deleteUser,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-} from "firebase/auth";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyAs53lxwaD6wZuLqXcpzF-G_yE-E40Funk",
@@ -43,243 +32,7 @@ const analytics = getAnalytics(app);
 
 // Firestore
 const db = getFirestore();
-
-// =========================================== GESTION DE USUARIO =========================================== //
-
-export async function guardarUser(email, img_url, nombre, uid, fecha) {
-  try {
-    const docRef = await setDoc(doc(db, "users", uid), {
-      email: email,
-      img_url: img_url,
-      nombre: nombre,
-      uid: uid,
-      fecha: fecha,
-    });
-    console.log(docRef);
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
-}
-
-export async function actualizarUser(uid, img_url, nombre) {
-  const userRef = doc(db, "users", uid);
-
-  return await updateDoc(userRef, {
-    img_url: img_url,
-    nombre: nombre,
-  })
-    .then(() => {
-      recuperarUser(auth.currentUser);
-      return "";
-    })
-    .catch((e) => {
-      return e.errorMessage;
-    });
-}
-
-export async function obtenerUsers() {
-  let users = [];
-
-  const usersRef = collection(db, "users");
-
-  const q = query(usersRef, orderBy("fecha"));
-
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => {
-    let fec = new Date(doc.data().fecha.toMillis());
-    users.push({
-      id: doc.id,
-      Imagen: doc.data().img_url,
-      Nombre: doc.data().nombre,
-      Email: doc.data().email,
-      UID: doc.data().uid,
-      Fecha: fec,
-    });
-  });
-
-  return users;
-}
-
-export async function guardarUserConGoogle(user) {
-  const querySnapshot = await getDocs(collection(db, "users"));
-  if (querySnapshot.docs.indexOf(user.uid) === -1) {
-    guardarUser(
-      user.email,
-      user.photoURL,
-      user.displayName,
-      user.uid,
-      new Date(auth.currentUser.metadata.creationTime)
-    );
-  }
-}
-
-// Firebase Auth
-
-const auth = getAuth();
-
-export async function logUpConMail(email, password, img_url, nombre) {
-  return createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      guardarUser(email, img_url, nombre, user.uid, new Date());
-      const save = {
-        uid: user.uid,
-        email: user.email,
-        photoURL: img_url,
-        displayName: nombre,
-      };
-      saveStorage(save);
-      return "";
-    })
-    .catch((error) => {
-      const errorMessage = error.message;
-      return errorMessage;
-    });
-}
-
-export async function logInConGoogle() {
-  const provider = new GoogleAuthProvider();
-
-  return signInWithPopup(auth, provider)
-    .then((result) => {
-      const user = result.user;
-      const save = {
-        uid: user.uid,
-        email: user.email,
-        photoURL: user.photoURL,
-        displayName: user.displayName,
-      };
-      saveStorage(save);
-      guardarUserConGoogle(user);
-      return "";
-    })
-    .catch((error) => {
-      const errorMessage = error.message;
-      return errorMessage;
-    });
-}
-
-export async function recuperarUser(user) {
-  const querySnapshot = await getDocs(collection(db, "users"));
-  querySnapshot.forEach((doc) => {
-    if (doc.id === user.uid) {
-      const save = {
-        uid: user.uid,
-        email: user.email,
-        photoURL: doc.data().img_url,
-        displayName: doc.data().nombre,
-      };
-      saveStorage(save);
-    }
-  });
-}
-
-export async function logInConMail(email, password) {
-  return signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      const save = {
-        uid: user.uid,
-        email: user.email,
-        photoURL: "",
-        displayName: "",
-      };
-      saveStorage(save);
-      recuperarUser(user);
-      return "";
-    })
-    .catch((error) => {
-      const errorMessage = error.message;
-      return errorMessage;
-    });
-}
-
-export async function obtenerUsuario() {
-  let fecha = "";
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      const uid = user.uid;
-      console.log(uid);
-    } else {
-      // User is signed out
-      // ...
-    }
-  });
-  return fecha;
-}
-
-export async function obtenerPerfil() {
-  const user = auth.currentUser;
-  if (user !== null) {
-    return user;
-  }
-}
-
-export async function actualizarPerfil(nombre, img_url) {
-  return await updateProfile(auth.currentUser, {
-    displayName: nombre,
-    photoURL: img_url,
-  })
-    .then(() => {
-      actualizarUser(auth.currentUser.uid, img_url, nombre).then((res) => {
-        if (res === "") return "";
-        else return res;
-      });
-    })
-    .catch((error) => {
-      return error.errorMessage;
-    });
-}
-
-export async function borrarUser() {
-  const user = auth.currentUser;
-
-  deleteUser(user)
-    .then(() => {
-      deleteDoc(doc(db, "users", user.uid));
-      deleteDoc(doc(db, "favs", user.uid));
-      deleteDoc(doc(db, "likes", user.uid));
-      eliminarDoc(user.uid);
-    })
-    .catch((error) => {
-      console.log(error.errorMessage);
-    });
-}
-
-async function eliminarDoc(uid) {
-  const projectsRef = collection(db, "projects");
-
-  const q = query(projectsRef, where("uid_creador", "==", uid));
-
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((documento) => {
-    deleteDoc(doc(db, "projects", documento.id));
-  });
-}
-
-// =========================================== STORAGE =========================================== //
-
 const storage = getStorage(app);
-
-export function saveStorage(storage) {
-  localStorage.storage = JSON.stringify(storage);
-}
-
-export function restoreSessionAction() {
-  let storage = localStorage.getItem("storage");
-  storage = JSON.parse(storage);
-  if (storage) {
-    return storage;
-  }
-}
-
-export function logOut() {
-  signOut(auth)
-    .then(() => {
-      localStorage.removeItem("storage");
-    })
-    .catch((error) => {});
-}
 
 // =========================================== GESTION DE PROYECTO =========================================== //
 
@@ -289,7 +42,8 @@ export async function guardarProyecto(
   categoria,
   img_url,
   tags,
-  precio
+  precio,
+  usuario
 ) {
   try {
     const docRef = await addDoc(collection(db, "projects"), {
@@ -302,7 +56,7 @@ export async function guardarProyecto(
       precio: precio,
       tags: tags,
       titulo: titulo,
-      uid_creador: restoreSessionAction().uid,
+      uid_creador: usuario.uid
     });
     console.log(docRef);
     return "";
@@ -439,9 +193,9 @@ export async function obtenerProyectosChar() {
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
     let creador = "";
-    obtenerCreador(doc.data().uid_creador).then(res => {
+    obtenerCreador(doc.data().uid_creador).then((res) => {
       creador = res.nombre;
-    })
+    });
     projects.push({
       id: doc.id,
       Titulo: doc.data().titulo,
@@ -451,7 +205,7 @@ export async function obtenerProyectosChar() {
       Precio: doc.data().precio,
       Creador: creador,
       Likes: doc.data().likes,
-      Favoritos: doc.data().favs
+      Favoritos: doc.data().favs,
     });
   });
 
@@ -473,15 +227,40 @@ export async function obtenerProyectosXCategoria(num) {
   return projects;
 }
 
-export async function usuariosMasProyectos(){
-  let proyectosXUser = [['','']]
-  obtenerUsers().then(res => {
-    res.forEach(element => {
-      proyectosxUID(element.id).then(proyectos => {
-        proyectosXUser.push({nombre: element.Nombre, email: element.Email, img_url: element.Imagen, cantidad: proyectos.length});
-      })
+export async function obtenerCantidad(uid) {
+  let cantidad = 0;
+  const querySnapshot = await getDocs(collection(db, "projects"));
+  querySnapshot.forEach((doc) => {
+    if (doc.data().uid_creador === uid) {
+      cantidad++;
+    }
+  });
+  return cantidad;
+}
+
+export async function usuariosMasProyectos() {
+  let proyectosXUser = [];
+
+  const projectsRef = collection(db, "users");
+  const q = query(projectsRef);
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    proyectosXUser.push({
+      id: doc.id,
+      nombre: doc.data().nombre,
+      email: doc.data().email,
+      img_url: doc.data().img_url,
+      cantidad: 0,
     });
-  })
+  });
+
+  for (let i = 0; i < proyectosXUser.length; i++) { 
+    await obtenerCantidad(proyectosXUser[i].id).then((res) => {
+      proyectosXUser[i].cantidad = res;
+    });
+  }
+
   return proyectosXUser;
 }
 
@@ -515,12 +294,10 @@ export async function restarFavs(id, favs) {
   });
 }
 
-export async function existeEnLikes(id) {
+export async function existeEnLikes(id, usuario) {
   let existe = false;
   let c = 0;
-  let storage = localStorage.getItem("storage");
-  storage = JSON.parse(storage);
-  let uid = storage.uid;
+  let uid = usuario.uid;
 
   const docRef = doc(db, "likes", uid);
   const docSnap = await getDoc(docRef);
@@ -536,12 +313,10 @@ export async function existeEnLikes(id) {
   return existe;
 }
 
-export async function existeEnFavs(id) {
+export async function existeEnFavs(id, usuario) {
   let existe = false;
   let c = 0;
-  let storage = localStorage.getItem("storage");
-  storage = JSON.parse(storage);
-  let uid = storage.uid;
+  let uid = usuario.uid;
 
   const docRef = doc(db, "favs", uid);
   const docSnap = await getDoc(docRef);
@@ -578,6 +353,21 @@ export async function getFavorites(uid) {
   }
 }
 
+export async function obtenerFavoritos() {
+  let projects = [];
+
+  const projectsRef = collection(db, "favs");
+
+  const q = query(projectsRef);
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    projects.push({ id: doc.id, datos: doc.data() });
+  });
+
+  return projects;
+}
+
 export function addLikes(array, uid) {
   try {
     return setDoc(doc(db, "likes", uid), {
@@ -599,24 +389,45 @@ export async function getLikes(uid) {
   }
 }
 
-// ======================================= GESTION DE COMENTARIOS ======================================== //
-export async function obtenerFoto(uid) {
-  let user = { foto: "", nombre: "" };
-  const querySnapshot = await getDocs(collection(db, "users"));
+export async function obtenerLikes() {
+  let projects = [];
+
+  const projectsRef = collection(db, "likes");
+
+  const q = query(projectsRef);
+
+  const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    if (doc.id === uid) {
-      user = { foto: doc.data().img_url, nombre: doc.data().nombre };
-    }
+    projects.push({ id: doc.id, datos: doc.data() });
   });
-  return user;
+
+  return projects;
 }
 
-export function obtenerUserComent(uid) {
-  let user = { foto: "", nombre: "" };
-  obtenerFoto(uid).then((res) => {
-    user = res;
+// ======================================= GESTION DE COMENTARIOS ======================================== //
+export async function registrarComentario(id, comentarios) {
+  const projectsRef = doc(db, "projects", id);
+  await updateDoc(projectsRef, {
+    comentarios: comentarios,
   });
-  return user;
 }
 
-export { analytics, auth, storage };
+export async function obtenerComentarios(id) {
+  const docRef = doc(db, "projects", id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data().comentarios;
+  } else {
+    console.log("No such document!");
+  }
+}
+
+export async function borrarComentario(id, comentarios) {
+  const projectsRef = doc(db, "projects", id);
+  await updateDoc(projectsRef, {
+    comentarios: comentarios,
+  });
+}
+
+export { analytics, storage, db };

@@ -6,6 +6,7 @@
     background: #FFFFFF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 62px;
+    border: 1px solid black;
 }
 
 .imgLogin{
@@ -66,12 +67,14 @@
     max-width: 99.923%;
 }
 
-.login .container-fluid{
+.login .contenedor{
     min-height: 100vh;
 }
+
 @media (max-width: 992px) {
     .imgLogin{
         height: 0;
+        width: 0;
     }
     .logoRojo{
         height: 10rem;
@@ -86,5 +89,9 @@
     }
     .rectangulo{
         width: 100%;
+        margin-top: 0;
+    }
+    .login .subtitulo{
+        font-size: 14px;
     }
 }

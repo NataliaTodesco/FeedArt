@@ -1,3 +1,7 @@
+.projectid{
+    background-color: rgb(237, 237, 241);
+}
+
 .project .card-user{
     color: white;
     background-color: var(--azul);

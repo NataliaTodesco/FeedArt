@@ -1,10 +1,12 @@
-import { Avatar as Img, Chip } from "@mui/material";
-import { Avatar, Comment } from "antd";
+import { Chip } from "@mui/material";
+import { Avatar } from "antd";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useUsuario } from "../../../context/UserContext";
 import { consultarProyecto, obtenerCreador, obtenerCategoria, actualizarLikes, actualizarFavs, restarLikes, restarFavs, existeEnLikes, existeEnFavs, getFavorites, addFavorites, getLikes, addLikes } from "../../../firebaseConfig";
 import Footer from "../../footer/footer";
 import Navbar from "../../Navbar/navbar";
+import Comentario from "./comentarios/comentarios";
 import "./project.css";
 
 function Proyecto() {
@@ -20,10 +22,7 @@ function Proyecto() {
       categoria: 1,
       favs: 0,
       img_url: "",
-      likes: 0,
       precio: 0,
-      tags: [],
-      titulo: "",
       uid_creador: "",
     },
   });
@@ -34,8 +33,7 @@ function Proyecto() {
     nombre: "",
     fecha: new Date().toLocaleDateString(),
   });
-  let storage = localStorage.getItem("storage");
-  storage = JSON.parse(storage);
+  const { usuario } = useUsuario()
 
   const [like, setLike] = useState(false);
   const [fav, setFav] = useState(false);
@@ -52,13 +50,13 @@ function Proyecto() {
 
   useEffect(() => {
     obtenerProyecto()
-    existeEnLikes(id).then((res) => {
+    existeEnLikes(id, usuario).then((res) => {
       setLike(res)
     })
-    existeEnFavs(id).then((res) => {
+    existeEnFavs(id, usuario).then((res) => {
       setFav(res)
     });
-  }, []);
+  }, [id]);
 
 
   function onclickLike(){
@@ -66,12 +64,12 @@ function Proyecto() {
         restarLikes(id,proyecto.datos.likes);
         setLike(false);
         obtenerProyecto();
-        getLikes(storage.uid).then(res => {
+        getLikes(usuario.uid).then(res => {
           let likes = res;
           for (let index = 0; index < likes.length; index++) {
             if (likes[index].id === id){
               likes.splice(index,1);
-              addLikes(likes,storage.uid);
+              addLikes(likes,usuario.uid);
             }
           }
         })
@@ -79,12 +77,12 @@ function Proyecto() {
         actualizarLikes(id,proyecto.datos.likes);
         setLike(true);
         obtenerProyecto();
-        getLikes(storage.uid).then((res) => {
+        getLikes(usuario.uid).then((res) => {
           let likes = res;
           let project = proyecto;
           project.datos.likes = project.datos.likes+1;
           likes.push(project);
-          addLikes(likes,storage.uid);
+          addLikes(likes,usuario.uid);
         });
       }
   }
@@ -94,12 +92,12 @@ function Proyecto() {
         restarFavs(id,proyecto.datos.favs);
         setFav(false);
         obtenerProyecto();
-        getFavorites(storage.uid).then((res) => {
+        getFavorites(usuario.uid).then((res) => {
           let favs = res;
           for (let index = 0; index < favs.length; index++) {
             if (favs[index].id === id){
               favs.splice(index,1);
-              addFavorites(favs,storage.uid);
+              addFavorites(favs,usuario.uid);
             }
           }
         });
@@ -107,12 +105,12 @@ function Proyecto() {
       actualizarFavs(id,proyecto.datos.favs);
       setFav(true);
       obtenerProyecto();
-      getFavorites(storage.uid).then((res) => {
+      getFavorites(usuario.uid).then((res) => {
         let favs = res;
         let project = proyecto;
         project.datos.favs = project.datos.favs+1;
         favs.push(project);
-        addFavorites(favs,storage.uid);
+        addFavorites(favs,usuario.uid);
       });
     }
   }
@@ -122,7 +120,7 @@ function Proyecto() {
   }
 
   return (
-    <div className="">
+    <div className="projectid">
       <Navbar></Navbar>
       <div className="project container-fluid my-3">
         <div className="row">
@@ -142,14 +140,14 @@ function Proyecto() {
                 </div>
               </div>
             </div>
-            <div className="mt-3 pl-2">
+            <div className="mt-3 pl-2 mb-4">
                 <h3><b>Precio:</b> <span className="badge badge-dark">${proyecto.datos.precio}</span></h3>
                 <button className="btn btn-success btn-lg btn-block mb-3"> 
                     Comprar
                     <i className="bi bi-cash-coin ml-2" style={{fontSize: 'large'}}></i> 
                 </button>
                 {proyecto.datos.tags.map((tag, index) => (
-                <Chip variant="outlined" label={tag} size="medium" key={index} className='mt-2 mb-4' />
+                <Chip variant="outlined" label={tag} size="medium" key={index} className='mt-2 ' />
                 ))}
             </div>
           </div>
@@ -178,36 +176,7 @@ function Proyecto() {
             </h6> 
           </div>
           <div className="col-lg-3 col-md-6">
-            {/* SEPARAR EN UN NUEVO COMPONENTE */}
-              <div className="card card-coment">
-                <h4 className="text-center" style={{color: 'white'}}>
-                    Comentarios 
-                    <i className="bi bi-chat-square-heart ml-3"></i>  
-                </h4>
-                <div className="card comentarios">
-                {proyecto.datos.comentarios.map((comentario, index) => (
-                    <div key={index}>
-                        <Comment
-                            author={<a onClick={e => {verUsuario(comentario.uid)}}>{comentario.nombre}</a>}
-                            avatar={<Img onClick={e => {verUsuario(comentario.uid)}} src={comentario.foto} alt="Han Solo" />}
-                            content={
-                                <p>
-                                    {comentario.comentario} 
-                                </p>
-                            }
-                        />
-                    </div>
-                ))}
-                </div>
-                <div className="input-group mt-3 mb-2">
-                    <input type="text" className="form-control" placeholder="Escribe un comentario..." aria-label="Recipient's username" aria-describedby="button-addon2"/>
-                    <div className="input-group-append">
-                        <button className="btn btn-outline-dark" type="button" id="button-addon2">
-                            <i className="bi bi-send-fill" style={{fontSize: 'medium'}}></i>
-                        </button>
-                    </div>
-                </div>
-              </div>
+            <Comentario id={id} proyecto={proyecto}></Comentario>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 .inicio{
-    background-color: white;
+    background-color: rgb(237, 237, 241);
     min-height: 100vh;
     box-shadow: none;
     border-radius: none;
@@ -31,4 +31,11 @@
 
 .inicio .container{
     min-height: 62.5vh;
+}
+
+@media (max-width: 530px) {
+    .banner{
+        height: 0;
+        width: 0;
+    }
 }

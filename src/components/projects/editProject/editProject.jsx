@@ -20,8 +20,7 @@ import AddIcon from "@mui/icons-material/Add";
 import newProject from "../../../img/logoVertical.svg";
 import { ref, uploadBytes, getDownloadURL, uploadBytesResumable,} from "firebase/storage";
 import { actualizarProyecto, consultarProyecto, storage } from "../../../firebaseConfig";
-import { useNavigate, useParams } from 'react-router-dom'
-
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 function EditProject() {
   const [foto, setFoto] = useState(newProject);
@@ -269,7 +268,7 @@ function EditProject() {
         setTexto(Tags)
         setFoto(res.datos.img_url)
     })    
-  }, []);
+  }, [id]);
 
   return (
     <div className="edit">
@@ -371,9 +370,15 @@ function EditProject() {
         </div>
         <div className="row mb-5">
           <div className="col-lg-12 d-flex justify-content-end">
+            <Link to='/list'>
+              <button className="btn btn-danger px-4 py-2 mr-3">
+                Cancelar
+                <i className="bi bi-x-circle ml-2"  style={{ fontSize: "medium" }}></i>
+              </button>
+            </Link>
             <button className="btn btn-info px-4 py-2" onClick={editar}>
               Editar
-              <i class="bi bi-pencil-square ml-2" style={{ fontSize: "medium" }}></i>
+              <i className="bi bi-pencil-square ml-2" style={{ fontSize: "medium" }}></i>
             </button>
           </div>
         </div>

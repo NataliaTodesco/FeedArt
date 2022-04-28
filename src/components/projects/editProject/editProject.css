@@ -1,3 +1,7 @@
+.edit{
+  background-color: rgb(237, 237, 241);
+}
+
 .edit .upload-btn-wrapper {
     position: relative;
     overflow: hidden;
@@ -7,7 +11,7 @@
 .edit .upload-btn-wrapper .btn {
     border: 2px solid var(--azul);
     color: var(--azul);
-    background-color: white;
+    background-color: rgb(237, 237, 241);;
     padding: 8px 20px;
     border-radius: 8px;
     font-size: 15px;
