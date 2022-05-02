@@ -35,7 +35,7 @@ export function UsuarioProvider(props) {
     }
   }, [auth.currentUser]);
 
-  async function guardarUser(email, img_url, nombre, uid, fecha) {
+  async function guardarUser(email, img_url, nombre, uid, fecha, token) {
     try {
       const docRef = await setDoc(doc(db, "users", uid), {
         email: email,
@@ -43,6 +43,7 @@ export function UsuarioProvider(props) {
         nombre: nombre,
         uid: uid,
         fecha: fecha,
+        token: token
       });
       console.log(docRef);
     } catch (e) {
@@ -97,7 +98,8 @@ export function UsuarioProvider(props) {
         user.photoURL,
         user.displayName,
         user.uid,
-        new Date(auth.currentUser.metadata.creationTime)
+        new Date(auth.currentUser.metadata.creationTime),
+        user.token
       );
     }
   }
@@ -106,7 +108,7 @@ export function UsuarioProvider(props) {
     return createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        guardarUser(email, img_url, nombre, user.uid, new Date());
+        guardarUser(email, img_url, nombre, user.uid, new Date(), user.accessToken);
         const save = {
           uid: user.uid,
           email: user.email,
@@ -139,7 +141,7 @@ export function UsuarioProvider(props) {
           token: token
         };
         setUsuario(save);
-        guardarUserConGoogle(user);
+        guardarUserConGoogle(save);
         return "";
       })
       .catch((error) => {

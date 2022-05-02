@@ -90,6 +90,7 @@ export async function obtenerCreador(uid) {
         img_url: doc.data().img_url,
         nombre: doc.data().nombre,
         fecha: fec,
+        token: doc.data().token
       };
       respuesta = save;
     }
@@ -427,6 +428,100 @@ export async function borrarComentario(id, comentarios) {
   const projectsRef = doc(db, "projects", id);
   await updateDoc(projectsRef, {
     comentarios: comentarios,
+  });
+}
+
+// ========================================== GESTION DE COMPRA =========================================== //
+export function addCompra(array, uid) {
+  try {
+    return setDoc(doc(db, "buy", uid), {
+      array,
+    });
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
+
+export async function getCompra(uid) {
+  const docRef = doc(db, "buy", uid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data().array;
+  } else {
+    return [];
+  }
+}
+
+export async function obtenerCompras() {
+  let projects = [];
+
+  const projectsRef = collection(db, "buy");
+
+  const q = query(projectsRef);
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    projects.push({ id: doc.id, datos: doc.data() });
+  });
+
+  return projects;
+}
+
+export function addVenta(array, uid) {
+  try {
+    return setDoc(doc(db, "sell", uid), {
+      array,
+    });
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
+
+export async function getVenta(uid) {
+  const docRef = doc(db, "sell", uid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data().array;
+  } else {
+    return [];
+  }
+}
+
+export async function obtenerVenta() {
+  let projects = [];
+
+  const projectsRef = collection(db, "sell");
+
+  const q = query(projectsRef);
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    projects.push({ id: doc.id, datos: doc.data() });
+  });
+
+  return projects;
+}
+
+export async function actualizarVendido(id) {
+  const projectsRef = doc(db, "projects", id);
+  await updateDoc(projectsRef, {
+    vendido: true
+  });
+}
+
+export async function actualizarEntregadoVendedor(id, array) {
+  const projectsRef = doc(db, "sell", id);
+  await updateDoc(projectsRef, {
+    array: array
+  });
+}
+
+export async function actualizarEntregadoComprador(id, array) {
+  const projectsRef = doc(db, "buy", id);
+  await updateDoc(projectsRef, {
+    array: array
   });
 }
 

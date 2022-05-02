@@ -1,0 +1,37 @@
+.shopping h3{
+    font-weight: 700;
+}
+
+.shopping{
+    background-color: rgb(237, 237, 241);
+}
+
+.shopping .list{
+    color: black;
+    background-color: rgb(237, 237, 241);
+    max-height: 67vh;
+    overflow-y: scroll;
+    border-radius: 8px;
+}
+
+.list::-webkit-scrollbar {
+    -webkit-appearance: none;
+}
+
+.list::-webkit-scrollbar:vertical {
+    width:8px;
+}
+
+.list::-webkit-scrollbar-button:increment,.contenedor::-webkit-scrollbar-button {
+    display: none;
+} 
+
+.list::-webkit-scrollbar-thumb {
+    background-color: #797979;
+    border-radius: 20px;
+    border: 2px solid #f1f2f3;
+}
+
+.list::-webkit-scrollbar-track {
+    border-radius: 10px;  
+}
