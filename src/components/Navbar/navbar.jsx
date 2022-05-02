@@ -93,6 +93,12 @@ function Navbar() {
                     Mis Listas
                   </NavLink>
                 </MenuItem>
+                <MenuItem onClick={handleCloseNavMenu}>
+                  <NavLink className="link" activeClassName="active" to="/shopping">
+                    <i className="bi bi-bag-heart-fill"></i>
+                    Compra / Venta 
+                  </NavLink>
+                </MenuItem>
                 {usuario.uid === "qA2c3TwTAKUc9160fsJlMtDSVgl1" ? (
                   <NavLink
                     className="link"
@@ -159,6 +165,12 @@ function Navbar() {
                   Mis Listas
                 </NavLink>
               </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu}>
+                  <NavLink className="link" activeClassName="active" to="/shopping">
+                  <i className="bi bi-bag-heart-fill"></i>
+                    Compra / Venta 
+                  </NavLink>
+                </MenuItem>
               {usuario.uid === "qA2c3TwTAKUc9160fsJlMtDSVgl1" ? (
                 <NavLink className="link" activeClassName="active" to="/admin">
                   <MenuItem onClick={handleCloseNavMenu}>

@@ -14,6 +14,7 @@ import NewProject from './components/projects/newProject/newProject'
 import Gestion from './components/gestion/gestion'
 import UsuarioUID from "./components/usuario/usuarioUID/usuarioUID";
 import EditProject from "./components/projects/editProject/editProject";
+import Shopping from "./components/shopping/shopping";
 
 function Routes() {
   return (
@@ -29,6 +30,7 @@ function Routes() {
         <Route path="/new-project" element={<NewProject></NewProject>} />
         <Route path="/admin" element={<Gestion></Gestion>} />
         <Route path="/user" element={<Usuario></Usuario>} />
+        <Route path="/shopping" element={<Shopping></Shopping>} />
       </Switch>
     </Router>
   );

@@ -624,7 +624,7 @@ function Gestion() {
 
     return (
       <div>
-        {/* <div className="row">
+        <div className="row">
           <a className="float-right" onClick={() => _exportPdf()}>
             <i
               className="bi bi-download mr-2"
@@ -660,7 +660,7 @@ function Gestion() {
               </div>
             );
           })}
-        </ul> */}
+        </ul>
       </div>
     );
   }

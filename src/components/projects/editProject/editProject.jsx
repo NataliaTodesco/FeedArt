@@ -321,7 +321,8 @@ function EditProject() {
             <br />
             <br />
             <div className="row">
-              <div className="col-lg-6">
+            <div className="col-lg-6 d-flex justify-content-between align-items-end">
+                <h6>$</h6>
                 <TextField
                   type="number"
                   id="standard-basic"
@@ -330,7 +331,8 @@ function EditProject() {
                   autoComplete="off"
                   onChange={(e) => setPrecio(e.target.value)}
                   value={precio}
-                />
+                /> 
+                <h5><span className="badge badge-secondary">USD</span></h5>
 
                 <br />
                 <br />
