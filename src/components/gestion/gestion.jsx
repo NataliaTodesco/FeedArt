@@ -665,6 +665,8 @@ function Gestion() {
     );
   }
 
+  function Top10ProyectosMasRecaudacion(){}
+
   return (
     <div className="gestion">
       <Navbar></Navbar>

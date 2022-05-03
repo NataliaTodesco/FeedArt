@@ -15,6 +15,8 @@ import {
   Chip,
   Alert,
   AlertTitle,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import newProject from "../../../img/logoVertical.svg";
@@ -66,6 +68,7 @@ function EditProject() {
   const [texto, setTexto] = useState("");
   let navigate = useNavigate();
   let {id} = useParams();
+  const [vender, setVender] = useState(false);
   
   function Tags() {
     const [open, setOpen] = React.useState(false);
@@ -225,7 +228,7 @@ function EditProject() {
         if (descripcion !== "") {
           if (precio !== "") {
             setShowAlert(false);
-            actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,precio).then(res =>{
+            actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,precio, 'USD').then(res =>{
               if (res === ""){
                 navigate('/project/'+id)
               }
@@ -267,6 +270,7 @@ function EditProject() {
         });
         setTexto(Tags)
         setFoto(res.datos.img_url)
+        if (res.datos.precio != 0) setVender(true)
     })    
   }, [id]);
 
@@ -302,7 +306,9 @@ function EditProject() {
             />{" "}
             <br />
             <br />
-            <TextField
+            <div className="row">
+              <div className="col-lg-6">
+              <TextField
               id="standard-select-currency"
               select
               label="Categoría"
@@ -318,29 +324,62 @@ function EditProject() {
                 </MenuItem>
               ))}
             </TextField>{" "}
-            <br />
-            <br />
-            <div className="row">
-            <div className="col-lg-6 d-flex justify-content-between align-items-end">
-                <h6>$</h6>
-                <TextField
-                  type="number"
-                  id="standard-basic"
-                  label="Precio"
-                  variant="standard"
-                  autoComplete="off"
-                  onChange={(e) => setPrecio(e.target.value)}
-                  value={precio}
-                /> 
-                <h5><span className="badge badge-secondary">USD</span></h5>
-
-                <br />
-                <br />
               </div>
               <div className="col-lg-6">
                 <Tags></Tags>
               </div>
             </div>{" "}
+            <br />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Vender"
+              checked={vender}
+              onChange={(e) => setVender(!vender)}
+            />
+            {vender ? (
+              <div className="row">
+                <div className="col-lg-6 d-flex justify-content-between align-items-end">
+                  <h6>$</h6>
+                  <TextField
+                    type="number"
+                    id="standard-basic"
+                    label="Precio"
+                    variant="standard"
+                    autoComplete="off"
+                    onChange={(e) => setPrecio(e.target.value)}
+                    value={precio}
+                  />
+                  <h5>
+                    <span className="badge badge-secondary">USD</span>
+                  </h5>
+                  <br />
+                  <br />
+                </div>
+                {/* <div className="col-lg-6">
+                <TextField
+                  id="standard-select-currency"
+                  select
+                  label="Moneda"
+                  value={divisa}
+                  onChange={handleChangeDivisa}
+                  variant="standard"
+                  autoComplete="off"
+                >
+                  {divisas.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.text}
+                    </MenuItem>
+                  ))}
+                </TextField>{" "}
+              </div> */}
+                <p className="text-danger mt-2">
+                  **El pago se realizará a través de PayPal asociado a su correo
+                  electrónico.
+                </p>
+              </div>
+            ) : (
+              <span></span>
+            )}
             <br />
           </div>
           <div className="col-lg-1"></div>

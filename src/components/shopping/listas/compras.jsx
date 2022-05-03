@@ -8,8 +8,8 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
-import { getCompra } from "../../firebaseConfig";
-import { useUsuario } from "../../context/UserContext";
+import { getCompra } from "../../../firebaseConfig";
+import { useUsuario } from "../../../context/UserContext";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 
 function Compra() {
