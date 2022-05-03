@@ -1,9 +1,9 @@
 import React from 'react'
 import Footer from '../footer/footer';
 import Navbar from '../Navbar/navbar';
-import Compra from './compras';
+import Compra from './listas/compras';
 import "./shopping.css"
-import Ventas from './ventas';
+import Ventas from './listas/ventas';
 
 function Shopping() {
     return (  
@@ -15,8 +15,8 @@ function Shopping() {
                         <h1 style={{fontWeight: '800'}}>COMPRA / VENTA</h1>
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col-lg-6">
+                <div className="row d-flex justify-content-center">
+                    <div className="col-lg-5">
                         <h3>
                             <i className="bi bi-bag-check-fill mr-3"></i>
                             MIS COMPRAS
@@ -25,7 +25,8 @@ function Shopping() {
                             <Compra></Compra>
                         </div>
                     </div>
-                    <div className="col-lg-6">
+                    <div className="col-lg-1"></div>
+                    <div className="col-lg-5">
                         <h3>
                             <i className="bi bi-bag-dash-fill mr-3"></i>
                             MIS VENTAS

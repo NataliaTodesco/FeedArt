@@ -43,7 +43,8 @@ export async function guardarProyecto(
   img_url,
   tags,
   precio,
-  usuario
+  usuario,
+  moneda
 ) {
   try {
     const docRef = await addDoc(collection(db, "projects"), {
@@ -53,6 +54,7 @@ export async function guardarProyecto(
       favs: 0,
       img_url: img_url,
       likes: 0,
+      moneda: moneda,
       precio: precio,
       tags: tags,
       titulo: titulo,
@@ -146,13 +148,15 @@ export async function actualizarProyecto(
   categoria,
   img_url,
   tags,
-  precio
+  precio,
+  moneda
 ) {
   try {
     const docRef = await updateDoc(doc(db, "projects", id), {
       categoria: categoria,
       descripcion: descripcion,
       img_url: img_url,
+      moneda: moneda,
       precio: precio,
       tags: tags,
       titulo: titulo,

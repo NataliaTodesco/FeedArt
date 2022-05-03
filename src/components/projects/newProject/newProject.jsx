@@ -15,6 +15,8 @@ import {
   Chip,
   Alert,
   AlertTitle,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import newProject from "../../../img/logoVertical.svg";
@@ -25,12 +27,11 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { guardarProyecto, storage } from "../../../firebaseConfig";
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from "react-router-dom";
 import { useUsuario } from "../../../context/UserContext";
 
-
 function NewProject() {
-  const { usuario } = useUsuario()
+  const { usuario } = useUsuario();
   const [foto, setFoto] = useState(newProject);
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -73,22 +74,49 @@ function NewProject() {
   const [categoria, setCategoria] = React.useState(1);
   const [texto, setTexto] = useState("");
   let navigate = useNavigate();
-  
+  const divisas = [
+    { value: "USD", text: "Dólar estadounidense (USD)" },
+    { value: "AUD", text: "Dólar australiano (AUD)" },
+    { value: "BRL", text: "Real brasileño (BRL)" },
+    { value: "GBP", text: "Libra esterlina (GBP)" },
+    { value: "CAD", text: "Dólar canadiense (CAD)" },
+    { value: "CZK", text: "Corona checa (CZK)" },
+    { value: "DKK", text: "Corona danesa (DKK)" },
+    { value: "EUR", text: "Euro (EUR)" },
+    { value: "HKD", text: "Dólar hongkonés (HKD)" },
+    { value: "HUF", text: "Forinto húngaro (HUF)" },
+    { value: "ILS", text: "Nuevo shéquel israelí (ILS)" },
+    { value: "JPY", text: "Yen japonés (JPY)" },
+    { value: "MXN", text: "Peso mexicano (MXN)" },
+    { value: "TWD", text: "Nuevo dólar taiwanés (TWD)" },
+    { value: "NZD", text: "Dólar neozelandés (NZD)" },
+    { value: "NOK", text: "Corona noruega (NOK)" },
+    { value: "PHP", text: "Peso filipino (PHP)" },
+    { value: "PLN", text: "Esloti polaco (PLN)" },
+    { value: "RUB", text: "Rublo ruso (RUB)" },
+    { value: "SGD", text: "Dólar singapurense (SGD)" },
+    { value: "SEK", text: "Corona sueca (SEK)" },
+    { value: "CHF", text: "Franco suizo (CHF)" },
+    { value: "THB", text: "Baht tailandés (THB)" },
+  ];
+  const [divisa, setDivisa] = useState("USD");
+  const [vender, setVender] = useState(false);
+
   function Tags() {
     const [open, setOpen] = React.useState(false);
     const [tag, setTag] = useState("");
     const [value, setValue] = useState(texto);
     const [tags, setTags] = useState(etiquetas);
-    
+
     const handleClickOpen = () => {
       setOpen(true);
     };
 
     const handleClose = (event, reason) => {
       if (reason !== "backdropClick") {
-        setEtiquetas(tags)
+        setEtiquetas(tags);
         setOpen(false);
-        setTexto(value)
+        setTexto(value);
       }
     };
 
@@ -106,21 +134,20 @@ function NewProject() {
       setTags([]);
       setValue("");
       setTag("");
-      setEtiquetas([])
-      setTexto("")
+      setEtiquetas([]);
+      setTexto("");
       setOpen(false);
     }
 
-    function quitar(index){
-      tags.splice(index,1)
-      let Tags = ""
-      tags.forEach(tag => {
-        if (Tags === ""){
-          Tags = tag
-        }
-        else Tags += ', '+tag
-      })
-      setValue(Tags)
+    function quitar(index) {
+      tags.splice(index, 1);
+      let Tags = "";
+      tags.forEach((tag) => {
+        if (Tags === "") {
+          Tags = tag;
+        } else Tags += ", " + tag;
+      });
+      setValue(Tags);
     }
 
     return (
@@ -155,7 +182,16 @@ function NewProject() {
             </Fab>{" "}
             <br />
             {tags.map((tag, index) => (
-              <Chip variant="outlined" label={tag} style={{cursor: 'pointer'}} size="medium" key={index} onClick={e => {quitar(index)}}/>
+              <Chip
+                variant="outlined"
+                label={tag}
+                style={{ cursor: "pointer" }}
+                size="medium"
+                key={index}
+                onClick={(e) => {
+                  quitar(index);
+                }}
+              />
             ))}
           </DialogContent>
           <DialogActions>
@@ -175,16 +211,17 @@ function NewProject() {
     };
 
     return (
-      <Dialog
-        disableEscapeKeyDown
-        open={showAlert}
-        onClose={handleClose}
-      >
+      <Dialog disableEscapeKeyDown open={showAlert} onClose={handleClose}>
         <DialogTitle>
           <Alert severity="error" className="pt-4">
             <AlertTitle>Error al Registrar el Proyecto</AlertTitle>
             Por favor <strong>{alert}</strong> <br />
-            <Button className="float-right text-danger mt-4 ml-2" onClick={handleClose}>Ok</Button>
+            <Button
+              className="float-right text-danger mt-4 ml-2"
+              onClick={handleClose}
+            >
+              Ok
+            </Button>
           </Alert>
         </DialogTitle>
       </Dialog>
@@ -193,6 +230,10 @@ function NewProject() {
 
   const handleChange = (event) => {
     setCategoria(event.target.value);
+  };
+
+  const handleChangeDivisa = (event) => {
+    setDivisa(event.target.value);
   };
 
   function onUpload(event) {
@@ -225,25 +266,75 @@ function NewProject() {
     );
   }
 
-
   function subir() {
     if (foto !== newProject && foto !== "") {
       if (titulo !== "") {
         if (descripcion !== "") {
           if (precio !== "") {
             setShowAlert(false);
-            guardarProyecto(titulo,descripcion,categoria,foto,etiquetas,precio, usuario).then(res =>{
-              if (res === ""){
-                navigate('/home')
-              }
-              else {
-                setShowAlert(true)
-                setAlert(res)
-              }
-            })
+            if (vender){
+              guardarProyecto(
+                titulo,
+                descripcion,
+                categoria,
+                foto,
+                etiquetas,
+                precio,
+                usuario,
+                divisa
+              ).then((res) => {
+                if (res === "") {
+                  navigate("/home");
+                } else {
+                  setShowAlert(true);
+                  setAlert(res);
+                }
+              });
+            }
+            else{
+              guardarProyecto(
+                titulo,
+                descripcion,
+                categoria,
+                foto,
+                etiquetas,
+                0,
+                usuario,
+                divisa
+              ).then((res) => {
+                if (res === "") {
+                  navigate("/home");
+                } else {
+                  setShowAlert(true);
+                  setAlert(res);
+                }
+              });
+            }
           } else {
-            setAlert('Complete el campo "Precio"');
-            setShowAlert(true);
+            if (vender){
+              setAlert('Complete el campo "Precio" o quite su selección en "Vender"');
+              setShowAlert(true);
+            }
+            else{
+              setShowAlert(false);
+              guardarProyecto(
+                titulo,
+                descripcion,
+                categoria,
+                foto,
+                etiquetas,
+                0,
+                usuario,
+                divisa
+              ).then((res) => {
+                if (res === "") {
+                  navigate("/home");
+                } else {
+                  setShowAlert(true);
+                  setAlert(res);
+                }
+              });
+            }
           }
         } else {
           setAlert('Complete el campo "Descripción"');
@@ -291,46 +382,81 @@ function NewProject() {
             />{" "}
             <br />
             <br />
-            <TextField
-              id="standard-select-currency"
-              select
-              label="Categoría"
-              value={categoria}
-              onChange={handleChange}
-              variant="standard"
-              fullWidth
-              autoComplete="off"
-            >
-              {categorias.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>{" "}
-            <br />
-            <br />
             <div className="row">
-              <div className="col-lg-6 d-flex justify-content-between align-items-end">
-                <h6>$</h6>
+              <div className="col-lg-6">
                 <TextField
-                  type="number"
-                  id="standard-basic"
-                  label="Precio"
+                  id="standard-select-currency"
+                  select
+                  label="Categoría"
+                  value={categoria}
+                  onChange={handleChange}
                   variant="standard"
+                  fullWidth
                   autoComplete="off"
-                  onChange={(e) => setPrecio(e.target.value)}
-                  value={precio}
-                /> 
-                <h5><span className="badge badge-secondary">USD</span></h5>
-
-                <br />
+                >
+                  {categorias.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>{" "}
                 <br />
               </div>
               <div className="col-lg-6">
                 <Tags></Tags>
+                <br />
               </div>
             </div>{" "}
-            <br />
+            <FormControlLabel
+              control={<Checkbox />}
+              label="Vender"
+              checked={vender}
+              onChange={(e) => setVender(!vender)}
+            />
+            {vender ? (
+              <div className="row">
+                <div className="col-lg-6 d-flex justify-content-between align-items-end">
+                  <h6>$</h6>
+                  <TextField
+                    type="number"
+                    id="standard-basic"
+                    label="Precio"
+                    variant="standard"
+                    autoComplete="off"
+                    onChange={(e) => setPrecio(e.target.value)}
+                    value={precio}
+                  />
+                  <h5>
+                    <span className="badge badge-secondary">USD</span>
+                  </h5>
+                  <br />
+                  <br />
+                </div>
+                {/* <div className="col-lg-6">
+                <TextField
+                  id="standard-select-currency"
+                  select
+                  label="Moneda"
+                  value={divisa}
+                  onChange={handleChangeDivisa}
+                  variant="standard"
+                  autoComplete="off"
+                >
+                  {divisas.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.text}
+                    </MenuItem>
+                  ))}
+                </TextField>{" "}
+              </div> */}
+                <p className="text-danger mt-2">
+                  **El pago se realizará a través de PayPal asociado a su correo
+                  electrónico.
+                </p>
+              </div>
+            ) : (
+              <span></span>
+            )}
           </div>
           <div className="col-lg-1"></div>
           <div className="col-lg-5 mt-2 mb-4 text-center">
@@ -361,14 +487,20 @@ function NewProject() {
         </div>
         <div className="row mb-5">
           <div className="col-lg-12 d-flex justify-content-end">
-           <Link to='/home'>
+            <Link to="/home">
               <button className="btn btn-danger px-4 py-2 mr-3">
                 Cancelar
-                <i className="bi bi-x-circle ml-2"  style={{ fontSize: "medium" }}></i>
+                <i
+                  className="bi bi-x-circle ml-2"
+                  style={{ fontSize: "medium" }}
+                ></i>
               </button>
             </Link>
             <button className="btn btn-info px-4 py-2" onClick={subir}>
-              <i className="bi bi-upload mr-3" style={{ fontSize: "medium" }}></i>
+              <i
+                className="bi bi-upload mr-3"
+                style={{ fontSize: "medium" }}
+              ></i>
               Subir
             </button>
           </div>

@@ -90,7 +90,7 @@ function MisProyectos() {
                           <InfoIcon style={{ color: "white" }} />
                         </IconButton>
                       </Link>
-                      <Link to={"/project/edit/" + proyecto.id}>
+                      {!proyecto.vendido? <Link to={"/project/edit/" + proyecto.id}>
                         <IconButton
                           className="float-right"
                           sx={{ color: "rgba(255, 255, 255, 0.54)" }}
@@ -99,8 +99,8 @@ function MisProyectos() {
                           {" "}
                           <EditIcon style={{ color: "white" }} />{" "}
                         </IconButton>
-                      </Link>
-                      <IconButton
+                      </Link>: <span></span>}
+                      {!proyecto.vendido? <IconButton
                         className="float-right"
                         onClick={(e) => {
                           eliminar(proyecto.id);
@@ -110,7 +110,7 @@ function MisProyectos() {
                       >
                         {" "}
                         <DeleteIcon style={{ color: "white" }} />{" "}
-                      </IconButton>
+                      </IconButton> : <span></span>}
                     </div>
                   }
                 />
