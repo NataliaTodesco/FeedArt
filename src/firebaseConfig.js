@@ -15,7 +15,6 @@ import {
   getDoc,
 } from "firebase/firestore";
 
-
 const firebaseConfig = {
   apiKey: "AIzaSyAs53lxwaD6wZuLqXcpzF-G_yE-E40Funk",
   authDomain: "feedart-3bdc9.firebaseapp.com",
@@ -58,7 +57,7 @@ export async function guardarProyecto(
       precio: precio,
       tags: tags,
       titulo: titulo,
-      uid_creador: usuario.uid
+      uid_creador: usuario.uid,
     });
     console.log(docRef);
     return "";
@@ -92,7 +91,7 @@ export async function obtenerCreador(uid) {
         img_url: doc.data().img_url,
         nombre: doc.data().nombre,
         fecha: fec,
-        token: doc.data().token
+        token: doc.data().token,
       };
       respuesta = save;
     }
@@ -171,6 +170,34 @@ export async function actualizarProyecto(
 
 export async function borrarProyecto(id) {
   deleteDoc(doc(db, "projects", id));
+  obtenerLikes().then((result) => {
+    for (let i = 0; i < result.length; i++) {
+      getLikes(result[i].id).then((res) => {
+        let likes = res;
+        for (let index = 0; index < likes.length; index++) {
+          if (likes[index].id === id) {
+            restarLikes(id, likes[index].datos.likes);
+            likes.splice(index, 1);
+            addLikes(likes, result[i].id);
+          }
+        }
+      });
+    }
+  });
+  obtenerFavoritos().then((result) => {
+    for (let i = 0; i < result.length; i++) {
+      getFavorites(result[i].id).then((res) => {
+        let favs = res;
+        for (let index = 0; index < favs.length; index++) {
+          if (favs[index].id === id) {
+            restarFavs(id, favs[index].datos.favs);
+            favs.splice(index, 1);
+            addFavorites(favs, result[i].id);
+          }
+        }
+      });
+    }
+  });
 }
 
 export async function obtenerProyectos() {
@@ -211,6 +238,7 @@ export async function obtenerProyectosChar() {
       Creador: creador,
       Likes: doc.data().likes,
       Favoritos: doc.data().favs,
+      vendido: doc.data().vendido,
     });
   });
 
@@ -260,7 +288,7 @@ export async function usuariosMasProyectos() {
     });
   });
 
-  for (let i = 0; i < proyectosXUser.length; i++) { 
+  for (let i = 0; i < proyectosXUser.length; i++) {
     await obtenerCantidad(proyectosXUser[i].id).then((res) => {
       proyectosXUser[i].cantidad = res;
     });
@@ -511,21 +539,21 @@ export async function obtenerVenta() {
 export async function actualizarVendido(id) {
   const projectsRef = doc(db, "projects", id);
   await updateDoc(projectsRef, {
-    vendido: true
+    vendido: true,
   });
 }
 
 export async function actualizarEntregadoVendedor(id, array) {
   const projectsRef = doc(db, "sell", id);
   await updateDoc(projectsRef, {
-    array: array
+    array: array,
   });
 }
 
 export async function actualizarEntregadoComprador(id, array) {
   const projectsRef = doc(db, "buy", id);
   await updateDoc(projectsRef, {
-    array: array
+    array: array,
   });
 }
 
