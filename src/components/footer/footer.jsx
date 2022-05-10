@@ -1,6 +1,7 @@
 import React from 'react'
 import './footer.css'
 import logo from '../../img/logoVerticalBlanco.svg'
+import { Link } from 'react-router-dom';
 
 function Footer() {
     return (  
@@ -15,7 +16,7 @@ function Footer() {
                         <div className="txt">Copyright © 2022. Todesco Natalia Sabrina 111957@tecnicatura.frc.utn.edu.ar</div>
                     </div>
                     <div className="d-flex justify-content-center">
-                        <a href='/' className='terminos mr-3'>T&C</a> | <a href='/' className='terminos ml-3'>CONTÁCTO</a>
+                       <Link to='/t&c'><a className='terminos mr-3'>T&C</a></Link> | <Link to='/contact'><a className='terminos ml-3'>CONTÁCTO</a></Link>
                     </div>
                 </div>
             </div>

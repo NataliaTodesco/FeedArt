@@ -665,15 +665,104 @@ function Gestion() {
     );
   }
 
-  function Top10ProyectosMasRecaudacion(){}
+  function Top10ProyectosMasRecaudacion(){
+    const [proyectos, setProyectos] = useState([]);
+  
+    useEffect(() => {
+      obtenerProyectosChar().then((res) => {
+        let project = res.sort(SortArray)
+        let vendidos = []
+        for (let index = 0; index < project.length; index++) {
+          if (project[index].vendido){
+            vendidos.push(project[index])
+          }
+        }
+        let top10 = []
+        
+        let indice = 10;
+        if (vendidos.length < 10) indice = vendidos.length
+
+        for (let index = 0; index < indice; index++) {
+          top10.push(vendidos[index])
+        }
+        setProyectos(top10)
+      });
+    }, []);
+
+    function SortArray(x, y) {
+      if (x.Precio < y.Precio) {
+        return 1;
+      }
+      if (x.Precio > y.Precio) {
+        return -1;
+      }
+      return 0;
+    }
+
+    function CustomToolbar() {
+      return (
+        <GridToolbarContainer>
+          <GridToolbarExport />
+          {/* <GridToolbarFilterButton /> */}
+        </GridToolbarContainer>
+      );
+    }
+
+    return (
+      <div className="col-lg-12 my-5" style={{ height: 560, width: "100%" }}>
+        <h3 style={{ textAlign: "center" }}>Top 10 Proyectos Vendidos que Más Dinero Recaudaron</h3>
+        <DataGrid
+          rows={proyectos}
+          columns={[
+            {
+              field: "Titulo",
+              width: 200,
+            },
+            {
+              field: "Categoria",
+              width: 170,
+            },
+            {
+              field: "Descripcion",
+              width: 390,
+            },
+            {
+              field: "Imagen",
+              width: 150,
+              renderCell: (proyectos) => (
+                <img
+                  className="img-fluid my-5 mr-3"
+                  alt=""
+                  src={proyectos.row.Imagen}
+                />
+              ),
+            },
+            {
+              field: "Precio",
+              width: 130,
+            },
+            {
+              field: "Likes",
+              width: 80,
+            },
+            {
+              field: "Favoritos",
+              width: 80,
+            },
+          ]}
+          components={{ Toolbar: CustomToolbar }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="gestion">
       <Navbar></Navbar>
-      <div className="container-fluid px-5 my-3">
+      <div className="container-fluid px-5 mt-3 mb-5">
         <div className="row">
           <div className="col-lg-12 text-center">
-            <h1 style={{ fontWeight: "800" }}>GESTIÓN</h1>
+            <h1 style={{ fontWeight: "800" }}> ✧・°・ GESTIÓN  ・°・✦</h1>
           </div>
         </div>
         <div className="row">
@@ -685,7 +774,7 @@ function Gestion() {
         <div className="row">
           <ListadoProyectos></ListadoProyectos>
         </div>
-        <div className="row my-5">
+        <div className="row mt-5">
           <ProyectosxCategoria></ProyectosxCategoria>
           <div className="col-lg-2 mb-3">
             <h6> <span className="text-info">A -</span> Arte Tradicional </h6>
@@ -699,6 +788,9 @@ function Gestion() {
           <div className="col-lg-4">
             <Top5Usuarios></Top5Usuarios>
           </div>
+        </div>
+        <div className="row mb-5">
+          <Top10ProyectosMasRecaudacion></Top10ProyectosMasRecaudacion>
         </div>
       </div>
       <Footer></Footer>

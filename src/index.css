@@ -1,14 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&display=swap');
+
 :root {
     --bordo: #780000;
     --rojo: #C1121F;
     --blanco: #FDF0D5;
-    --fondo: rgb(237, 237, 241);;
+    --fondo: rgb(237, 237, 241);
+    ;
     --azul: #003049;
     --celeste: #669BBC;
     --celeste-pastel: #a2d2ff;
+    --titulo: 'Rubik Wet Paint', cursive;
 }
 
-body{
+body {
     max-width: 100%;
     background-color: rgb(237, 237, 241);
 }

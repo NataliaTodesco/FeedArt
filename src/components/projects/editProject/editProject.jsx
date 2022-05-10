@@ -280,7 +280,7 @@ function EditProject() {
       <div className="container my-3">
         <div className="row">
           <div className="col-lg-12 text-center">
-            <h1 style={{ fontWeight: "800" }}>EDITAR PROYECTO</h1>
+            <h1 style={{ fontWeight: "800" }}> ✧・°・ EDITAR PROYECTO  ・°・✦</h1>
           </div>
         </div>
         <div className="row" style={{ marginTop: "-1%" }}>
