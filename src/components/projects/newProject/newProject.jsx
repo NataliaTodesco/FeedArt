@@ -356,14 +356,14 @@ function NewProject() {
       <div className="container my-3">
         <div className="row">
           <div className="col-lg-12 text-center">
-            <h1 style={{ fontWeight: "800" }}> ✧・°・ NUEVO PROYECTO  ・°・✦</h1>
+            <h1 style={{ fontWeight: "800" }}> <span className="shine">✧・°・</span> NUEVO PROYECTO  <span className="shine">・°・✦</span></h1>
           </div>
         </div>
         <div className="row" style={{ marginTop: "-1%" }}>
           <div className="col-lg-6">
             <TextField
               id="standard-basic"
-              label="Título"
+              label="*Título"
               variant="standard"
               fullWidth
               onChange={(e) => setTitulo(e.target.value)}
@@ -373,7 +373,7 @@ function NewProject() {
             <br />
             <TextField
               id="standard-multiline-static"
-              label="Descripción"
+              label="*Descripción"
               variant="standard"
               fullWidth
               autoComplete="off"
@@ -387,7 +387,7 @@ function NewProject() {
                 <TextField
                   id="standard-select-currency"
                   select
-                  label="Categoría"
+                  label="*Categoría"
                   value={categoria}
                   onChange={handleChange}
                   variant="standard"
@@ -420,7 +420,7 @@ function NewProject() {
                   <TextField
                     type="number"
                     id="standard-basic"
-                    label="Precio"
+                    label="*Precio"
                     variant="standard"
                     autoComplete="off"
                     onChange={(e) => setPrecio(e.target.value)}

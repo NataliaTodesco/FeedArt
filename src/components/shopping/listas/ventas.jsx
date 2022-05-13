@@ -64,7 +64,6 @@ function Ventas() {
                   src={proyecto.proyecto.datos.img_url}
                   alt=""
                   className="img-fluid inicio-foto my-1"
-                  style={{ maxHeight: "225px" }}
                 />
                 <ImageListItemBar
                   title={proyecto.proyecto.datos.titulo}

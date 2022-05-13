@@ -1,4 +1,4 @@
-.inicio{
+.inicio {
     background-color: rgb(237, 237, 241);
     min-height: 100vh;
     box-shadow: none;
@@ -6,35 +6,87 @@
     max-width: 100%;
 }
 
-.inicio-foto{
+.inicio-foto {
     border-radius: 8px;
 }
 
-.inicio .proyecto .bi{
+.inicio .proyecto .bi {
     font-size: x-large;
     cursor: pointer;
 }
 
-.inicio .btn-dark{
+.inicio .btn-dark {
     background-color: var(--azul);
     border: none;
     color: white;
 }
-.inicio .btn-dark:hover{
+
+.inicio .btn-dark:hover {
     background-color: #003a8c;
     border: none;
     color: white;
 }
-.inicio input:focus{
+
+.inicio input:focus {
     box-shadow: none;
 }
 
-.inicio .container{
+.inicio .container {
     min-height: 62.5vh;
 }
 
+.search-input {
+    margin-left: 15%;
+}
+
+/* .inicio .proyecto .card {
+    border-radius: 0%;
+    BORDER-RIGHT: #999999 1px solid;
+    PADDING-RIGHT: 8px;
+    PADDING-LEFT: 8px;
+    PADDING-BOTTOM: 8px;
+    PADDING-TOP: 8px;
+    BORDER-BOTTOM: #999999 1px solid;
+    BACKGROUND-COLOR: #f5f5f5;
+    box-shadow: 1px 2px 2px #CCC;
+    -webkit-box-shadow: 1px 2px 2px #CCC;
+    -moz-box-shadow: 1px 2px 2px #CCC;
+    -ms-box-shadow: 1px 2px 2px #CCC;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+
+.texto-encima {
+    position: absolute;
+    top: 5.5px;
+    left: 0px;
+    background-color: black;
+    padding: 5%;
+}
+
+.centrado {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: transparent;
+}
+
+.inicio .proyecto .card:hover img{
+    opacity: .5;
+}
+
+.inicio .proyecto .card:hover .centrado {
+    border: 2px solid rgb(51, 48, 48);;
+    padding: 7%;
+    color: rgb(51, 48, 48);
+    font-size: 16px;
+    font-weight: 600;
+} */
+
 @media (max-width: 530px) {
-    .banner{
+    .banner {
         height: 0;
         width: 0;
     }

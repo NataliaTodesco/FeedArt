@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react";
 
 function Terminos() {
-    return (  
-        <div>T&C</div>
-    );
+  return (
+    <div className="terminos">t&c</div>
+  );
 }
 
 export default Terminos;
