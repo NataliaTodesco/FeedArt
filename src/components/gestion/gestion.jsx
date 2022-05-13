@@ -762,7 +762,7 @@ function Gestion() {
       <div className="container-fluid px-5 mt-3 mb-5">
         <div className="row">
           <div className="col-lg-12 text-center">
-            <h1 style={{ fontWeight: "800" }}> ✧・°・ GESTIÓN  ・°・✦</h1>
+            <h1 style={{ fontWeight: "800" }}> <span className="shine">✧・°・</span> GESTIÓN  <span className="shine">・°・✦</span></h1>
           </div>
         </div>
         <div className="row">

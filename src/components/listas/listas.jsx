@@ -13,7 +13,7 @@ function Listas() {
             <div className="container my-3" style={{ minHeight: "62.5vh" }}>
             <div className="row">
                     <div className="col-lg-12 text-center">
-                        <h1 style={{fontWeight: '800'}}>✧・°・ MIS LISTAS  ・°・✦</h1>
+                        <h1 style={{fontWeight: '800'}}><span className="shine">✧・°・</span> MIS LISTAS  <span className="shine">・°・✦</span></h1>
                     </div>
                 </div>
                 <div className="row">

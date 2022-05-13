@@ -58,6 +58,7 @@ export async function guardarProyecto(
       tags: tags,
       titulo: titulo,
       uid_creador: usuario.uid,
+      fecha: new Date()
     });
     console.log(docRef);
     return "";
@@ -159,6 +160,7 @@ export async function actualizarProyecto(
       precio: precio,
       tags: tags,
       titulo: titulo,
+      fecha: new Date()
     });
     console.log(docRef);
     return "";

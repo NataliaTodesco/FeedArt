@@ -123,7 +123,7 @@ function Usuario() {
       <div className="container">
         <div className="row">
           <div className="col-lg-12 text-center mt-3">
-            <h1 style={{ fontWeight: "800" }}>✧・°・ MI CUENTA  ・°・✦</h1>
+            <h1 style={{ fontWeight: "800" }}><span className="shine">✧・°・</span> MI CUENTA  <span className="shine">・°・✦</span></h1>
           </div>
         </div>
         <div className="row text-center d-flex justify-content-center">

@@ -74,10 +74,9 @@ function MisProyectos() {
                   src={proyecto.img}
                   alt=""
                   className="img-fluid inicio-foto my-1"
-                  style={{ maxHeight: "225px" }}
                 />
                 <ImageListItemBar
-                  title={proyecto.titulo}
+                  title={proyecto.title}
                   className="mb-1 text-left"
                   style={{ borderRadius: "8px" }}
                   actionIcon={
@@ -85,7 +84,7 @@ function MisProyectos() {
                       <Link to={"/project/" + proyecto.id}>
                         <IconButton
                           sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                          aria-label={`info sobre ${proyecto.titulo}`}
+                          aria-label={`info sobre ${proyecto.title}`}
                         >
                           <InfoIcon style={{ color: "white" }} />
                         </IconButton>
@@ -94,7 +93,7 @@ function MisProyectos() {
                         <IconButton
                           className="float-right"
                           sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                          aria-label={`editar ${proyecto.titulo}`}
+                          aria-label={`editar ${proyecto.title}`}
                         >
                           {" "}
                           <EditIcon style={{ color: "white" }} />{" "}

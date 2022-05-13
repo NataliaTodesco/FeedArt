@@ -37,7 +37,7 @@ function Contact() {
       </div>
       <div className="container">
         <div className="row my-3">
-          <div className="col-lg-6">
+          <div className="col-lg-6 mb-2">
             <h1 className="text-center" style={{ fontWeight: "800" }}>
               PREGUNTAS FRECUENTES
             </h1>
@@ -115,7 +115,7 @@ function Contact() {
               </Accordion.Item>
             </Accordion>
           </div>
-          <div className="col-lg-6">
+          <div className="col-lg-6 mb-2">
             <h1 className="text-center" style={{ fontWeight: "800" }}>
               CONTÁCTAME
             </h1>
@@ -129,7 +129,7 @@ function Contact() {
                 <input
                   type="hidden"
                   name="_next"
-                  value="https://feedart.netlify.app/contact"
+                  value="https://feedart.netlify.app"
                 />
                 <input type="hidden" name="_captcha" value="false" />
                 <div>
