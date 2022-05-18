@@ -3,7 +3,9 @@
 
 .start{
     min-height: 100vh;
-    background: var(--azul);
+    /* background: var(--azul); */
+    background:linear-gradient(rgba(0, 48, 73, .98),rgba(0, 48, 73, .98)), url("../../img/fondo.jpg");
+
     width: 100%;
 }
 

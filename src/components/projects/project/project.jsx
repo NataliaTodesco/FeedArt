@@ -34,6 +34,9 @@ import {
 
 function Proyecto() {
   const { id } = useParams();
+  const { usuario } = useUsuario();
+  let navigate = useNavigate();
+
   const [proyecto, setProyecto] = useState({
     id: id,
     datos: {
@@ -56,12 +59,10 @@ function Proyecto() {
     nombre: "",
     fecha: new Date().toLocaleDateString(),
   });
-  const { usuario } = useUsuario();
   const [vendido, setVendido] = useState(false);
 
   const [like, setLike] = useState(false);
   const [fav, setFav] = useState(false);
-  let navigate = useNavigate();
 
   function obtenerProyecto() {
     consultarProyecto(id).then((res) => {
@@ -83,122 +84,249 @@ function Proyecto() {
     });
   }, [id, usuario]);
 
-  function onclickLike() {
-    if (like) {
-      restarLikes(id, proyecto.datos.likes);
-      setLike(false);
-      obtenerProyecto();
-      getLikes(usuario.uid).then((res) => {
-        let likes = res;
-        for (let index = 0; index < likes.length; index++) {
-          if (likes[index].id === id) {
-            likes.splice(index, 1);
-            addLikes(likes, usuario.uid);
-          }
-        }
-      });
-    } else {
-      actualizarLikes(id, proyecto.datos.likes);
-      setLike(true);
-      obtenerProyecto();
-      getLikes(usuario.uid).then((res) => {
-        let likes = res;
-        let project = proyecto;
-        project.datos.likes = project.datos.likes + 1;
-        likes.push(project);
-        addLikes(likes, usuario.uid);
-      });
+  function Usuario() {
+    function verUsuario(uid) {
+      navigate("/user/" + uid);
     }
+
+    return (
+      <div
+        className="card card-user p-3"
+        style={{ cursor: "pointer" }}
+        onClick={(e) => {
+          verUsuario(creador.uid);
+        }}
+      >
+        <div className="row text-center d-flex justify-content-center">
+          <div className="col-lg-12">
+            <Avatar
+              size={115}
+              src={creador.img_url}
+              alt=""
+              className="img-fluid img-creador"
+            />
+            <h4 style={{ color: "white" }} className="mt-4">
+              {creador.nombre}
+            </h4>
+            <h6 style={{ color: "white" }}>{creador.email}</h6>
+            <p className="">{creador.fecha}</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  function onclickFavs() {
-    if (fav) {
-      restarFavs(id, proyecto.datos.favs);
-      setFav(false);
-      obtenerProyecto();
-      getFavorites(usuario.uid).then((res) => {
-        let favs = res;
-        for (let index = 0; index < favs.length; index++) {
-          if (favs[index].id === id) {
-            favs.splice(index, 1);
-            addFavorites(favs, usuario.uid);
-          }
-        }
-      });
-    } else {
-      actualizarFavs(id, proyecto.datos.favs);
-      setFav(true);
-      obtenerProyecto();
-      getFavorites(usuario.uid).then((res) => {
-        let favs = res;
-        let project = proyecto;
-        project.datos.favs = project.datos.favs + 1;
-        favs.push(project);
-        addFavorites(favs, usuario.uid);
-      });
-    }
+  function Tags() {
+    return (
+      <div>
+        {proyecto.datos.tags.map((tag, index) => (
+          <Chip
+            variant="outlined"
+            label={tag}
+            size="medium"
+            key={index}
+            className="mt-2 "
+          />
+        ))}
+      </div>
+    );
   }
 
-  function verUsuario(uid) {
-    navigate("/user/" + uid);
-  }
+  function Compra() {
+    function Pagar({ proyecto, creador }) {
+      async function guardarVenta(details) {
+        actualizarVendido(proyecto.id);
+        let venta = [];
+        await getVenta(creador.uid).then((res) => {
+          venta = res;
+        });
+        venta.push({
+          proyecto: proyecto,
+          entregado: false,
+          comprador: details.purchase_units[0],
+          comprador_uid: usuario.uid,
+          fecha: details.update_time,
+        });
+        addVenta(venta, creador.uid);
+      }
 
-  function Pagar({ proyecto, creador }) {
-    async function guardarVenta(details) {
-      actualizarVendido(proyecto.id);
-      let venta = [];
-      await getVenta(creador.uid).then((res) => {
-        venta = res;
-      });
-      venta.push({
-        proyecto: proyecto,
-        entregado: false,
-        comprador: details.purchase_units[0],
-        comprador_uid: usuario.uid,
-        fecha: details.update_time,
-      });
-      addVenta(venta, creador.uid);
+      async function guardarCompra(details) {
+        let compra = [];
+        await getCompra(usuario.uid).then((res) => {
+          compra = res;
+        });
+        compra.push({
+          proyecto: proyecto,
+          entregado: false,
+          comprador: details.purchase_units[0],
+          comprador_uid: usuario.uid,
+          fecha: details.update_time,
+        });
+        addCompra(compra, usuario.uid);
+      }
+
+      const success = () => {
+        message.success("¡Compra realizada con éxito!");
+        setVendido(true);
+      };
+
+      return (
+        <div>
+          <PayPalButton
+            options={{
+              clientId:
+                "AS3T_m64SF8mvaVEGqam0_SQsfpO7c_SpAa6NufjUcVr05Nyb3G9SpVTY6DePN8JUGrNIBqG0laFOJ8Q",
+              currency: "USD",
+            }}
+            amount={proyecto.datos.precio}
+            payee={{
+              email_address: creador.email,
+            }}
+            onSuccess={(details, data) => {
+              guardarVenta(details);
+              guardarCompra(details);
+              success();
+              console.log({ details, data });
+            }}
+          />
+        </div>
+      );
     }
-
-    async function guardarCompra(details) {
-      let compra = [];
-      await getCompra(usuario.uid).then((res) => {
-        compra = res;
-      });
-      compra.push({
-        proyecto: proyecto,
-        entregado: false,
-        comprador: details.purchase_units[0],
-        comprador_uid: usuario.uid,
-        fecha: details.update_time,
-      });
-      addCompra(compra, usuario.uid);
-    }
-
-    const success = () => {
-      message.success("¡Compra realizada con éxito!");
-      setVendido(true);
-    };
 
     return (
       <div>
-        <PayPalButton
-          options={{
-            clientId:
-              "AS3T_m64SF8mvaVEGqam0_SQsfpO7c_SpAa6NufjUcVr05Nyb3G9SpVTY6DePN8JUGrNIBqG0laFOJ8Q",
-            currency: "USD",
-          }}
-          amount={proyecto.datos.precio}
-          payee={{
-            email_address: creador.email,
-          }}
-          onSuccess={(details, data) => {
-            guardarVenta(details);
-            guardarCompra(details);
-            success();
-            console.log({ details, data });
-          }}
-        />
+        {proyecto.datos.precio < 1 ? (
+          <span></span>
+        ) : (
+          <div>
+            {/* Precio */}
+            <h3 className="mt-2">
+              <b>Precio:</b>{" "}
+              <span className="badge badge-dark">
+                ${proyecto.datos.precio} USD
+              </span>
+            </h3>
+            {/* Comprar */}
+            {vendido ? (
+              <span className="btn btn-success btn-lg btn-block" disabled>
+                Vendido
+                <i
+                  className="bi bi-check2-circle ml-2"
+                  style={{ fontSize: "large" }}
+                ></i>
+              </span>
+            ) : (
+              <Pagar
+                proyecto={proyecto}
+                creador={creador}
+                setVendido={vendido}
+              ></Pagar>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  function Proyecto() {
+    function onclickLike() {
+      if (like) {
+        restarLikes(id, proyecto.datos.likes);
+        setLike(false);
+        obtenerProyecto();
+        getLikes(usuario.uid).then((res) => {
+          let likes = res;
+          for (let index = 0; index < likes.length; index++) {
+            if (likes[index].id === id) {
+              likes.splice(index, 1);
+              addLikes(likes, usuario.uid);
+            }
+          }
+        });
+      } else {
+        actualizarLikes(id, proyecto.datos.likes);
+        setLike(true);
+        obtenerProyecto();
+        getLikes(usuario.uid).then((res) => {
+          let likes = res;
+          let project = proyecto;
+          project.datos.likes = project.datos.likes + 1;
+          likes.push(project);
+          addLikes(likes, usuario.uid);
+        });
+      }
+    }
+
+    function onclickFavs() {
+      if (fav) {
+        restarFavs(id, proyecto.datos.favs);
+        setFav(false);
+        obtenerProyecto();
+        getFavorites(usuario.uid).then((res) => {
+          let favs = res;
+          for (let index = 0; index < favs.length; index++) {
+            if (favs[index].id === id) {
+              favs.splice(index, 1);
+              addFavorites(favs, usuario.uid);
+            }
+          }
+        });
+      } else {
+        actualizarFavs(id, proyecto.datos.favs);
+        setFav(true);
+        obtenerProyecto();
+        getFavorites(usuario.uid).then((res) => {
+          let favs = res;
+          let project = proyecto;
+          project.datos.favs = project.datos.favs + 1;
+          favs.push(project);
+          addFavorites(favs, usuario.uid);
+        });
+      }
+    }
+
+    function LikeFav() {
+      return (
+        <span className="float-right">
+          {like ? (
+            <i className="bi bi-hand-thumbs-up-fill mr-3" onClick={onclickLike}>
+              {proyecto.datos.likes}
+            </i>
+          ) : (
+            <i className="bi bi-hand-thumbs-up mr-3" onClick={onclickLike}>
+              {proyecto.datos.likes}
+            </i>
+          )}
+          {fav ? (
+            <i className="bi bi-heart-fill" onClick={onclickFavs}>
+              {proyecto.datos.favs}
+            </i>
+          ) : (
+            <i className="bi bi-heart" onClick={onclickFavs}>
+              {proyecto.datos.favs}
+            </i>
+          )}
+        </span>
+      );
+    }
+
+    return (
+      <div>
+        <div className="d-flex justify-content-center">
+          <img className="img-fluid mb-1" src={proyecto.datos.img_url} alt="" />
+        </div>
+        <h4>
+          <b>Descripción</b>
+          <LikeFav />
+        </h4>
+        <h6 className="mb-4">
+          {proyecto.datos.descripcion} <br />
+          <span className="float-right">
+            <h6>
+              Categoría: <b>{obtenerCategoria(proyecto.datos.categoria)}</b>
+            </h6>
+          </span>
+        </h6>
       </div>
     );
   }
@@ -207,7 +335,6 @@ function Proyecto() {
     <div className="projectid">
       <Navbar></Navbar>
       <div className="project container-fluid my-3">
-        {/* Titulo */}
         <div className="row">
           <div className="col-lg-12 text-center">
             <h1 style={{ fontWeight: "800" }}>{proyecto.datos.titulo}</h1>
@@ -215,120 +342,15 @@ function Proyecto() {
         </div>
         <div className="row" style={{ marginTop: "-1%" }}>
           <div className="col-lg-3 col-md-4">
-            {/* Usuario */}
-            <div
-              className="card card-user p-3"
-              style={{ cursor: "pointer" }}
-              onClick={(e) => {
-                verUsuario(creador.uid);
-              }}
-            >
-              <div className="row text-center d-flex justify-content-center">
-                <div className="col-lg-12">
-                  <Avatar
-                    size={115}
-                    src={creador.img_url}
-                    alt=""
-                    className="img-fluid img-creador"
-                  />
-                  <h4 style={{ color: "white" }} className="mt-4">
-                    {creador.nombre}
-                  </h4>
-                  <h6 style={{ color: "white" }}>{creador.email}</h6>
-                  <p className="">{creador.fecha}</p>
-                </div>
-              </div>
-            </div>
-            {/* Tags */}
+            <Usuario />
             <div className="mt-1 pl-2 mb-4">
-              {proyecto.datos.tags.map((tag, index) => (
-                <Chip
-                  variant="outlined"
-                  label={tag}
-                  size="medium"
-                  key={index}
-                  className="mt-2 "
-                />
-              ))}
-              {proyecto.datos.precio < 1 ? (
-                <span></span>
-              ) : (
-                <div>
-                  {/* Precio */}
-                  <h3 className="mt-2">
-                    <b>Precio:</b>{" "}
-                    <span className="badge badge-dark">
-                      ${proyecto.datos.precio} USD
-                    </span>
-                  </h3>
-                  {/* Comprar */}
-                  {vendido ? (
-                    <span className="btn btn-success btn-lg btn-block" disabled>
-                      Vendido
-                      <i
-                        className="bi bi-check2-circle ml-2"
-                        style={{ fontSize: "large" }}
-                      ></i>
-                    </span>
-                  ) : (
-                    <Pagar
-                      proyecto={proyecto}
-                      creador={creador}
-                      setVendido={vendido}
-                    ></Pagar>
-                  )}
-                </div>
-              )}
+              <Tags />
+              <Compra />
             </div>
           </div>
-          {/* Proyecto */}
           <div className="col-lg-6 col-md-8">
-            <div className="d-flex justify-content-center">
-              <img
-                className="img-fluid mb-1"
-                src={proyecto.datos.img_url}
-                alt=""
-              />
-            </div>
-            <h4>
-              <b>Descripción</b>
-              <span className="float-right">
-                {like ? (
-                  <i
-                    className="bi bi-hand-thumbs-up-fill mr-3"
-                    onClick={onclickLike}
-                  >
-                    {proyecto.datos.likes}
-                  </i>
-                ) : (
-                  <i
-                    className="bi bi-hand-thumbs-up mr-3"
-                    onClick={onclickLike}
-                  >
-                    {proyecto.datos.likes}
-                  </i>
-                )}
-                {fav ? (
-                  <i className="bi bi-heart-fill" onClick={onclickFavs}>
-                    {proyecto.datos.favs}
-                  </i>
-                ) : (
-                  <i className="bi bi-heart" onClick={onclickFavs}>
-                    {proyecto.datos.favs}
-                  </i>
-                )}
-              </span>
-            </h4>
-            <h6 className="mb-4">
-              {proyecto.datos.descripcion} <br />
-              <span className="float-right">
-                <h6>
-                  Categoría: <b>{obtenerCategoria(proyecto.datos.categoria)}</b>
-                </h6>
-              </span>
-            </h6>
+            <Proyecto />
           </div>
-          {/* Comentarios */}
           <div className="col-lg-3 col-md-6">
             <Comentario id={id} proyecto={proyecto}></Comentario>
           </div>

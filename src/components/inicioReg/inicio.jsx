@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import {
   obtenerProyectos,
   obtenerProyectosXCategoria,
+  obtenerTags,
+  obtenerTitulos,
 } from "../../firebaseConfig";
 import { Button } from "antd";
 import {
@@ -16,6 +18,8 @@ import {
   Typography,
   Box,
   ButtonBase,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import banner from "../../img/banners/6.png";
@@ -30,11 +34,30 @@ function Inicio() {
   const [Categoria, setCategoria] = useState(0);
   const [search, setSearch] = useState("");
   const myContainer = useRef(null);
+  const [opciones, setOpciones] = useState([]);
   let c = 0;
 
   useEffect(() => {
     Proyectos(0);
+    obtenerTags().then((result) => {
+      obtenerTitulos().then((res) => {
+        removeDuplicates(res.concat(result));
+      });
+    });
   }, []);
+
+  function removeDuplicates(inArray){
+    var arr = inArray.concat() 
+    for(var i=0; i<arr.length; ++i) { 
+        for(var j=i+1; j<arr.length; ++j) { 
+            if(arr[i] === arr[j]) {
+                arr.splice(j, 1); 
+            }
+        }
+    }
+    setOpciones(arr);
+    return arr;
+}
 
   function Proyectos(index) {
     if (index === 0) {
@@ -81,10 +104,6 @@ function Inicio() {
       },
     ];
     const [busqueda, setBusqueda] = useState("");
-
-    function Cambiar(event) {
-      setBusqueda(event.target.value);
-    }
 
     const Buscar = () => {
       setSearch(busqueda);
@@ -136,27 +155,28 @@ function Inicio() {
           })}
         </div>
         <div className="input-group search-input">
-          <input
-            type="text"
-            className="form-control "
-            placeholder="Buscar..."
-            value={busqueda}
-            onChange={(e) => {
-              Cambiar(e);
+          <Autocomplete
+            sx={{ width: 215 }}
+            className="mb-3"
+            id="size-small-standard"
+            size="small"
+            options={opciones}
+            getOptionLabel={(option) => option}
+            onChange={(event, newValue) => {
+              setSearch(newValue);
             }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Buscar..."
+                placeholder="Buscar por título o tag..."
+                className="busqueda"
+              />
+            )}
           />
-          <div className="input-group-append">
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              id="button-addon2"
-              onClick={() => {
-                Buscar();
-              }}
-            >
-              <i className="bi bi-search" style={{ fontSize: "medium" }}></i>
-            </button>
-          </div>
+          <Button type="primary" onClick={Buscar} size="large">
+            <img alt="" src="https://img.icons8.com/ios-glyphs/30/ffffff/broom.png"/>
+          </Button>
         </div>
       </div>
     );
@@ -379,7 +399,7 @@ function Inicio() {
       <Navbar></Navbar>
       <CarouselBanner></CarouselBanner>
       {/* <div className="container-fluid px-3 mt-2 py-1">
-          <ButtonBases></ButtonBases>
+        <ButtonBases></ButtonBases>
       </div> */}
       <div className="container-fluid px-5 my-3">
         <div className="row">
@@ -401,20 +421,20 @@ function Inicio() {
                 {proyectos.map((proyecto, index) => {
                   if (search === "")
                     return (
-                        <ImageListItem className="proyecto" key={index}>
-                          {/* <div className="card"> */}
-                            <img
-                              loading="lazy"
-                              src={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
-                              srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                              alt=""
-                              className="img-fluid inicio-foto my-1"
-                              style={{ maxHeight: "450px" }}
-                            />
-                            {/* <div class="texto-encima">{proyecto.datos.titulo}</div>
+                      <ImageListItem className="proyecto" key={index}>
+                        {/* <div className="card"> */}
+                        <img
+                          loading="lazy"
+                          src={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
+                          srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                          alt=""
+                          className="img-fluid inicio-foto my-1"
+                          style={{ maxHeight: "450px" }}
+                        />
+                        {/* <div class="texto-encima">{proyecto.datos.titulo}</div>
                             <div class="centrado item tres">VER</div>
                           </div> */}
-                          <ImageListItemBar
+                        <ImageListItemBar
                           title={proyecto.datos.titulo}
                           className="mb-1"
                           style={{ borderRadius: "8px" }}
@@ -429,7 +449,7 @@ function Inicio() {
                             </Link>
                           }
                         />
-                        </ImageListItem>
+                      </ImageListItem>
                     );
                   else if (
                     proyecto.datos.titulo.toUpperCase() ===
@@ -445,7 +465,6 @@ function Inicio() {
                           srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
                           alt=""
                           className="img-fluid inicio-foto my-1"
-                          style={{ maxHeight: "250px" }}
                         />
                         <ImageListItemBar
                           title={proyecto.datos.titulo}

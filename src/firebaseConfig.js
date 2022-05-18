@@ -299,6 +299,46 @@ export async function usuariosMasProyectos() {
   return proyectosXUser;
 }
 
+export async function obtenerTags(){
+  let tags = [];
+
+  const projectsRef = collection(db, "tags");
+
+  const q = query(projectsRef);
+
+  const querySnapshot = await getDocs(q);
+  await querySnapshot.forEach((doc) => {
+    tags.push(doc.data().tag);
+  });
+
+  return tags; 
+} 
+
+export async function obtenerTitulos(){
+  let projects = [];
+
+  const projectsRef = collection(db, "projects");
+
+  const q = query(projectsRef);
+
+  const querySnapshot = await getDocs(q);
+  await querySnapshot.forEach((doc) => {
+    projects.push(doc.data().titulo);
+  });
+
+  return projects;
+} 
+
+export function addTags(tag) {
+  try {
+    return setDoc(doc(db, "tags"), {
+      tag,
+    });
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
+
 // =========================================== GESTION DE LISTAS =========================================== //
 
 export async function actualizarLikes(id, likes) {
