@@ -186,6 +186,7 @@ function NewProject() {
               onChange={(e) => setTag(e.target.value)}
               value={tag}
               className="mb-4"
+              autoComplete='off'
             />
             <Fab
               className="ml-4 float-right"
@@ -395,6 +396,7 @@ function NewProject() {
               fullWidth
               onChange={(e) => setTitulo(e.target.value)}
               value={titulo}
+              autoComplete='off'
             />
             <br />
             <br />

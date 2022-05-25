@@ -13,7 +13,6 @@ import { Button } from "antd";
 import {
   ImageListItem,
   ImageListItemBar,
-  IconButton,
   ImageList,
   Typography,
   Box,
@@ -21,15 +20,17 @@ import {
   TextField,
   Autocomplete,
 } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
 import banner from "../../img/banners/6.png";
 import banner2 from "../../img/banners/7.png";
 import banner3 from "../../img/banners/8.png";
 import banner4 from "../../img/banners/9.png";
 import { Carousel } from "react-bootstrap";
 import { styled } from "@mui/material/styles";
+import { useUsuario } from "../../context/UserContext";
 
 function Inicio() {
+  const { obtenerUsers } = useUsuario()
+  const [usuarios, setUsuarios] = useState([]);
   const [proyectos, setProyectos] = useState([]);
   const [Categoria, setCategoria] = useState(0);
   const [search, setSearch] = useState("");
@@ -44,7 +45,14 @@ function Inicio() {
         removeDuplicates(res.concat(result));
       });
     });
-  }, []);
+    obtenerUsers().then(res => {
+      let users = []
+      res.forEach(element => {
+        users.push({nombre: element.Nombre, email: element.Email, uid: element.id})
+      });
+      setUsuarios(users)
+    })
+  }, [obtenerUsers]);
 
   function removeDuplicates(inArray) {
     var arr = inArray.concat();
@@ -397,6 +405,13 @@ function Inicio() {
     );
   }
 
+  function verUser(uid){
+    for (let i = 0; i < usuarios.length; i++) {
+      if (uid === usuarios[i].uid)
+        return usuarios[i].nombre
+    }
+  }
+
   return (
     <div className="inicio">
       <Navbar></Navbar>
@@ -451,6 +466,7 @@ function Inicio() {
                         </div>
                         <ImageListItemBar
                           title={proyecto.datos.titulo}
+                          subtitle={verUser(proyecto.datos.uid_creador)}
                           className="mb-1 bar"
                           style={{ borderRadius: "0 0 8px 8px" }}
                         />
@@ -494,6 +510,7 @@ function Inicio() {
                         </div>
                         <ImageListItemBar
                           title={proyecto.datos.titulo}
+                          subtitle={verUser(proyecto.datos.uid_creador)}
                           className="mb-1 bar"
                           style={{ borderRadius: "0 0 8px 8px" }}
                         />

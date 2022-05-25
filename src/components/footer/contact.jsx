@@ -139,6 +139,7 @@ function Contact() {
                     type="text"
                     name="name"
                     placeholder="Tu nombre"
+                    autoComplete="off"
                     required
                   />{" "}
                   <br />
@@ -148,6 +149,7 @@ function Contact() {
                     className="form-control"
                     name="email"
                     placeholder="Nombre@ejemplo.com"
+                    autoComplete="off"
                     required
                   />
                   <br />
@@ -157,6 +159,7 @@ function Contact() {
                     name="message"
                     rows="5"
                     placeholder="¡Hola!"
+                    autocomplete="nope"
                     required
                   ></textarea>
                 </div>

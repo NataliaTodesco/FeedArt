@@ -7,13 +7,13 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import InfoIcon from "@mui/icons-material/Info";
 import { getCompra } from "../../../firebaseConfig";
 import { useUsuario } from "../../../context/UserContext";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 
 function Compra() {
-  const { usuario } = useUsuario();
+  const { usuario, obtenerUsers } = useUsuario();
+  const [usuarios, setUsuarios] = useState([]);
   const [proyectos, setProyectos] = useState([]);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -32,7 +32,21 @@ function Compra() {
     getCompra(usuario.uid).then((res) => {
       setProyectos(res);
     });
-  }, []);
+    obtenerUsers().then(res => {
+      let users = []
+      res.forEach(element => {
+        users.push({nombre: element.Nombre, email: element.Email, uid: element.id})
+      });
+      setUsuarios(users)
+    })
+  }, [obtenerUsers, usuario.uid]);
+
+  function verUser(uid){
+    for (let i = 0; i < usuarios.length; i++) {
+      if (uid === usuarios[i].uid)
+        return usuarios[i].nombre
+    }
+  }
 
   return (
     <div className="venta">
@@ -159,6 +173,7 @@ function Compra() {
                 </div>
                 <ImageListItemBar
                   title={proyecto.proyecto.datos.titulo}
+                  subtitle={verUser(proyecto.proyecto.datos.uid_creador)}
                   className="mb-1 bar text-left"
                   style={{ borderRadius: "0 0 8px 8px" }}
                 />

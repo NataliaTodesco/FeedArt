@@ -139,6 +139,7 @@ function UsuarioUID() {
                   </div>
                   <ImageListItemBar
                     title={item.title}
+                    subtitle={creador.nombre}
                     className="mb-1 bar"
                     style={{ borderRadius: "0 0 8px 8px" }}
                   />

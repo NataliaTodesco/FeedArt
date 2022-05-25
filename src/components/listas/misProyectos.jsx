@@ -135,6 +135,7 @@ function MisProyectos() {
                 </div>
                 <ImageListItemBar
                   title={proyecto.datos.titulo}
+                  subtitle={usuario.displayName}
                   className="mb-1 bar"
                   style={{ borderRadius: "0 0 8px 8px" }}
                 />

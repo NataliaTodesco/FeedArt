@@ -182,6 +182,7 @@ function EditProject() {
               onChange={(e) => setTag(e.target.value)}
               value={tag}
               className="mb-4"
+              autoComplete='off'
             />
             <Fab
               className="ml-4 float-right"
@@ -367,6 +368,7 @@ function EditProject() {
               fullWidth
               onChange={(e) => setTitulo(e.target.value)}
               value={titulo}
+              autoComplete='off'
             />
             <br />
             <br />
@@ -430,23 +432,6 @@ function EditProject() {
                   <br />
                   <br />
                 </div>
-                {/* <div className="col-lg-6">
-                <TextField
-                  id="standard-select-currency"
-                  select
-                  label="Moneda"
-                  value={divisa}
-                  onChange={handleChangeDivisa}
-                  variant="standard"
-                  autoComplete="off"
-                >
-                  {divisas.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.text}
-                    </MenuItem>
-                  ))}
-                </TextField>{" "}
-              </div> */}
                 <p className="text-danger mt-2">
                   **El pago se realizará a través de PayPal asociado a su correo
                   electrónico.
