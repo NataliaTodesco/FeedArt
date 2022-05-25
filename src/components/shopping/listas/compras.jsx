@@ -40,34 +40,44 @@ function Compra() {
         {proyectos.map((proyecto, index) => {
           return (
             <div key={index} className="text-center">
-              <ImageListItem key={index}>
-                <img
-                  src={proyecto.proyecto.datos.img_url}
-                  alt=""
-                  className="img-fluid inicio-foto my-1"
-                />
-                <ImageListItemBar
-                  title={proyecto.proyecto.datos.titulo}
-                  className="mb-1 text-left"
-                  style={{ borderRadius: "8px" }}
-                  actionIcon={
-                    <div>
-                      <Link to={"/project/" + proyecto.proyecto.id}>
-                        <IconButton
-                          sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                          aria-label={`info sobre ${proyecto.proyecto.titulo}`}
+              <ImageListItem className="proyecto" key={index}>
+                <div className="portfolio-item portfolio-item--eff1">
+                  <img
+                    loading="lazy"
+                    src={`${proyecto.proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
+                    srcSet={`${proyecto.proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                    alt=""
+                    className="img-fluid inicio-foto my-1"
+                  />
+                  <div className="portfolio-item__info">
+                    <h3
+                      style={{ fontWeight: "400" }}
+                      className="portfolio-item__header"
+                    >
+                      {proyecto.proyecto.datos.titulo}
+                    </h3>
+                    <div className="portfolio-item__links">
+                      <div className="portfolio-item__link-block">
+                        <Link to={"/project/" + proyecto.proyecto.id}>
+                          <a
+                            className="portfolio-item__link"
+                            href="/"
+                            title="Ver Proyecto"
+                          >
+                            <i className="material-icons">link</i>
+                          </a>
+                        </Link>
+                      </div>
+                      <div className="portfolio-item__link-block">
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={handleClick}
+                          title="Información de la Venta"
+                          className="portfolio-item__link"
                         >
-                          <InfoIcon style={{ color: "white" }} />
-                        </IconButton>
-                      </Link>
-                      <IconButton
-                        aria-describedby={id}
-                        onClick={handleClick}
-                        sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                        aria-label={`info sobre ${proyecto.proyecto.titulo}`}
-                      >
-                        <LocalShippingIcon style={{ color: "white" }} />
-                      </IconButton>
+                          <LocalShippingIcon className="material-icons"></LocalShippingIcon>
+                        </div>
+                      </div>
                       <Popover
                         id={id}
                         open={open}
@@ -145,7 +155,12 @@ function Compra() {
                         </Typography>
                       </Popover>
                     </div>
-                  }
+                  </div>
+                </div>
+                <ImageListItemBar
+                  title={proyecto.proyecto.datos.titulo}
+                  className="mb-1 bar text-left"
+                  style={{ borderRadius: "0 0 8px 8px" }}
                 />
               </ImageListItem>
             </div>

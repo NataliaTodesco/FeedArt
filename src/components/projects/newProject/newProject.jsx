@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Footer from "../../footer/footer";
 import Navbar from "../../Navbar/navbar";
 import "./newProject.css";
@@ -17,6 +17,7 @@ import {
   AlertTitle,
   Checkbox,
   FormControlLabel,
+  Autocomplete,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import newProject from "../../../img/logoVertical.svg";
@@ -26,21 +27,30 @@ import {
   getDownloadURL,
   uploadBytesResumable,
 } from "firebase/storage";
-import { guardarProyecto, storage } from "../../../firebaseConfig";
+import { addTags, guardarProyecto, obtenerTags, storage } from "../../../firebaseConfig";
 import { Link, useNavigate } from "react-router-dom";
 import { useUsuario } from "../../../context/UserContext";
 
 function NewProject() {
+  let navigate = useNavigate();
   const { usuario } = useUsuario();
+
   const [foto, setFoto] = useState(newProject);
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState(0);
-  const [state, setState] = useState();
   const [cargando, setCargando] = useState(false);
+  const [vender, setVender] = useState(false);
+  const [state, setState] = useState();
+  
   const [alert, setAlert] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  
+  const [tagsDB, setTagsDB] = useState([]);
   const [etiquetas, setEtiquetas] = useState([]);
+  const [texto, setTexto] = useState("");
+  
+  const [categoria, setCategoria] = React.useState(1);
   const categorias = [
     {
       value: 1,
@@ -71,36 +81,12 @@ function NewProject() {
       label: "Arte callejero",
     },
   ];
-  const [categoria, setCategoria] = React.useState(1);
-  const [texto, setTexto] = useState("");
-  let navigate = useNavigate();
-  const divisas = [
-    { value: "USD", text: "Dólar estadounidense (USD)" },
-    { value: "AUD", text: "Dólar australiano (AUD)" },
-    { value: "BRL", text: "Real brasileño (BRL)" },
-    { value: "GBP", text: "Libra esterlina (GBP)" },
-    { value: "CAD", text: "Dólar canadiense (CAD)" },
-    { value: "CZK", text: "Corona checa (CZK)" },
-    { value: "DKK", text: "Corona danesa (DKK)" },
-    { value: "EUR", text: "Euro (EUR)" },
-    { value: "HKD", text: "Dólar hongkonés (HKD)" },
-    { value: "HUF", text: "Forinto húngaro (HUF)" },
-    { value: "ILS", text: "Nuevo shéquel israelí (ILS)" },
-    { value: "JPY", text: "Yen japonés (JPY)" },
-    { value: "MXN", text: "Peso mexicano (MXN)" },
-    { value: "TWD", text: "Nuevo dólar taiwanés (TWD)" },
-    { value: "NZD", text: "Dólar neozelandés (NZD)" },
-    { value: "NOK", text: "Corona noruega (NOK)" },
-    { value: "PHP", text: "Peso filipino (PHP)" },
-    { value: "PLN", text: "Esloti polaco (PLN)" },
-    { value: "RUB", text: "Rublo ruso (RUB)" },
-    { value: "SGD", text: "Dólar singapurense (SGD)" },
-    { value: "SEK", text: "Corona sueca (SEK)" },
-    { value: "CHF", text: "Franco suizo (CHF)" },
-    { value: "THB", text: "Baht tailandés (THB)" },
-  ];
-  const [divisa, setDivisa] = useState("USD");
-  const [vender, setVender] = useState(false);
+  
+  useEffect(() => {
+    obtenerTags().then((res) => {
+      setTagsDB(res);
+    });
+  }, []);
 
   function Tags() {
     const [open, setOpen] = React.useState(false);
@@ -150,6 +136,9 @@ function NewProject() {
       setValue(Tags);
     }
 
+    const fixedOptions = [];
+    const [values, setValues] = useState([...fixedOptions]);
+
     return (
       <div>
         <TextField
@@ -165,12 +154,38 @@ function NewProject() {
         <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
           <DialogTitle>Agregar Tags</DialogTitle>
           <DialogContent>
+            <Autocomplete
+              multiple
+              id="fixed-tags-demo"
+              value={values}
+              onChange={(event, newValue) => {
+                setValues(newValue.filter(option => option.index === -1))
+                setTags([...tags, newValue[0]]); 
+                if (value === "") {
+                  setValue(newValue[0]);
+                } else {
+                  setValue(value + ", " + newValue[0]);
+                }
+              }}
+              options={tagsDB}
+              getOptionLabel={(option) => option}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Buscar tag"
+                  variant="standard"
+                  placeholder="Tag..."
+                  className="mb-4"
+                />
+              )}
+            />
             <TextField
               id="standard-basic"
-              label="Tag"
+              label="Agregar nuevo tag"
               variant="standard"
               onChange={(e) => setTag(e.target.value)}
               value={tag}
+              className="mb-4"
             />
             <Fab
               className="ml-4 float-right"
@@ -232,10 +247,6 @@ function NewProject() {
     setCategoria(event.target.value);
   };
 
-  const handleChangeDivisa = (event) => {
-    setDivisa(event.target.value);
-  };
-
   function onUpload(event) {
     setCargando(true);
     const file = event.target.files[0];
@@ -272,7 +283,7 @@ function NewProject() {
         if (descripcion !== "") {
           if (precio !== "") {
             setShowAlert(false);
-            if (vender){
+            if (vender) {
               guardarProyecto(
                 titulo,
                 descripcion,
@@ -281,7 +292,7 @@ function NewProject() {
                 etiquetas,
                 precio,
                 usuario,
-                divisa
+                "USD"
               ).then((res) => {
                 if (res === "") {
                   navigate("/home");
@@ -290,8 +301,7 @@ function NewProject() {
                   setAlert(res);
                 }
               });
-            }
-            else{
+            } else {
               guardarProyecto(
                 titulo,
                 descripcion,
@@ -300,7 +310,7 @@ function NewProject() {
                 etiquetas,
                 0,
                 usuario,
-                divisa
+                "USD"
               ).then((res) => {
                 if (res === "") {
                   navigate("/home");
@@ -310,12 +320,19 @@ function NewProject() {
                 }
               });
             }
-          } else {
-            if (vender){
-              setAlert('Complete el campo "Precio" o quite su selección en "Vender"');
-              setShowAlert(true);
+
+            for (let index = 0; index < etiquetas.length; index++) {
+              if (!tagsDB.includes(etiquetas[index])){
+                addTags(etiquetas[index])
+              }
             }
-            else{
+          } else {
+            if (vender) {
+              setAlert(
+                'Complete el campo "Precio" o quite su selección en "Vender"'
+              );
+              setShowAlert(true);
+            } else {
               setShowAlert(false);
               guardarProyecto(
                 titulo,
@@ -325,7 +342,7 @@ function NewProject() {
                 etiquetas,
                 0,
                 usuario,
-                divisa
+                "USD"
               ).then((res) => {
                 if (res === "") {
                   navigate("/home");
@@ -334,6 +351,12 @@ function NewProject() {
                   setAlert(res);
                 }
               });
+
+              for (let index = 0; index < etiquetas.length; index++) {
+                if (!tagsDB.includes(etiquetas[index])){
+                  addTags(etiquetas[index])
+                }
+              }
             }
           }
         } else {
@@ -356,7 +379,11 @@ function NewProject() {
       <div className="container my-3">
         <div className="row">
           <div className="col-lg-12 text-center">
-            <h1 style={{ fontWeight: "800" }}> <span className="shine">✧・°・</span> NUEVO PROYECTO  <span className="shine">・°・✦</span></h1>
+            <h1 style={{ fontWeight: "800" }}>
+              {" "}
+              <span className="shine">✧・°・</span> NUEVO PROYECTO{" "}
+              <span className="shine">・°・✦</span>
+            </h1>
           </div>
         </div>
         <div className="row" style={{ marginTop: "-1%" }}>
@@ -432,23 +459,6 @@ function NewProject() {
                   <br />
                   <br />
                 </div>
-                {/* <div className="col-lg-6">
-                <TextField
-                  id="standard-select-currency"
-                  select
-                  label="Moneda"
-                  value={divisa}
-                  onChange={handleChangeDivisa}
-                  variant="standard"
-                  autoComplete="off"
-                >
-                  {divisas.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.text}
-                    </MenuItem>
-                  ))}
-                </TextField>{" "}
-              </div> */}
                 <p className="text-danger mt-2">
                   **El pago se realizará a través de PayPal asociado a su correo
                   electrónico.

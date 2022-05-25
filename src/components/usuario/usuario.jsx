@@ -1,7 +1,7 @@
 import { Avatar, Button, Modal, Progress, Alert } from "antd";
 import React, { useState, useEffect } from "react";
-import { useUsuario } from '../../context/UserContext'
-import { storage } from "../../firebaseConfig";
+import { useUsuario } from "../../context/UserContext";
+import { proyectosxUID, storage } from "../../firebaseConfig";
 import Footer from "../footer/footer";
 import Navbar from "../Navbar/navbar";
 import "./usuario.css";
@@ -17,18 +17,23 @@ import {
   getDownloadURL,
   uploadBytesResumable,
 } from "firebase/storage";
+import selfie from "../../img/news.svg";
 
 function Usuario() {
-  const { borrarUser, actualizarPerfil, usuario } = useUsuario()
+  const { borrarUser, actualizarPerfil, usuario } = useUsuario();
   const navigate = useNavigate();
   const [nombre, setNombre] = useState("");
   const [url, setUrl] = useState("");
   const [editar, setEditar] = useState(false);
   const [state, setState] = useState(0);
+  const [cant, setCant] = useState(0);
 
   useEffect(() => {
     setNombre(usuario.displayName);
     setUrl(usuario.photoURL);
+    proyectosxUID(usuario.uid).then((res) => {
+      setCant(res.length);
+    });
   }, [usuario]);
 
   function eliminar() {
@@ -123,12 +128,18 @@ function Usuario() {
       <div className="container">
         <div className="row">
           <div className="col-lg-12 text-center mt-3">
-            <h1 style={{ fontWeight: "800" }}><span className="shine">✧・°・</span> MI CUENTA  <span className="shine">・°・✦</span></h1>
+            <h1 style={{ fontWeight: "800" }}>
+              <span className="shine">✧・°・</span> MI CUENTA{" "}
+              <span className="shine">・°・✦</span>
+            </h1>
           </div>
         </div>
-        <div className="row text-center d-flex justify-content-center">
+        <div className="row text-center">
+          <div className="col-lg-3 mt-5">
+            <img src={selfie} alt="" className="img-fluid hombre" />
+          </div>
           <div className="col-lg-6">
-            <div className="card mb-5 mt-3 p-5">
+            <div className="card mb-5 mt-4 p-5">
               <div>
                 {editar ? (
                   <div>
@@ -215,6 +226,31 @@ function Usuario() {
                   />
                 </div>
               )}
+            </div>
+          </div>
+          <div className="col-lg-3">
+            <div
+              class="card text-left mt-4"
+              style={{ backgroundColor: "#003049" }}
+            >
+              <div class="card-body">
+                <h5 style={{ color: "white" }} class="card-title">
+                  Fecha de Creación:
+                </h5>
+                <p class="card-text">
+                  {usuario.fecha.getDate()}/{usuario.fecha.getMonth() + 1}/
+                  {usuario.fecha.getFullYear()}
+                </p>
+              </div>
+            </div>
+            <div
+              class="card text-left mt-4"
+              style={{ backgroundColor: "#ccc5b9", color: "black" }}
+            >
+              <div class="card-body">
+                <h5 class="card-title">Cant. de Proyectos:</h5>
+                <p class="card-text">{cant}</p>
+              </div>
             </div>
           </div>
         </div>

@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import {
   obtenerProyectos,
   obtenerProyectosXCategoria,
+  obtenerTags,
+  obtenerTitulos,
 } from "../../firebaseConfig";
 import { Button } from "antd";
 import {
@@ -16,6 +18,8 @@ import {
   Typography,
   Box,
   ButtonBase,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import banner from "../../img/banners/6.png";
@@ -30,11 +34,30 @@ function Inicio() {
   const [Categoria, setCategoria] = useState(0);
   const [search, setSearch] = useState("");
   const myContainer = useRef(null);
+  const [opciones, setOpciones] = useState([]);
   let c = 0;
 
   useEffect(() => {
     Proyectos(0);
+    obtenerTags().then((result) => {
+      obtenerTitulos().then((res) => {
+        removeDuplicates(res.concat(result));
+      });
+    });
   }, []);
+
+  function removeDuplicates(inArray) {
+    var arr = inArray.concat();
+    for (var i = 0; i < arr.length; ++i) {
+      for (var j = i + 1; j < arr.length; ++j) {
+        if (arr[i] === arr[j]) {
+          arr.splice(j, 1);
+        }
+      }
+    }
+    setOpciones(arr);
+    return arr;
+  }
 
   function Proyectos(index) {
     if (index === 0) {
@@ -81,10 +104,6 @@ function Inicio() {
       },
     ];
     const [busqueda, setBusqueda] = useState("");
-
-    function Cambiar(event) {
-      setBusqueda(event.target.value);
-    }
 
     const Buscar = () => {
       setSearch(busqueda);
@@ -136,27 +155,30 @@ function Inicio() {
           })}
         </div>
         <div className="input-group search-input">
-          <input
-            type="text"
-            className="form-control "
-            placeholder="Buscar..."
-            value={busqueda}
-            onChange={(e) => {
-              Cambiar(e);
+          <Autocomplete
+            className="mb-3 auto"
+            id="size-small-standard"
+            size="small"
+            options={opciones}
+            getOptionLabel={(option) => option}
+            onChange={(event, newValue) => {
+              setSearch(newValue);
             }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Buscar..."
+                placeholder="Buscar por título o tag..."
+                className="busqueda"
+              />
+            )}
           />
-          <div className="input-group-append">
-            <button
-              className="btn btn-outline-secondary"
-              type="button"
-              id="button-addon2"
-              onClick={() => {
-                Buscar();
-              }}
-            >
-              <i className="bi bi-search" style={{ fontSize: "medium" }}></i>
-            </button>
-          </div>
+          <Button type="primary" onClick={Buscar} size="large">
+            <img
+              alt=""
+              src="https://img.icons8.com/ios-glyphs/30/ffffff/broom.png"
+            />
+          </Button>
         </div>
       </div>
     );
@@ -173,7 +195,8 @@ function Inicio() {
   function FuntionResize() {
     if (myContainer.current) {
       var widthBrowser = myContainer.current.offsetWidth;
-      if (widthBrowser < 1024) return 2;
+      if (widthBrowser < 524) return 1;
+      else if (widthBrowser < 1024) return 2;
       else return 4;
     } else return 3;
   }
@@ -378,9 +401,6 @@ function Inicio() {
     <div className="inicio">
       <Navbar></Navbar>
       <CarouselBanner></CarouselBanner>
-      {/* <div className="container-fluid px-3 mt-2 py-1">
-          <ButtonBases></ButtonBases>
-      </div> */}
       <div className="container-fluid px-5 my-3">
         <div className="row">
           <Categorias></Categorias>
@@ -401,35 +421,40 @@ function Inicio() {
                 {proyectos.map((proyecto, index) => {
                   if (search === "")
                     return (
-                        <ImageListItem className="proyecto" key={index}>
-                          {/* <div className="card"> */}
-                            <img
-                              loading="lazy"
-                              src={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
-                              srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                              alt=""
-                              className="img-fluid inicio-foto my-1"
-                              style={{ maxHeight: "450px" }}
-                            />
-                            {/* <div class="texto-encima">{proyecto.datos.titulo}</div>
-                            <div class="centrado item tres">VER</div>
-                          </div> */}
-                          <ImageListItemBar
+                      <ImageListItem className="proyecto" key={index}>
+                        <div className="portfolio-item portfolio-item--eff1">
+                          <img
+                            loading="lazy"
+                            src={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
+                            srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                            alt=""
+                            className="img-fluid inicio-foto my-1"
+                          />
+                          <div className="portfolio-item__info">
+                            <h3 className="portfolio-item__header">
+                              {proyecto.datos.titulo}
+                            </h3>
+                            <div className="portfolio-item__links">
+                              <div className="portfolio-item__link-block">
+                              <Link className="portfolio-item__link" to={"/project/" + proyecto.id}>
+                                <a
+                                  className="portfolio-item__link"
+                                  href="/"
+                                  title="Ver Proyecto"
+                                >
+                                  <i className="material-icons">link</i>
+                                </a>
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <ImageListItemBar
                           title={proyecto.datos.titulo}
-                          className="mb-1"
-                          style={{ borderRadius: "8px" }}
-                          actionIcon={
-                            <Link to={"/project/" + proyecto.id}>
-                              <IconButton
-                                sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                                aria-label={`info sobre ${proyecto.title}`}
-                              >
-                                <InfoIcon style={{ color: "white" }} />
-                              </IconButton>
-                            </Link>
-                          }
+                          className="mb-1 bar"
+                          style={{ borderRadius: "0 0 8px 8px" }}
                         />
-                        </ImageListItem>
+                      </ImageListItem>
                     );
                   else if (
                     proyecto.datos.titulo.toUpperCase() ===
@@ -440,27 +465,37 @@ function Inicio() {
                   )
                     return (
                       <ImageListItem className="proyecto" key={index}>
-                        <img
-                          src={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
-                          srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                          alt=""
-                          className="img-fluid inicio-foto my-1"
-                          style={{ maxHeight: "250px" }}
-                        />
+                        <div className="portfolio-item portfolio-item--eff1">
+                          <img
+                            loading="lazy"
+                            src={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
+                            srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                            alt=""
+                            className="img-fluid inicio-foto my-1"
+                          />
+                          <div className="portfolio-item__info">
+                            <h3 className="portfolio-item__header">
+                              {proyecto.datos.titulo}
+                            </h3>
+                            <div className="portfolio-item__links">
+                              <div className="portfolio-item__link-block">
+                              <Link to={"/project/" + proyecto.id}>
+                                <a
+                                  className="portfolio-item__link"
+                                  href="/"
+                                  title="Ver Proyecto"
+                                >
+                                  <i className="material-icons">link</i>
+                                </a>
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         <ImageListItemBar
                           title={proyecto.datos.titulo}
-                          className="mb-1"
-                          style={{ borderRadius: "8px" }}
-                          actionIcon={
-                            <Link to={"/project/" + proyecto.id}>
-                              <IconButton
-                                sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                                aria-label={`info sobre ${proyecto.title}`}
-                              >
-                                <InfoIcon style={{ color: "white" }} />
-                              </IconButton>
-                            </Link>
-                          }
+                          className="mb-1 bar"
+                          style={{ borderRadius: "0 0 8px 8px" }}
                         />
                       </ImageListItem>
                     );
@@ -476,7 +511,7 @@ function Inicio() {
                               style={{ heigth: "100%" }}
                             >
                               No se encontró ningún proyecto que coincida con la
-                              búsqueda
+                              búsqueda en esta categoría
                             </div>
                           </div>
                         </div>

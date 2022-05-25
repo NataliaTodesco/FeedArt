@@ -17,23 +17,32 @@ import {
   AlertTitle,
   FormControlLabel,
   Checkbox,
+  Autocomplete,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import newProject from "../../../img/logoVertical.svg";
 import { ref, uploadBytes, getDownloadURL, uploadBytesResumable,} from "firebase/storage";
-import { actualizarProyecto, consultarProyecto, storage } from "../../../firebaseConfig";
+import { actualizarProyecto, addTags, consultarProyecto, obtenerTags, storage } from "../../../firebaseConfig";
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 function EditProject() {
+  let navigate = useNavigate();
+  let {id} = useParams();
+
   const [foto, setFoto] = useState(newProject);
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [precio, setPrecio] = useState(0);
+  const [vender, setVender] = useState(false);
+  const [texto, setTexto] = useState("");
+  
   const [state, setState] = useState();
   const [cargando, setCargando] = useState(false);
+
   const [alert, setAlert] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  const [etiquetas, setEtiquetas] = useState([]);
+  
+  const [categoria, setCategoria] = React.useState(1);
   const categorias = [
     {
       value: 1,
@@ -64,11 +73,15 @@ function EditProject() {
       label: "Arte callejero",
     },
   ];
-  const [categoria, setCategoria] = React.useState(1);
-  const [texto, setTexto] = useState("");
-  let navigate = useNavigate();
-  let {id} = useParams();
-  const [vender, setVender] = useState(false);
+  
+  const [tagsDB, setTagsDB] = useState([]);
+  const [etiquetas, setEtiquetas] = useState([]);
+
+  useEffect(() => {
+    obtenerTags().then((res) => {
+      setTagsDB(res);
+    });
+  }, []);
   
   function Tags() {
     const [open, setOpen] = React.useState(false);
@@ -119,6 +132,9 @@ function EditProject() {
       setValue(Tags)
     }
 
+    const fixedOptions = [];
+    const [values, setValues] = useState([...fixedOptions]);
+
     return (
       <div>
         <TextField
@@ -134,12 +150,38 @@ function EditProject() {
         <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
           <DialogTitle>Agregar Tags</DialogTitle>
           <DialogContent>
+          <Autocomplete
+              multiple
+              id="fixed-tags-demo"
+              value={values}
+              onChange={(event, newValue) => {
+                setValues(newValue.filter(option => option.index === -1))
+                setTags([...tags, newValue[0]]); 
+                if (value === "") {
+                  setValue(newValue[0]);
+                } else {
+                  setValue(value + ", " + newValue[0]);
+                }
+              }}
+              options={tagsDB}
+              getOptionLabel={(option) => option}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Buscar tag"
+                  variant="standard"
+                  placeholder="Tag..."
+                  className="mb-4"
+                />
+              )}
+            />
             <TextField
               id="standard-basic"
-              label="Tag"
+              label="Agregar nuevo tag"
               variant="standard"
               onChange={(e) => setTag(e.target.value)}
               value={tag}
+              className="mb-4"
             />
             <Fab
               className="ml-4 float-right"
@@ -228,6 +270,7 @@ function EditProject() {
         if (descripcion !== "") {
           if (precio !== "") {
             setShowAlert(false);
+            if (vender) {
             actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,precio, 'USD').then(res =>{
               if (res === ""){
                 navigate('/project/'+id)
@@ -238,8 +281,40 @@ function EditProject() {
               }
             })
           } else {
-            setAlert('Complete el campo "Precio"');
-            setShowAlert(true);
+            actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,0, 'USD').then(res =>{
+              if (res === ""){
+                navigate('/project/'+id)
+              }
+              else {
+                setShowAlert(true)
+                setAlert(res)
+              }
+            })
+          }
+          } else {
+            if (vender) {
+              setAlert(
+                'Complete el campo "Precio" o quite su selección en "Vender"'
+              );
+              setShowAlert(true);
+            } else {
+              setShowAlert(false);
+              actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,0, 'USD').then(res =>{
+                if (res === ""){
+                  navigate('/project/'+id)
+                }
+                else {
+                  setShowAlert(true)
+                  setAlert(res)
+                }
+              })
+
+              for (let index = 0; index < etiquetas.length; index++) {
+                if (!tagsDB.includes(etiquetas[index])){
+                  addTags(etiquetas[index])
+                }
+              }
+            }
           }
         } else {
           setAlert('Complete el campo "Descripción"');

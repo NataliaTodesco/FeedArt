@@ -36,7 +36,21 @@
 }
 
 .search-input {
-    margin-left: 15%;
+    margin-left: 13.5%;
+}
+
+.busqueda{
+    background: linear-gradient(to top, rgb(206, 217, 224), #fff);
+}
+
+.busqueda:focus {
+    text-decoration: none;
+    border: 1px solid var(--celeste);
+    box-shadow: none;
+}
+
+.auto{
+    width: 215px;
 }
 
 /* .inicio .proyecto .card {
@@ -89,5 +103,11 @@
     .banner {
         height: 0;
         width: 0;
+    }
+    .search-input {
+        margin-left: 0%;
+    }
+    .auto{
+        width: 185px;
     }
 }

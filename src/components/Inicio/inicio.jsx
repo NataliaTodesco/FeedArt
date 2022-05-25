@@ -12,7 +12,7 @@ function Inicio() {
         <div className="row mb-2">
           <div className="col-lg-6 pl-4">
             <h1 className="head">
-              Feed<span className="art">Art</span>
+              <span className='one'>Feed</span><span className='two'>Art</span>
             </h1>
             <p className="texto margin">
               FeedArt es una página web para que estudiantes de artes visuales y

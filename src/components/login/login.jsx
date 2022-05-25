@@ -123,7 +123,6 @@ function Login() {
           setAlerta2(res);
         }
       });
-      setShowAlert2(true);
     } else {
       setAlerta2("Complete todos los campos");
       setShowAlert2(true);

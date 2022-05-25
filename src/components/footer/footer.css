@@ -63,6 +63,18 @@
     box-shadow: none;
 }
 
+.tc p{
+    font-size: 15.5px;
+}
+
+.tc .clip{
+    background-color: goldenrod;
+    padding: 2.5%;
+    width: 25%;
+    margin-top: -5%;
+    margin-bottom: 15px;
+    margin-left: 37.5%;
+}
 
 @media (max-width: 530px) {
     .footer .txt {
@@ -76,5 +88,14 @@
 
     .terminos {
         font-size: 14px;
+    }
+    .tc p{
+        font-size: 14px;
+    }
+    .tc h2{
+        font-size: 28px;
+    }
+    .tc h3{
+        font-size: 24px;
     }
 }

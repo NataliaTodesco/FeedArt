@@ -5,7 +5,7 @@ import { addFavorites, getFavorites, restarFavs } from "../../firebaseConfig";
 import { IconButton, ImageListItem, ImageListItemBar } from "@mui/material";
 import { Link } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useUsuario } from "../../context/UserContext";
 
 function Favoritos() {
@@ -22,8 +22,8 @@ function Favoritos() {
       cancelText: "Cancelar",
       onOk() {
         let array = proyectos;
-        restarFavs(proyectos[index].id,proyectos[index].datos.favs);
-        array.splice(index, 1)
+        restarFavs(proyectos[index].id, proyectos[index].datos.favs);
+        array.splice(index, 1);
         addFavorites(array, usuario.uid);
         getFavorites(usuario.uid).then((res) => {
           setProyectos(res);
@@ -43,39 +43,53 @@ function Favoritos() {
       <div className="container">
         {proyectos.map((proyecto, index) => {
           return (
-            <div key={index} className='text-center'>
-              <ImageListItem key={index}>
-                <img
-                  src={proyecto.datos.img_url}
-                  alt=""
-                  className="img-fluid inicio-foto my-1"
-                />
+            <div key={index} className="text-center">
+              <ImageListItem className="proyecto" key={index}>
+                <div className="portfolio-item portfolio-item--eff1">
+                  <img
+                    loading="lazy"
+                    src={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
+                    srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                    alt=""
+                    className="img-fluid inicio-foto my-1"
+                  />
+                  <div className="portfolio-item__info">
+                    <h3 style={{fontWeight: '400'}} className="portfolio-item__header">
+                      {proyecto.datos.titulo}
+                    </h3>
+                    <div className="portfolio-item__links">
+                      <div className="portfolio-item__link-block">
+                        <Link to={"/project/" + proyecto.id}>
+                          <a
+                            className="portfolio-item__link"
+                            href="/"
+                            title="Ver Proyecto"
+                          >
+                            <i className="material-icons">link</i>
+                          </a>
+                        </Link>
+                      </div>
+                      <div className="portfolio-item__link-block">
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={(e) => {
+                            eliminar(index);
+                          }}
+                          title="Eliminar de mis Favoritos"
+                          className="portfolio-item__link"
+                        >
+                          <i className="material-icons">delete</i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <ImageListItemBar
                   title={proyecto.datos.titulo}
-                  className="mb-1 text-left"
-                  style={{ borderRadius: "8px" }}
-                  actionIcon={
-                    <div>
-                      <Link to={"/project/" + proyecto.id}>
-                      <IconButton
-                        sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                        aria-label={`info sobre ${proyecto.title}`}
-                      >
-                        <InfoIcon style={{ color: "white" }} />
-                      </IconButton>
-                    </Link>
-                    <IconButton
-                      className="float-right"
-                      onClick={(e) => {
-                        eliminar(index);
-                      }}
-                      sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                        aria-label={`info sobre ${proyecto.title}`}
-                    > <DeleteIcon style={{ color: "white" }} /> </IconButton>
-                    </div>
-                  }
+                  className="mb-1 bar text-left"
+                  style={{ borderRadius: "0 0 8px 8px" }}
                 />
-              </ImageListItem> 
+              </ImageListItem>
             </div>
           );
         })}

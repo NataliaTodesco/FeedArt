@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { obtenerCreador, proyectosxUID } from "../../../firebaseConfig";
 import Footer from "../../footer/footer";
 import Navbar from "../../Navbar/navbar";
@@ -108,29 +108,41 @@ function UsuarioUID() {
                 gap={8}
               >
                 {itemData.map((item) => (
-                  <ImageListItem key={item.img}>
+                  <ImageListItem className="proyecto" key={item.img}>
+                  <div className="portfolio-item portfolio-item--eff1">
                     <img
+                      loading="lazy"
                       src={`${item.img}?w=248&fit=crop&auto=format`}
                       srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=4 2x`}
                       alt={item.title}
-                      loading="lazy"
-                      style={{ maxHeight: "250px", borderRadius: "8px" }}
-                    />
-                    <ImageListItemBar
                       style={{ borderRadius: "8px" }}
-                      title={item.title}
-                      subtitle={item.author}
-                      actionIcon={
-                        <IconButton
-                          sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                          aria-label={`info about ${item.title}`}
-                          onClick={(e) => verProyecto(item.id)}
-                        >
-                          <InfoIcon style={{ color: "white" }} />
-                        </IconButton>
-                      }
+                      className="img-fluid inicio-foto my-1"
                     />
-                  </ImageListItem>
+                    <div className="portfolio-item__info">
+                      <h3 className="portfolio-item__header">
+                        {item.title}
+                      </h3>
+                      <div className="portfolio-item__links">
+                        <div className="portfolio-item__link-block">
+                        <Link to={"/project/" + item.id}>
+                          <a
+                            className="portfolio-item__link"
+                            href="/"
+                            title="Ver Proyecto"
+                          >
+                            <i className="material-icons">link</i>
+                          </a>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <ImageListItemBar
+                    title={item.title}
+                    className="mb-1 bar"
+                    style={{ borderRadius: "0 0 8px 8px" }}
+                  />
+                </ImageListItem>
                 ))}
               </ImageList>
               </div>
