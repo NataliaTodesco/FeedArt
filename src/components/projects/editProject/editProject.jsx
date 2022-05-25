@@ -22,7 +22,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import newProject from "../../../img/logoVertical.svg";
 import { ref, uploadBytes, getDownloadURL, uploadBytesResumable,} from "firebase/storage";
-import { actualizarProyecto, consultarProyecto, obtenerTags, storage } from "../../../firebaseConfig";
+import { actualizarProyecto, addTags, consultarProyecto, obtenerTags, storage } from "../../../firebaseConfig";
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 function EditProject() {
@@ -270,6 +270,7 @@ function EditProject() {
         if (descripcion !== "") {
           if (precio !== "") {
             setShowAlert(false);
+            if (vender) {
             actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,precio, 'USD').then(res =>{
               if (res === ""){
                 navigate('/project/'+id)
@@ -280,8 +281,40 @@ function EditProject() {
               }
             })
           } else {
-            setAlert('Complete el campo "Precio"');
-            setShowAlert(true);
+            actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,0, 'USD').then(res =>{
+              if (res === ""){
+                navigate('/project/'+id)
+              }
+              else {
+                setShowAlert(true)
+                setAlert(res)
+              }
+            })
+          }
+          } else {
+            if (vender) {
+              setAlert(
+                'Complete el campo "Precio" o quite su selección en "Vender"'
+              );
+              setShowAlert(true);
+            } else {
+              setShowAlert(false);
+              actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,0, 'USD').then(res =>{
+                if (res === ""){
+                  navigate('/project/'+id)
+                }
+                else {
+                  setShowAlert(true)
+                  setAlert(res)
+                }
+              })
+
+              for (let index = 0; index < etiquetas.length; index++) {
+                if (!tagsDB.includes(etiquetas[index])){
+                  addTags(etiquetas[index])
+                }
+              }
+            }
           }
         } else {
           setAlert('Complete el campo "Descripción"');

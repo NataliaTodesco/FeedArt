@@ -46,18 +46,18 @@ function Inicio() {
     });
   }, []);
 
-  function removeDuplicates(inArray){
-    var arr = inArray.concat() 
-    for(var i=0; i<arr.length; ++i) { 
-        for(var j=i+1; j<arr.length; ++j) { 
-            if(arr[i] === arr[j]) {
-                arr.splice(j, 1); 
-            }
+  function removeDuplicates(inArray) {
+    var arr = inArray.concat();
+    for (var i = 0; i < arr.length; ++i) {
+      for (var j = i + 1; j < arr.length; ++j) {
+        if (arr[i] === arr[j]) {
+          arr.splice(j, 1);
         }
+      }
     }
     setOpciones(arr);
     return arr;
-}
+  }
 
   function Proyectos(index) {
     if (index === 0) {
@@ -156,8 +156,7 @@ function Inicio() {
         </div>
         <div className="input-group search-input">
           <Autocomplete
-            sx={{ width: 215 }}
-            className="mb-3"
+            className="mb-3 auto"
             id="size-small-standard"
             size="small"
             options={opciones}
@@ -175,7 +174,10 @@ function Inicio() {
             )}
           />
           <Button type="primary" onClick={Buscar} size="large">
-            <img alt="" src="https://img.icons8.com/ios-glyphs/30/ffffff/broom.png"/>
+            <img
+              alt=""
+              src="https://img.icons8.com/ios-glyphs/30/ffffff/broom.png"
+            />
           </Button>
         </div>
       </div>
@@ -193,7 +195,8 @@ function Inicio() {
   function FuntionResize() {
     if (myContainer.current) {
       var widthBrowser = myContainer.current.offsetWidth;
-      if (widthBrowser < 1024) return 2;
+      if (widthBrowser < 524) return 1;
+      else if (widthBrowser < 1024) return 2;
       else return 4;
     } else return 3;
   }
@@ -398,9 +401,6 @@ function Inicio() {
     <div className="inicio">
       <Navbar></Navbar>
       <CarouselBanner></CarouselBanner>
-      {/* <div className="container-fluid px-3 mt-2 py-1">
-        <ButtonBases></ButtonBases>
-      </div> */}
       <div className="container-fluid px-5 my-3">
         <div className="row">
           <Categorias></Categorias>
@@ -422,32 +422,37 @@ function Inicio() {
                   if (search === "")
                     return (
                       <ImageListItem className="proyecto" key={index}>
-                        {/* <div className="card"> */}
-                        <img
-                          loading="lazy"
-                          src={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
-                          srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                          alt=""
-                          className="img-fluid inicio-foto my-1"
-                          style={{ maxHeight: "450px" }}
-                        />
-                        {/* <div class="texto-encima">{proyecto.datos.titulo}</div>
-                            <div class="centrado item tres">VER</div>
-                          </div> */}
+                        <div className="portfolio-item portfolio-item--eff1">
+                          <img
+                            loading="lazy"
+                            src={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
+                            srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                            alt=""
+                            className="img-fluid inicio-foto my-1"
+                          />
+                          <div className="portfolio-item__info">
+                            <h3 className="portfolio-item__header">
+                              {proyecto.datos.titulo}
+                            </h3>
+                            <div className="portfolio-item__links">
+                              <div className="portfolio-item__link-block">
+                              <Link className="portfolio-item__link" to={"/project/" + proyecto.id}>
+                                <a
+                                  className="portfolio-item__link"
+                                  href="/"
+                                  title="Ver Proyecto"
+                                >
+                                  <i className="material-icons">link</i>
+                                </a>
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         <ImageListItemBar
                           title={proyecto.datos.titulo}
-                          className="mb-1"
-                          style={{ borderRadius: "8px" }}
-                          actionIcon={
-                            <Link to={"/project/" + proyecto.id}>
-                              <IconButton
-                                sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                                aria-label={`info sobre ${proyecto.title}`}
-                              >
-                                <InfoIcon style={{ color: "white" }} />
-                              </IconButton>
-                            </Link>
-                          }
+                          className="mb-1 bar"
+                          style={{ borderRadius: "0 0 8px 8px" }}
                         />
                       </ImageListItem>
                     );
@@ -460,26 +465,37 @@ function Inicio() {
                   )
                     return (
                       <ImageListItem className="proyecto" key={index}>
-                        <img
-                          src={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
-                          srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                          alt=""
-                          className="img-fluid inicio-foto my-1"
-                        />
+                        <div className="portfolio-item portfolio-item--eff1">
+                          <img
+                            loading="lazy"
+                            src={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
+                            srcSet={`${proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                            alt=""
+                            className="img-fluid inicio-foto my-1"
+                          />
+                          <div className="portfolio-item__info">
+                            <h3 className="portfolio-item__header">
+                              {proyecto.datos.titulo}
+                            </h3>
+                            <div className="portfolio-item__links">
+                              <div className="portfolio-item__link-block">
+                              <Link to={"/project/" + proyecto.id}>
+                                <a
+                                  className="portfolio-item__link"
+                                  href="/"
+                                  title="Ver Proyecto"
+                                >
+                                  <i className="material-icons">link</i>
+                                </a>
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         <ImageListItemBar
                           title={proyecto.datos.titulo}
-                          className="mb-1"
-                          style={{ borderRadius: "8px" }}
-                          actionIcon={
-                            <Link to={"/project/" + proyecto.id}>
-                              <IconButton
-                                sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                                aria-label={`info sobre ${proyecto.title}`}
-                              >
-                                <InfoIcon style={{ color: "white" }} />
-                              </IconButton>
-                            </Link>
-                          }
+                          className="mb-1 bar"
+                          style={{ borderRadius: "0 0 8px 8px" }}
                         />
                       </ImageListItem>
                     );
@@ -495,7 +511,7 @@ function Inicio() {
                               style={{ heigth: "100%" }}
                             >
                               No se encontró ningún proyecto que coincida con la
-                              búsqueda
+                              búsqueda en esta categoría
                             </div>
                           </div>
                         </div>

@@ -49,6 +49,10 @@
     box-shadow: none;
 }
 
+.auto{
+    width: 215px;
+}
+
 /* .inicio .proyecto .card {
     border-radius: 0%;
     BORDER-RIGHT: #999999 1px solid;
@@ -99,5 +103,11 @@
     .banner {
         height: 0;
         width: 0;
+    }
+    .search-input {
+        margin-left: 0%;
+    }
+    .auto{
+        width: 185px;
     }
 }

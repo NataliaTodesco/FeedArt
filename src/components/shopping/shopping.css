@@ -35,3 +35,7 @@
 .list::-webkit-scrollbar-track {
     border-radius: 10px;  
 }
+
+.portfolio-item__link-block:hover .material-icons{
+    color: #f1f2f3;
+}

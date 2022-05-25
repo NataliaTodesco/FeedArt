@@ -20,6 +20,7 @@
     color: black;
 }
 
-.menu{
-    margin-bottom: 1%;
-}
+/* .menu{
+    backdrop-filter: blur(1rem);
+    padding-bottom: 1%;
+} */

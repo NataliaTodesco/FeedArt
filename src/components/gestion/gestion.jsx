@@ -26,7 +26,6 @@ import {
   LineSeries,
   BarSeries,
   Title,
-  Legend,
 } from "@devexpress/dx-react-chart-material-ui";
 import {
   Plugin,
@@ -39,6 +38,7 @@ import { Animation } from "@devexpress/dx-react-chart";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useUsuario } from '../../context/UserContext'
+import { useNavigate } from "react-router-dom";
 
 function Gestion() {
   const [usuarios, setUsuarios] = useState([]); 
@@ -51,13 +51,19 @@ function Gestion() {
   }, []);
 
   function ListadoUsuarios() {
+    let navigate = useNavigate()
+
+    function verUsuario(uid) {
+      navigate("/user/" + uid);
+    }
+
     const columns = [
       {
         field: "Imagen",
         width: 80,
         renderCell: (usuarios) => (
           <strong>
-            <Avatar alt="Profile Picture" src={usuarios.row.Imagen} />
+            <Avatar style={{cursor: 'pointer'}} onClick={e => verUsuario(usuarios.row.id)} alt="Profile Picture" src={usuarios.row.Imagen} />
           </strong>
         ),
       },
@@ -360,6 +366,12 @@ function Gestion() {
       );
     }
 
+    let navigate = useNavigate()
+
+    function verProyecto(id) {
+      navigate("/project/" + id);
+    }
+    
     return (
       <div className="col-lg-12 my-5" style={{ height: 450, width: "100%" }}>
         <h3 style={{ textAlign: "center" }}>Listado de Proyectos</h3>
@@ -372,7 +384,7 @@ function Gestion() {
             },
             {
               field: "Categoria",
-              width: 170,
+              width: 150,
             },
             {
               field: "Descripcion",
@@ -383,6 +395,7 @@ function Gestion() {
               width: 150,
               renderCell: (proyectos) => (
                 <img
+                  style={{cursor: 'pointer'}} onClick={e => verProyecto(proyectos.row.id)}
                   className="img-fluid my-5 mr-3"
                   alt=""
                   src={proyectos.row.Imagen}
@@ -391,7 +404,7 @@ function Gestion() {
             },
             {
               field: "Precio",
-              width: 130,
+              width: 80,
             },
             {
               field: "Likes",
@@ -400,6 +413,16 @@ function Gestion() {
             {
               field: "Favoritos",
               width: 80,
+            },
+            {
+              field: "Fecha",
+              width: 100,
+              renderCell: (usuarios) => (
+                <div>
+                  {usuarios.row.Fecha.getDate()}/{usuarios.row.Fecha.getMonth() + 1}/
+                  {usuarios.row.Fecha.getFullYear()}
+                </div>
+              ),
             },
           ]}
           components={{ Toolbar: CustomToolbar }}
@@ -595,7 +618,7 @@ function Gestion() {
 
   function Top5Usuarios() {
     const [proyectosXUser, setProyectosXUser] = useState([]);
-
+    
     function SortArray(x, y) {
       if (x.cantidad < y.cantidad) {
         return 1;
@@ -605,7 +628,7 @@ function Gestion() {
       }
       return 0;
     }
-
+    
     const _exportPdf = () => {
       html2canvas(document.querySelector("#capture")).then((canvas) => {
         document.body.appendChild(canvas);
@@ -615,6 +638,12 @@ function Gestion() {
         pdf.save("Top5UsuariosConMasProyectos.pdf");
       });
     };
+    
+    let navigate = useNavigate()
+
+    function verUsuario(uid) {
+      navigate("/user/" + uid);
+    }
 
     useEffect(() => {
       usuariosMasProyectos().then((res) => {
@@ -647,7 +676,7 @@ function Gestion() {
                     className="list-group-item list-group-item-dark"
                   >
                     <div className="d-flex justify-content-left">
-                      <Avatar alt="" src={user.img_url}></Avatar>
+                      <Avatar style={{cursor: 'pointer'}} onClick={e => verUsuario(user.id)} alt="" src={user.img_url}></Avatar>
                       <p className="ml-2">
                         {user.nombre} - {user.email}. <br />
                         Cant. de proyectos: <strong>{user.cantidad}</strong>
@@ -699,6 +728,12 @@ function Gestion() {
       return 0;
     }
 
+    let navigate = useNavigate()
+
+    function verProyecto(id) {
+      navigate("/project/" + id);
+    }
+
     function CustomToolbar() {
       return (
         <GridToolbarContainer>
@@ -720,7 +755,7 @@ function Gestion() {
             },
             {
               field: "Categoria",
-              width: 170,
+              width: 150,
             },
             {
               field: "Descripcion",
@@ -731,6 +766,7 @@ function Gestion() {
               width: 150,
               renderCell: (proyectos) => (
                 <img
+                  style={{cursor: 'pointer'}} onClick={e => verProyecto(proyectos.row.id)}
                   className="img-fluid my-5 mr-3"
                   alt=""
                   src={proyectos.row.Imagen}
@@ -739,7 +775,7 @@ function Gestion() {
             },
             {
               field: "Precio",
-              width: 130,
+              width: 80,
             },
             {
               field: "Likes",
@@ -748,6 +784,16 @@ function Gestion() {
             {
               field: "Favoritos",
               width: 80,
+            },
+            {
+              field: "Fecha",
+              width: 100,
+              renderCell: (usuarios) => (
+                <div>
+                  {usuarios.row.Fecha.getDate()}/{usuarios.row.Fecha.getMonth() + 1}/
+                  {usuarios.row.Fecha.getFullYear()}
+                </div>
+              ),
             },
           ]}
           components={{ Toolbar: CustomToolbar }}

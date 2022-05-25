@@ -58,7 +58,7 @@ export async function guardarProyecto(
       tags: tags,
       titulo: titulo,
       uid_creador: usuario.uid,
-      fecha: new Date()
+      fecha: new Date(),
     });
     console.log(docRef);
     return "";
@@ -141,6 +141,24 @@ export async function proyectosxUID(uid) {
   return proyectos;
 }
 
+export async function misProyectos(uid) {
+  let proyectos = [];
+  const projectsRef = collection(db, "projects");
+
+  const q = query(projectsRef, where("uid_creador", "==", uid));
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    const proyecto = {
+      id: doc.id,
+      datos: doc.data(),
+    };
+    proyectos.push(proyecto);
+  });
+
+  return proyectos;
+}
+
 export async function actualizarProyecto(
   id,
   titulo,
@@ -160,7 +178,7 @@ export async function actualizarProyecto(
       precio: precio,
       tags: tags,
       titulo: titulo,
-      fecha: new Date()
+      fecha: new Date(),
     });
     console.log(docRef);
     return "";
@@ -226,6 +244,7 @@ export async function obtenerProyectosChar() {
 
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
+    let fecha = new Date(doc.data().fecha.toMillis());
     let creador = "";
     obtenerCreador(doc.data().uid_creador).then((res) => {
       creador = res.nombre;
@@ -240,6 +259,7 @@ export async function obtenerProyectosChar() {
       Creador: creador,
       Likes: doc.data().likes,
       Favoritos: doc.data().favs,
+      Fecha: fecha,
       vendido: doc.data().vendido,
     });
   });
@@ -299,7 +319,7 @@ export async function usuariosMasProyectos() {
   return proyectosXUser;
 }
 
-export async function obtenerTags(){
+export async function obtenerTags() {
   let tags = [];
 
   const projectsRef = collection(db, "tags");
@@ -311,10 +331,10 @@ export async function obtenerTags(){
     tags.push(doc.data().tag);
   });
 
-  return tags; 
-} 
+  return tags;
+}
 
-export async function obtenerTitulos(){
+export async function obtenerTitulos() {
   let projects = [];
 
   const projectsRef = collection(db, "projects");
@@ -327,7 +347,7 @@ export async function obtenerTitulos(){
   });
 
   return projects;
-} 
+}
 
 export function addTags(tag) {
   try {
@@ -593,10 +613,11 @@ export async function actualizarEntregadoVendedor(id, array) {
 }
 
 export async function actualizarEntregadoComprador(id, array) {
+  console.log(array[2])
   const projectsRef = doc(db, "buy", id);
   await updateDoc(projectsRef, {
     array: array,
-  });
+  })
 }
 
 export { analytics, storage, db };

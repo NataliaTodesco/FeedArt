@@ -1,50 +1,122 @@
 import React, { useState, useEffect } from "react";
-import {
-  IconButton,
-  ImageListItem,
-  ImageListItemBar,
-  Popover,
-  Typography,
-} from "@mui/material";
+import { ImageListItem, ImageListItemBar, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import InfoIcon from "@mui/icons-material/Info";
-import { actualizarEntregadoComprador, actualizarEntregadoVendedor, getCompra, getVenta } from "../../../firebaseConfig";
+import {
+  actualizarEntregadoComprador,
+  actualizarEntregadoVendedor,
+  getCompra,
+  getVenta,
+} from "../../../firebaseConfig";
 import { useUsuario } from "../../../context/UserContext";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import { Modal } from "react-bootstrap";
+import { message } from "antd";
 
 function Ventas() {
   const { usuario } = useUsuario();
   const [proyectos, setProyectos] = useState([]);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  async function actualizarEntrega(project,index){
+  function actualizarEntrega(project, index, entregado) {
     let ventas = proyectos;
-    ventas[index].entregado = !ventas[index].entregado;
+    ventas[index].entregado = entregado;
 
-    let compras = [];
-    await getCompra(project.comprador_uid).then(res => {
-        compras = res;
-    })
-    compras[index].entregado = !compras[index].entregado;
+    actualizarEntregadoVendedor(usuario.uid, ventas).then((res) => {
+      getVenta(usuario.uid).then((res) => {
+        setProyectos(res);
+      });
+    });
 
-    await actualizarEntregadoComprador(project.comprador_uid,compras)
-    actualizarEntregadoVendedor(usuario.uid, ventas).then(res => {
-        getVenta(usuario.uid).then((res) => {
-            console.log(res)
-            setProyectos(res);
-        });
-    })
+    getCompra(project.comprador_uid).then((res) => {
+      let compras = res;
+      for (let i = 0; i < compras.length; i++) {
+        if (compras[i].proyecto.id === project.id){
+          compras[i].entregado = entregado;
+          console.log(compras)
+          actualizarEntregadoComprador(project.comprador_uid, compras);
+        }
+      }
+    });
+
+    message.success("¡La información se modificó con éxito!");
+  }
+
+  function ModalVenta({ proyecto, index }) {
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const [entregado, setEntregado] = useState(proyecto.entregado);
+
+    return (
+      <>
+        <div
+          style={{ cursor: "pointer" }}
+          onClick={handleShow}
+          title="Información de la Venta"
+          className="portfolio-item__link"
+        >
+          <LocalShippingIcon className="material-icons"></LocalShippingIcon>
+        </div>
+
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Información de Venta</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Typography sx={{ px: 2 }}>
+              <div>
+                <div className="custom-control custom-checkbox mb-3">
+                  <input
+                    type="checkbox"
+                    className="custom-control-input"
+                    id="customCheck1"
+                    defaultChecked={entregado}
+                    onChange={(e) => setEntregado(!entregado)}
+                  />
+                  <label
+                    className="custom-control-label"
+                    htmlFor="customCheck1"
+                  >
+                    Entregado
+                  </label>
+                </div>
+                <h6>Comprador:</h6>
+                <p>{proyecto.comprador.shipping.name.full_name}</p>
+                <h6>Email</h6>
+                <p>{proyecto.comprador.payee.email_address}</p>
+                <h6>Dirección de entrega: </h6>
+                <p>
+                  {proyecto.comprador.shipping.address.address_line_1},{" "}
+                  {proyecto.comprador.shipping.address.admin_area_1} -{" "}
+                  {proyecto.comprador.shipping.address.country_code}
+                </p>
+                <h6>Fecha de Compra:</h6>
+                <p>
+                  {new Date(proyecto.fecha).getDate()}/
+                  {new Date(proyecto.fecha).getMonth() + 1}/
+                  {new Date(proyecto.fecha).getFullYear()}
+                </p>
+              </div>
+            </Typography>
+          </Modal.Body>
+          <Modal.Footer>
+            <button className="btn btn-secondary" onClick={handleClose}>
+              Cerrar
+            </button>
+            <button
+              className="btn btn-dark"
+              onClick={(e) => {
+                actualizarEntrega(proyecto, index, entregado);
+                handleClose();
+              }}
+            >
+              Guardar Cambios
+            </button>
+          </Modal.Footer>
+        </Modal>
+      </>
+    );
   }
 
   useEffect(() => {
@@ -59,88 +131,47 @@ function Ventas() {
         {proyectos.map((proyecto, index) => {
           return (
             <div key={index} className="text-center">
-              <ImageListItem key={index}>
-                <img
-                  src={proyecto.proyecto.datos.img_url}
-                  alt=""
-                  className="img-fluid inicio-foto my-1"
-                />
+              <ImageListItem className="proyecto" key={index}>
+                <div className="portfolio-item portfolio-item--eff1">
+                  <img
+                    loading="lazy"
+                    src={`${proyecto.proyecto.datos.img_url}?w=248&fit=crop&auto=format`}
+                    srcSet={`${proyecto.proyecto.datos.img_url}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                    alt=""
+                    className="img-fluid inicio-foto my-1"
+                  />
+                  <div className="portfolio-item__info">
+                    <h3
+                      style={{ fontWeight: "400" }}
+                      className="portfolio-item__header"
+                    >
+                      {proyecto.proyecto.datos.titulo}
+                    </h3>
+                    <div className="portfolio-item__links">
+                      <div className="portfolio-item__link-block">
+                        <Link to={"/project/" + proyecto.proyecto.id}>
+                          <a
+                            className="portfolio-item__link"
+                            href="/"
+                            title="Ver Proyecto"
+                          >
+                            <i className="material-icons">link</i>
+                          </a>
+                        </Link>
+                      </div>
+                      <div className="portfolio-item__link-block">
+                        <ModalVenta
+                          proyecto={proyecto}
+                          index={index}
+                        ></ModalVenta>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <ImageListItemBar
                   title={proyecto.proyecto.datos.titulo}
-                  className="mb-1 text-left"
-                  style={{ borderRadius: "8px" }}
-                  actionIcon={
-                    <div>
-                      <Link to={"/project/" + proyecto.proyecto.id}>
-                        <IconButton
-                          sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                          aria-label={`info sobre ${proyecto.proyecto.titulo}`}
-                        >
-                          <InfoIcon style={{ color: "white" }} />
-                        </IconButton>
-                      </Link>
-                      <IconButton
-                        aria-describedby={id}
-                        onClick={handleClick}
-                        sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                        aria-label={`info sobre ${proyecto.proyecto.titulo}`}
-                      >
-                        <LocalShippingIcon style={{ color: "white" }} />
-                      </IconButton>
-                      <Popover
-                        id={id}
-                        open={open}
-                        anchorEl={anchorEl}
-                        onClose={handleClose}
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "left",
-                        }}
-                      >
-                        <Typography sx={{ p: 2 }}>
-                          <div>
-                            <div className="custom-control custom-checkbox mb-3">
-                              <input
-                                type="checkbox"
-                                className="custom-control-input"
-                                id="customCheck1"
-                                checked={proyecto.entregado}
-                                onChange={(e) => actualizarEntrega(proyecto, index)}
-                                style={{cursor: 'pointer'}}
-                              />
-                              <label
-                                className="custom-control-label"
-                                htmlFor="customCheck1"
-                              >
-                                Entregado
-                              </label>
-                            </div>
-                            <h6>Comprador:</h6>
-                            <p>{proyecto.comprador.shipping.name.full_name}</p>
-                            <h6>Email</h6>
-                            <p>{proyecto.comprador.payee.email_address}</p>
-                            <h6>Dirección de entrega: </h6>
-                            <p>
-                              {
-                                proyecto.comprador.shipping.address
-                                  .address_line_1
-                              }
-                              ,{" "}
-                              {proyecto.comprador.shipping.address.admin_area_1}{" "}
-                              -{" "}
-                              {proyecto.comprador.shipping.address.country_code}
-                            </p>
-                            <h6>Fecha de Compra:</h6>
-                            <p>
-                              {new Date(proyecto.fecha).getDate()}/
-                              {new Date(proyecto.fecha).getMonth() + 1}/
-                              {new Date(proyecto.fecha).getFullYear()}
-                            </p>
-                          </div>
-                        </Typography>
-                      </Popover>
-                    </div>
-                  }
+                  className="mb-1 bar text-left"
+                  style={{ borderRadius: "0 0 8px 8px" }}
                 />
               </ImageListItem>
             </div>

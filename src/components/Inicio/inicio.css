@@ -54,9 +54,9 @@
     font-weight: 400;
     font-size: 140px;
     line-height: 140px;
-
-    color: var(--blanco);
-
+    z-index: 1;
+    animation: glow 1s ease-in-out infinite alternate;
+    color: #d90429;
 }
 
 .boton{
@@ -109,6 +109,10 @@
     font-size: xx-large;
 }
 
+.one{
+    color: #fff;
+     animation: glow2 1s ease-in-out infinite alternate;
+  }
 
 @media(max-width:530px){
     .head{
@@ -129,3 +133,20 @@
         width: 10%;
     }  
 }
+
+@keyframes glow {
+    from {
+      text-shadow: 0 0 20px #C1121F;
+    }
+    to {
+      text-shadow: 0 0 30px #780000, 0 0 10px #780000;
+    }
+  }
+  @keyframes glow2 {
+    from {
+      text-shadow: 0 0 20px #b9baa3;
+    }
+    to {
+      text-shadow: 0 0 30px #8c7a6b, 0 0 10px #8c7a6b;
+    }
+  }

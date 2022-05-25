@@ -108,7 +108,6 @@ export function UsuarioProvider(props) {
     return createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        guardarUser(email, img_url, nombre, user.uid, new Date(), user.accessToken);
         const save = {
           uid: user.uid,
           email: user.email,
@@ -116,7 +115,12 @@ export function UsuarioProvider(props) {
           displayName: nombre,
           token: user.accessToken
         };
+        
+        const fecha = new Date();
+        guardarUser(email, img_url, nombre, user.uid, fecha, user.accessToken);
+
         setUsuario(save);
+        recuperarUser(user)
         return "";
       })
       .catch((error) => {
@@ -142,6 +146,7 @@ export function UsuarioProvider(props) {
         };
         setUsuario(save);
         guardarUserConGoogle(save);
+        recuperarUser(user)
         return "";
       })
       .catch((error) => {
@@ -154,12 +159,14 @@ export function UsuarioProvider(props) {
     const querySnapshot = await getDocs(collection(db, "users"));
     querySnapshot.forEach((doc) => {
       if (doc.id === user.uid) {
+        let fecha = new Date(doc.data().fecha.toMillis());
         const save = {
           uid: user.uid,
           email: user.email,
           photoURL: doc.data().img_url,
           displayName: doc.data().nombre,
-          token: user.accessToken
+          token: user.accessToken,
+          fecha: fecha
         };
         setUsuario(save);
       }
@@ -173,10 +180,11 @@ export function UsuarioProvider(props) {
         const save = {
           uid: user.uid,
           email: user.email,
-          photoURL: "",
-          displayName: "",
+          photoURL: user.photoURL,
+          displayName: user.displayName,
           token: user.accessToken
         };
+
         setUsuario(save);
         recuperarUser(user);
         return "";
