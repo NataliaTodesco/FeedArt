@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { IconButton, ImageListItem, ImageListItemBar } from "@mui/material";
+import { ImageListItem, ImageListItemBar } from "@mui/material";
 import { Link } from "react-router-dom";
-import InfoIcon from "@mui/icons-material/Info";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { addLikes, getLikes, restarLikes } from "../../firebaseConfig";
 import { useUsuario } from "../../context/UserContext";
 
 function Likes() {
-  const { usuario } = useUsuario();
+  const { usuario, obtenerUsers } = useUsuario();
+  const [usuarios, setUsuarios] = useState([]);
   const [proyectos, setProyectos] = useState([]);
 
   function eliminar(index) {
@@ -32,11 +31,25 @@ function Likes() {
     });
   }
 
+  function verUser(uid){
+    for (let i = 0; i < usuarios.length; i++) {
+      if (uid === usuarios[i].uid)
+        return usuarios[i].nombre
+    }
+  }
+
   useEffect(() => {
     getLikes(usuario.uid).then((res) => {
       setProyectos(res);
     });
-  }, []);
+    obtenerUsers().then(res => {
+      let users = []
+      res.forEach(element => {
+        users.push({nombre: element.Nombre, email: element.Email, uid: element.id})
+      });
+      setUsuarios(users)
+    })
+  }, [obtenerUsers, usuario]);
 
   return (
     <div className="likes">
@@ -86,6 +99,7 @@ function Likes() {
                 </div>
                 <ImageListItemBar
                   title={proyecto.datos.titulo}
+                  subtitle={verUser(proyecto.datos.uid_creador)}
                   className="mb-1 bar text-left"
                   style={{ borderRadius: "0 0 8px 8px" }}
                 />

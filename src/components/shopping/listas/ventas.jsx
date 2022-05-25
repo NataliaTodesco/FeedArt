@@ -13,7 +13,8 @@ import { Modal } from "react-bootstrap";
 import { message } from "antd";
 
 function Ventas() {
-  const { usuario } = useUsuario();
+  const { usuario, obtenerUsers } = useUsuario();
+  const [usuarios, setUsuarios] = useState([]);
   const [proyectos, setProyectos] = useState([]);
 
   function actualizarEntrega(project, index, entregado) {
@@ -29,9 +30,8 @@ function Ventas() {
     getCompra(project.comprador_uid).then((res) => {
       let compras = res;
       for (let i = 0; i < compras.length; i++) {
-        if (compras[i].proyecto.id === project.id){
+        if (compras[i].proyecto.id === project.proyecto.id) {
           compras[i].entregado = entregado;
-          console.log(compras)
           actualizarEntregadoComprador(project.comprador_uid, compras);
         }
       }
@@ -123,7 +123,21 @@ function Ventas() {
     getVenta(usuario.uid).then((res) => {
       setProyectos(res);
     });
-  }, []);
+    obtenerUsers().then(res => {
+      let users = []
+      res.forEach(element => {
+        users.push({nombre: element.Nombre, email: element.Email, uid: element.id})
+      });
+      setUsuarios(users)
+    })
+  }, [usuario.uid, obtenerUsers]);
+
+  function verUser(uid){
+    for (let i = 0; i < usuarios.length; i++) {
+      if (uid === usuarios[i].uid)
+        return usuarios[i].nombre
+    }
+  }
 
   return (
     <div className="venta">
@@ -170,6 +184,7 @@ function Ventas() {
                 </div>
                 <ImageListItemBar
                   title={proyecto.proyecto.datos.titulo}
+                  subtitle={verUser(proyecto.proyecto.datos.uid_creador)}
                   className="mb-1 bar text-left"
                   style={{ borderRadius: "0 0 8px 8px" }}
                 />

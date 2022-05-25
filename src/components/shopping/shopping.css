@@ -1,12 +1,12 @@
-.shopping h3{
+.shopping h3 {
     font-weight: 700;
 }
 
-.shopping{
+.shopping {
     background-color: rgb(237, 237, 241);
 }
 
-.shopping .list{
+.shopping .list {
     color: black;
     background-color: rgb(237, 237, 241);
     max-height: 67vh;
@@ -19,12 +19,13 @@
 }
 
 .list::-webkit-scrollbar:vertical {
-    width:8px;
+    width: 8px;
 }
 
-.list::-webkit-scrollbar-button:increment,.contenedor::-webkit-scrollbar-button {
+.list::-webkit-scrollbar-button:increment,
+.contenedor::-webkit-scrollbar-button {
     display: none;
-} 
+}
 
 .list::-webkit-scrollbar-thumb {
     background-color: #797979;
@@ -33,9 +34,28 @@
 }
 
 .list::-webkit-scrollbar-track {
-    border-radius: 10px;  
+    border-radius: 10px;
 }
 
-.portfolio-item__link-block:hover .material-icons{
+.portfolio-item__link-block:hover .material-icons {
     color: #f1f2f3;
+}
+
+#check,
+#circulo {
+    animation: movimientoY 2.5s ease infinite;
+}
+
+@keyframes movimientoY {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-40px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
 }
