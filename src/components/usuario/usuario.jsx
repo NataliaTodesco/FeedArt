@@ -134,12 +134,12 @@ function Usuario() {
             </h1>
           </div>
         </div>
-        <div className="row text-center">
-          <div className="col-lg-3 mt-5">
+        <div className="row text-center mt-4">
+          <div className="col-lg-3">
             <img src={selfie} alt="" className="img-fluid hombre" />
           </div>
           <div className="col-lg-6">
-            <div className="card mb-5 mt-4 p-5">
+            <div className="card mb-5 p-5">
               <div>
                 {editar ? (
                   <div>
@@ -230,7 +230,7 @@ function Usuario() {
           </div>
           <div className="col-lg-3">
             <div
-              class="card text-left mt-4"
+              class="card text-left"
               style={{ backgroundColor: "#003049" }}
             >
               <div class="card-body">
@@ -244,7 +244,7 @@ function Usuario() {
               </div>
             </div>
             <div
-              class="card text-left mt-4"
+              class="card text-left my-4"
               style={{ backgroundColor: "#ccc5b9", color: "black" }}
             >
               <div class="card-body">

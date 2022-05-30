@@ -102,6 +102,7 @@ function Gestion() {
           rows={usuarios}
           columns={columns}
           components={{ Toolbar: CustomToolbar }}
+          title={"Listado de Usuarios"}
         />
       </div>
     );
@@ -208,7 +209,7 @@ function Gestion() {
           const dataUrl = await exportFunc(chart, { filter });
           const link = document.createElement("a");
           document.body.appendChild(link);
-          link.download = `chart.${format}`;
+          link.download = `Cant. de Usuarios por Mes y Año.${format}`;
           link.href = dataUrl;
           link.click();
           link.remove();
@@ -236,7 +237,7 @@ function Gestion() {
           const pdfWidth = doc.internal.pageSize.getWidth();
           const pdfHeight = doc.internal.pageSize.getHeight();
           doc.addImage(dataUrl, "JPEG", 0, 0, pdfWidth, pdfHeight);
-          doc.save("chart");
+          doc.save("Cant. de Usuarios por Mes y Año");
         } catch (err) {
           console.error("oops, something went wrong!", err);
         }
@@ -493,7 +494,7 @@ function Gestion() {
           const dataUrl = await exportFunc(chart, { filter });
           const link = document.createElement("a");
           document.body.appendChild(link);
-          link.download = `chart.${format}`;
+          link.download = `ProyectosxCategoría.${format}`;
           link.href = dataUrl;
           link.click();
           link.remove();
@@ -521,7 +522,7 @@ function Gestion() {
           const pdfWidth = doc.internal.pageSize.getWidth();
           const pdfHeight = doc.internal.pageSize.getHeight();
           doc.addImage(dataUrl, "JPEG", 0, 0, pdfWidth, pdfHeight);
-          doc.save("chart");
+          doc.save("ProyectosxCategoría");
         } catch (err) {
           console.error("oops, something went wrong!", err);
         }
@@ -622,7 +623,10 @@ function Gestion() {
                 </Chart>
               </Paper>
             </div>
-            <div className="col-lg-3 mb-3 py-4" style={{ background: "rgb(237, 237, 241)", borderRadius: "8px" }} >
+            <div
+              className="col-lg-3 mb-3 py-4"
+              style={{ background: "rgb(237, 237, 241)", borderRadius: "8px" }}
+            >
               <h6>
                 {" "}
                 <span className="text-info">A -</span> Arte Tradicional{" "}
@@ -853,6 +857,31 @@ function Gestion() {
     );
   }
 
+  function ContextMenu() {
+    const [open, setOpen] = useState(false);
+    const handleMenuClicked = (event) => {
+      event.preventDefault();
+      setOpen(!open);
+    };
+    return (
+      <>
+        <nav className={open ? "menus" : "hideMenu"}>
+          <a href="#users">Usuarios</a>
+          <a href="#projects">Proyectos</a>
+          <a href="#shopping">Ventas</a>
+        </nav>
+
+        <div className="floating">
+          <div
+            onClick={(e) => {
+              handleMenuClicked(e);
+            }}
+            className="contextMenu d-flex justify-content-center align-items-center"
+          ><i class="bi bi-list text-light" style={{fontSize: 'larger'}}></i></div>
+        </div>
+      </>
+    );
+  }
   return (
     <div className="gestion">
       <Navbar></Navbar>
@@ -866,23 +895,24 @@ function Gestion() {
             </h1>
             {/* <h1 style={{ fontWeight: "800" }}> <span className="shine">[</span> GESTIÓN  <span className="shine">]</span></h1> */}
           </div>
-        </div>
-        <div className="row">
+        </div>{" "}
+        <div className="row" id="users">
           <ListadoUsuarios></ListadoUsuarios>
           <div className="col-lg-5">
             <CantidadxAño></CantidadxAño>
           </div>
         </div>
-        <div className="row">
+        <div className="row" id="projects">
           <ListadoProyectos></ListadoProyectos>
         </div>
         <div className="row mt-5">
           <ProyectosxCategoria></ProyectosxCategoria>
         </div>
-        <div className="row mb-5">
+        <div className="row mb-5" id="shopping">
           <Top10ProyectosMasRecaudacion></Top10ProyectosMasRecaudacion>
         </div>
       </div>
+      <ContextMenu />
       <Footer></Footer>
       {/* <button className='btn btn-info' onClick={() => window.print()}>Imprimir</button> */}
     </div>

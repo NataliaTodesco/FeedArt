@@ -1,0 +1,66 @@
+.link{
+    color: rgb(82, 79, 79);
+}
+
+.link:hover{
+    color: rgb(43, 41, 41);
+    text-decoration: none;
+}
+
+.active{
+    color: black;
+}
+
+.link .bi{
+    font-size: medium;
+    margin-right: 5px;
+}
+
+.css-i4bv87-MuiSvgIcon-root{
+    color: black;
+}
+
+.tarjeta{
+    border-left: 3px solid var(--rojo);
+    width: 241px;
+    border-radius: 0 5px 5px 0;
+}
+
+.noread{
+    background-color: rgb(155, 181, 202, .3);
+}
+
+.notificaciones .list {
+    color: black;
+    background-color: rgb(237, 237, 241);
+    max-height: 63vh;
+    overflow-y: scroll;
+    border-radius: 8px;
+}
+
+.list::-webkit-scrollbar {
+    -webkit-appearance: none;
+}
+
+.list::-webkit-scrollbar:horizontal {
+    -webkit-appearance: none;
+}
+
+.list::-webkit-scrollbar:vertical {
+    width: 8px;
+}
+
+.list::-webkit-scrollbar-button:increment,
+.contenedor::-webkit-scrollbar-button {
+    display: none;
+}
+
+.list::-webkit-scrollbar-thumb {
+    background-color: #797979;
+    border-radius: 20px;
+    border: 2px solid #f1f2f3;
+}
+
+.list::-webkit-scrollbar-track {
+    border-radius: 10px;
+}

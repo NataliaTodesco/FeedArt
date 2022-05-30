@@ -14,7 +14,8 @@ import {
   Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useUsuario } from '../../context/UserContext'
+import { useUsuario } from "../../context/UserContext";
+import Notifications from "./notifications/notificaciones";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -58,12 +59,15 @@ function Navbar() {
                 size="large"
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
-                aria-haspopup="true"
                 onClick={handleOpenNavMenu}
-                color="inherit"
               >
-                <MenuIcon />
+                <MenuItem className="link" activeClassName="active" style={{color: 'rgb(82, 79, 79)'}}>
+                  <MenuIcon sx={{color: 'rgb(82, 79, 79)'}} className="mr-2" /> Menú
+                </MenuItem>
               </IconButton>
+              <MenuItem onClick={handleCloseNavMenu} className="mr-1">
+                <Notifications></Notifications>
+              </MenuItem>
               <Menu
                 id="menu-appbar"
                 anchorEl={anchorElNav}
@@ -79,7 +83,7 @@ function Navbar() {
                 open={Boolean(anchorElNav)}
                 onClose={handleCloseNavMenu}
                 sx={{
-                  display: { xs: "block", md: "none" }
+                  display: { xs: "block", md: "none" },
                 }}
               >
                 <MenuItem onClick={handleCloseNavMenu}>
@@ -94,22 +98,26 @@ function Navbar() {
                   </NavLink>
                 </MenuItem>
                 <MenuItem onClick={handleCloseNavMenu}>
-                  <NavLink className="link" activeClassName="active" to="/shopping">
-                    <i className="bi bi-bag-heart-fill"></i>
-                    Compra / Venta 
-                  </NavLink>
-                </MenuItem>
-                {usuario.uid === "qA2c3TwTAKUc9160fsJlMtDSVgl1" ? (
                   <NavLink
                     className="link"
                     activeClassName="active"
-                    to="/admin"
+                    to="/shopping"
                   >
-                    <MenuItem onClick={handleCloseNavMenu}>
+                    <i className="bi bi-bag-heart-fill"></i>
+                    Compra / Venta
+                  </NavLink>
+                </MenuItem>
+                {usuario.uid === "qA2c3TwTAKUc9160fsJlMtDSVgl1" ? (
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <NavLink
+                      className="link"
+                      activeClassName="active"
+                      to="/admin"
+                    >
                       <i className="bi bi-clipboard-data-fill"></i>
                       Gestión
-                    </MenuItem>
-                  </NavLink>
+                    </NavLink>
+                  </MenuItem>
                 ) : (
                   <span></span>
                 )}
@@ -166,18 +174,26 @@ function Navbar() {
                 </NavLink>
               </MenuItem>
               <MenuItem onClick={handleCloseNavMenu}>
-                  <NavLink className="link" activeClassName="active" to="/shopping">
+                <NavLink
+                  className="link"
+                  activeClassName="active"
+                  to="/shopping"
+                >
                   <i className="bi bi-bag-heart-fill"></i>
-                    Compra / Venta 
-                  </NavLink>
-                </MenuItem>
+                  Compra / Venta
+                </NavLink>
+              </MenuItem>
               {usuario.uid === "qA2c3TwTAKUc9160fsJlMtDSVgl1" ? (
-                <NavLink className="link" activeClassName="active" to="/admin">
-                  <MenuItem onClick={handleCloseNavMenu}>
+                <MenuItem onClick={handleCloseNavMenu}>
+                  <NavLink
+                    className="link"
+                    activeClassName="active"
+                    to="/admin"
+                  >
                     <i className="bi bi-clipboard-data-fill"></i>
                     Gestión
-                  </MenuItem>
-                </NavLink>
+                  </NavLink>
+                </MenuItem>
               ) : (
                 <span></span>
               )}
@@ -190,6 +206,9 @@ function Navbar() {
                   <i className="bi bi-plus-circle-fill"></i>
                   Nuevo Proyecto
                 </NavLink>
+              </MenuItem>
+              <MenuItem onClick={handleCloseNavMenu} className="mr-1">
+                <Notifications></Notifications>
               </MenuItem>
               <NavLink className="link" to="/user">
                 <Avatar alt="Profile Picture" src={usuario.photoURL} />

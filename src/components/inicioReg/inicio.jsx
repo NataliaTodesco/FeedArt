@@ -420,7 +420,7 @@ function Inicio() {
         <div className="row">
           <Categorias></Categorias>
         </div>
-        <div>
+        <div style={{minHeight: '50vh'}}>
           {proyectos.length === 0 ? (
             <div className="alert alert-secondary" role="alert">
               No se encontró ningún proyecto de esta <strong>Categoría</strong>

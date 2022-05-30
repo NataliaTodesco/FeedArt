@@ -17,6 +17,7 @@ import {
   addFavorites,
   getLikes,
   addLikes,
+  addNotification,
 } from "../../../firebaseConfig";
 import Footer from "../../footer/footer";
 import Navbar from "../../Navbar/navbar";
@@ -254,6 +255,7 @@ function Proyecto() {
           likes.push(project);
           addLikes(likes, usuario.uid);
         });
+        addNotification(id, 'Me Gusta', usuario)
       }
     }
 
@@ -282,6 +284,7 @@ function Proyecto() {
           favs.push(project);
           addFavorites(favs, usuario.uid);
         });
+        addNotification( id, 'Favorito', usuario)
       }
     }
 

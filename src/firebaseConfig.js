@@ -245,16 +245,21 @@ export async function obtenerProyectosChar() {
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
     let fecha = new Date(doc.data().fecha.toMillis());
-    let fec = fecha.getDate() +'/'+(fecha.getMonth() + 1)+'/'+fecha.getFullYear();
+    let fec =
+      fecha.getDate() +
+      "/" +
+      (fecha.getMonth() + 1) +
+      "/" +
+      fecha.getFullYear();
     let creador = "";
-    
+
     projects.push({
       id: doc.id,
       Titulo: doc.data().titulo,
       Categoria: obtenerCategoria(doc.data().categoria),
       Descripcion: doc.data().descripcion,
       Imagen: doc.data().img_url,
-      Precio: doc.data().precio+' USD',
+      Precio: doc.data().precio + " USD",
       Creador: doc.data().uid_creador,
       Likes: doc.data().likes,
       Favs: doc.data().favs,
@@ -618,11 +623,67 @@ export async function actualizarEntregadoVendedor(id, array) {
 }
 
 export async function actualizarEntregadoComprador(id, array) {
-  console.log(array[2])
+  console.log(array[2]);
   const projectsRef = doc(db, "buy", id);
   await updateDoc(projectsRef, {
     array: array,
-  })
+  });
+}
+
+// =========================================== NOTIFICACIONES =========================================== //
+export async function addNotification(id, tipo, usuario) {
+  try {
+    let array = [];
+    let uid = "";
+    let project = {};
+    let index = 0;
+
+    await consultarProyecto(id).then((res) => {
+      uid = res.datos.uid_creador;
+      project = res;
+    });
+
+    await getNotification(uid).then((res) => {
+      array = res;
+      index = res.length
+    });
+
+    if (usuario.uid !== uid)
+      array.push({ proyecto: project, tipo: tipo, user: usuario, leido: false, id: index });
+    
+    return await setDoc(doc(db, "notifications", uid), {
+      array,
+    });
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+}
+
+export async function getNotification(uid) {
+  const docRef = doc(db, "notifications", uid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data().array;
+  } else {
+    return [];
+  }
+}
+
+export async function actualizarLeido(uid, index) {
+  let array = [];
+
+  await getNotification(uid).then((res) => {
+    array = res;
+  });
+
+  console.log(index)
+  array[index].leido = true;
+
+  const projectsRef = doc(db, "notifications", uid);
+  await updateDoc(projectsRef, {
+    array: array,
+  });
 }
 
 export { analytics, storage, db };
