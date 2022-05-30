@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal } from "antd";
+import { message, Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { ImageListItem, ImageListItemBar } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -27,6 +27,7 @@ function Likes() {
         getLikes(usuario.uid).then((res) => {
           setProyectos(res);
         });
+        message.success("Proyecto Eliminado de Tus Me Gusta");
       },
     });
   }

@@ -76,14 +76,16 @@ export function UsuarioProvider(props) {
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      let fec = new Date(doc.data().fecha.toMillis());
+      let fecha = new Date(doc.data().fecha.toMillis());
+      let fec = fecha.getDate()+'/'+(fecha.getMonth() + 1)+'/'+fecha.getFullYear();
       users.push({
         id: doc.id,
         Imagen: doc.data().img_url,
         Nombre: doc.data().nombre,
         Email: doc.data().email,
         UID: doc.data().uid,
-        Fecha: fec,
+        fecha: fecha,
+        Fecha: fec
       });
     });
 

@@ -32,19 +32,22 @@ function Compra() {
     getCompra(usuario.uid).then((res) => {
       setProyectos(res);
     });
-    obtenerUsers().then(res => {
-      let users = []
-      res.forEach(element => {
-        users.push({nombre: element.Nombre, email: element.Email, uid: element.id})
+    obtenerUsers().then((res) => {
+      let users = [];
+      res.forEach((element) => {
+        users.push({
+          nombre: element.Nombre,
+          email: element.Email,
+          uid: element.id,
+        });
       });
-      setUsuarios(users)
-    })
+      setUsuarios(users);
+    });
   }, [obtenerUsers, usuario.uid]);
 
-  function verUser(uid){
+  function verUser(uid) {
     for (let i = 0; i < usuarios.length; i++) {
-      if (uid === usuarios[i].uid)
-        return usuarios[i].nombre
+      if (uid === usuarios[i].uid) return usuarios[i].nombre;
     }
   }
 
@@ -133,6 +136,8 @@ function Compra() {
                                 {new Date(proyecto.fecha).getMonth() + 1}/
                                 {new Date(proyecto.fecha).getFullYear()}
                               </p>
+                              <h6>Monto:</h6>
+                              <p>{proyecto.comprador.amount.value} USD</p>
                             </div>
                           ) : (
                             <div>

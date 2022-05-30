@@ -163,6 +163,10 @@ body {
       background: transparent;
   }
 
+  .shine{
+    font-weight: 200;
+  }
+
 @media (max-width: 555px) {
     .shine{
         font-size: 0;

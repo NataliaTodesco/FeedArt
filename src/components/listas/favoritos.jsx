@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal } from "antd";
+import { message, Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { addFavorites, getFavorites, restarFavs } from "../../firebaseConfig";
 import { ImageListItem, ImageListItemBar } from "@mui/material";
@@ -27,6 +27,7 @@ function Favoritos() {
         getFavorites(usuario.uid).then((res) => {
           setProyectos(res);
         });
+        message.success("Proyecto Eliminado de Tus Favoritos");
       },
     });
   }

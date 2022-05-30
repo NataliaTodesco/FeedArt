@@ -245,24 +245,29 @@ export async function obtenerProyectosChar() {
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
     let fecha = new Date(doc.data().fecha.toMillis());
+    let fec = fecha.getDate() +'/'+(fecha.getMonth() + 1)+'/'+fecha.getFullYear();
     let creador = "";
-    obtenerCreador(doc.data().uid_creador).then((res) => {
-      creador = res.nombre;
-    });
+    
     projects.push({
       id: doc.id,
       Titulo: doc.data().titulo,
       Categoria: obtenerCategoria(doc.data().categoria),
       Descripcion: doc.data().descripcion,
       Imagen: doc.data().img_url,
-      Precio: doc.data().precio,
-      Creador: creador,
+      Precio: doc.data().precio+' USD',
+      Creador: doc.data().uid_creador,
       Likes: doc.data().likes,
-      Favoritos: doc.data().favs,
-      Fecha: fecha,
+      Favs: doc.data().favs,
+      Fecha: fec,
       vendido: doc.data().vendido,
     });
   });
+
+  for (let i = 0; i < projects.length; i++) {
+    await obtenerCreador(projects[i].Creador).then((res) => {
+      projects[i].Creador = res.nombre;
+    });
+  }
 
   return projects;
 }

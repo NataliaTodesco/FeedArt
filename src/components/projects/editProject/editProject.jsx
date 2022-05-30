@@ -24,6 +24,7 @@ import newProject from "../../../img/logoVertical.svg";
 import { ref, uploadBytes, getDownloadURL, uploadBytesResumable,} from "firebase/storage";
 import { actualizarProyecto, addTags, consultarProyecto, obtenerTags, storage } from "../../../firebaseConfig";
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { message } from "antd";
 
 function EditProject() {
   let navigate = useNavigate();
@@ -275,6 +276,7 @@ function EditProject() {
             actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,precio, 'USD').then(res =>{
               if (res === ""){
                 navigate('/project/'+id)
+                message.success("Proyecto Modificado");
               }
               else {
                 setShowAlert(true)
@@ -285,6 +287,7 @@ function EditProject() {
             actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,0, 'USD').then(res =>{
               if (res === ""){
                 navigate('/project/'+id)
+                message.success("Proyecto Modificado");
               }
               else {
                 setShowAlert(true)
@@ -303,6 +306,7 @@ function EditProject() {
               actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,0, 'USD').then(res =>{
                 if (res === ""){
                   navigate('/project/'+id)
+                  message.success("Proyecto Modificado");
                 }
                 else {
                   setShowAlert(true)
@@ -472,7 +476,7 @@ function EditProject() {
         <div className="row mb-5">
           <div className="col-lg-12 d-flex justify-content-end">
             <Link to='/list'>
-              <button className="btn btn-danger px-4 py-2 mr-3">
+              <button className="btn btn-danger px-4 py-2 mr-3" onClick={e => {message.error("Edición Cancelada");}}>
                 Cancelar
                 <i className="bi bi-x-circle ml-2"  style={{ fontSize: "medium" }}></i>
               </button>

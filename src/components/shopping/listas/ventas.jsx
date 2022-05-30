@@ -97,6 +97,8 @@ function Ventas() {
                   {new Date(proyecto.fecha).getMonth() + 1}/
                   {new Date(proyecto.fecha).getFullYear()}
                 </p>
+                <h6>Monto:</h6>
+                <p>{proyecto.comprador.amount.value} USD</p>
               </div>
             </Typography>
           </Modal.Body>
