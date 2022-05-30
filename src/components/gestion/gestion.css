@@ -24,3 +24,79 @@ h3 {
         width: 720px;
     }
 } */
+
+.contextMenu {
+    width: 2.5em;
+    height: 2.5em;
+    border-radius: 50%;
+    background-color: #3c3c3b;
+    position: fixed;
+    cursor: pointer;
+    bottom: 0;
+    margin: 1em;
+    z-index: 1;
+  }
+  
+  .menus {
+    position: fixed;
+    bottom: 0;
+    margin: 2.5em 4em 4em;
+    z-index: 1;
+    display: flex;
+    flex-flow: column;
+  }
+  
+  .menus > a {
+    background-color: #3c3c3b;
+    color: white;
+    width: 150px;
+    padding: 0.5em;
+    text-align: center;
+    transform: translateY(-2.5em);
+    transition: transform 400ms 0ms, opacity 400ms ease-out;
+    opacity: 1;
+    border-radius: 8pt;
+    text-decoration: none;
+  }
+  .menus > a:nth-child(2) {
+    transform: translateY(-1.5em);
+    transition: transform 300ms 0ms, opacity 300ms ease-out;
+  }
+  .menus > a:last-child {
+    transform: translateY(-0.5em);
+    transition: transform 200ms 0ms, opacity 200ms ease-out;
+  }
+  
+  .hideMenu {
+    position: fixed;
+    bottom: 0;
+    margin: 2.5em 4em;
+    display: flex;
+    flex-flow: column;
+  }
+  
+  .hideMenu > a {
+    background-color: #53525e;
+    color: white;
+    width: 150px;
+    padding: 0.5em;
+    text-align: center;
+    visibility: none;
+    transform: translateY(4em);
+    transition: transform 400ms 0ms, opacity 400ms ease-in;
+    opacity: 0;
+    border-radius: 8pt;
+    text-decoration: none;
+  }
+  .hideMenu > a:nth-child(2) {
+    transform: translateY(2em);
+    transition: transform 300ms 0ms, opacity 300ms ease-in;
+  }
+  .hideMenu > a:last-child {
+    transform: translateY(0em);
+    transition: opacity 200ms ease-in;
+  }
+
+  .floating {
+    position: relative;
+  }

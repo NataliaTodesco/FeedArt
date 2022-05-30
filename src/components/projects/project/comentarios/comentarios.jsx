@@ -13,6 +13,7 @@ import { useTheme } from "@mui/material/styles";
 import { Comment, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import {
+  addNotification,
   borrarComentario,
   obtenerComentarios,
   registrarComentario,
@@ -45,6 +46,7 @@ function Comentario({ id }) {
     });
     setComentario("");
     message.success("Comentario Registrado");
+    addNotification(id, 'Comentario', usuario)
   }
 
   function editarComentario(comentario) {
