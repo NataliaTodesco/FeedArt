@@ -10,7 +10,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { Comment } from "antd";
+import { Comment, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import {
   borrarComentario,
@@ -44,6 +44,7 @@ function Comentario({ id }) {
       setComentarios(res);
     });
     setComentario("");
+    message.success("Comentario Registrado");
   }
 
   function editarComentario(comentario) {
@@ -59,6 +60,7 @@ function Comentario({ id }) {
       obtenerComentarios(id).then((res) => {
         setComentarios(res);
       });
+      message.success("Comentario Modificado");
     } else {
       setOpen(true)
     }
@@ -103,9 +105,11 @@ function Comentario({ id }) {
   function eliminarComentario(indice) {
     let coments = comentarios;
     coments.splice(indice, 1);
+    comentarios.splice(indice, 1);
     borrarComentario(id, coments);
     obtenerComentarios(id).then((res) => {
       setComentarios(res);
+      message.success("Comentario Eliminado");
     });
     setComentario("");
   }

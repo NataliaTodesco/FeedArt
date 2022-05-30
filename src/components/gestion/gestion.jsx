@@ -2,11 +2,17 @@ import React, { useState, useEffect } from "react";
 import Footer from "../footer/footer";
 import Navbar from "../Navbar/navbar";
 import "./gestion.css";
-import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+  GridToolbarFilterButton,
+} from "@mui/x-data-grid";
 import {
   obtenerProyectos,
   obtenerProyectosChar,
   usuariosMasProyectos,
+  proyectosxUID,
 } from "../../firebaseConfig";
 import {
   Avatar,
@@ -37,13 +43,13 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Animation } from "@devexpress/dx-react-chart";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { useUsuario } from '../../context/UserContext'
+import { useUsuario } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
 function Gestion() {
-  const [usuarios, setUsuarios] = useState([]); 
+  const [usuarios, setUsuarios] = useState([]);
   const { obtenerUsers } = useUsuario();
-  
+
   useEffect(() => {
     obtenerUsers().then((array) => {
       setUsuarios(array);
@@ -51,7 +57,7 @@ function Gestion() {
   }, []);
 
   function ListadoUsuarios() {
-    let navigate = useNavigate()
+    let navigate = useNavigate();
 
     function verUsuario(uid) {
       navigate("/user/" + uid);
@@ -63,21 +69,20 @@ function Gestion() {
         width: 80,
         renderCell: (usuarios) => (
           <strong>
-            <Avatar style={{cursor: 'pointer'}} onClick={e => verUsuario(usuarios.row.id)} alt="Profile Picture" src={usuarios.row.Imagen} />
+            <Avatar
+              style={{ cursor: "pointer" }}
+              onClick={(e) => verUsuario(usuarios.row.id)}
+              alt="Profile Picture"
+              src={usuarios.row.Imagen}
+            />
           </strong>
         ),
       },
       { field: "Nombre", width: 180 },
       { field: "Email", width: 270 },
       {
-        field: "Fecha de Creación",
+        field: "Fecha",
         width: 150,
-        renderCell: (usuarios) => (
-          <div>
-            {usuarios.row.Fecha.getDate()}/{usuarios.row.Fecha.getMonth() + 1}/
-            {usuarios.row.Fecha.getFullYear()}
-          </div>
-        ),
       },
     ];
 
@@ -101,7 +106,7 @@ function Gestion() {
       </div>
     );
   }
-  
+
   function CantidadxAño() {
     const [año, setAño] = React.useState(2022);
     let year = 2022;
@@ -152,8 +157,8 @@ function Gestion() {
       ];
 
       for (let index = 0; index < array.length; index++) {
-        if (year == array[index].Fecha.getFullYear()) {
-          switch (array[index].Fecha.getMonth() + 1) {
+        if (year == array[index].fecha.getFullYear()) {
+          switch (array[index].fecha.getMonth() + 1) {
             case 1:
               element[1].value = element[1].value + 1;
               break;
@@ -211,12 +216,13 @@ function Gestion() {
           console.error("oops, something went wrong!", err);
         }
       };
-    
+
       const iconButton = "exportIconButton";
       const filter = (node) => node.id !== iconButton;
-    
-      const exportToPng = (chart) => exportToImage(chart, "png", domtoimage.toPng);
-    
+
+      const exportToPng = (chart) =>
+        exportToImage(chart, "png", domtoimage.toPng);
+
       const exportToPdf = async (chart) => {
         const width = chart.offsetWidth;
         const height = chart.offsetHeight;
@@ -235,12 +241,12 @@ function Gestion() {
           console.error("oops, something went wrong!", err);
         }
       };
-    
+
       const options = [
         { key: "PNG", action: exportToPng, text: "Save as PNG" },
         { key: "PDF", action: exportToPdf, text: "Save as PDF" },
       ];
-    
+
       const ITEM_HEIGHT = 48;
       const paperProps = {
         style: {
@@ -248,7 +254,7 @@ function Gestion() {
           width: 150,
         },
       };
-    
+
       const [anchorEl, setAnchorEl] = useState(null);
       const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -335,7 +341,7 @@ function Gestion() {
       <div>
         <h3 style={{ textAlign: "center" }}>Cant. de Usuarios por Mes y Año</h3>
 
-        <Paper id='rootContainerId'>
+        <Paper id="rootContainerId">
           <Chart data={data} style={{ maxHeight: "415px" }}>
             <Export />
             <ArgumentAxis />
@@ -350,7 +356,7 @@ function Gestion() {
 
   function ListadoProyectos() {
     const [proyectos, setProyectos] = useState([]);
-  
+
     useEffect(() => {
       obtenerProyectosChar().then((res) => {
         setProyectos(res);
@@ -366,12 +372,12 @@ function Gestion() {
       );
     }
 
-    let navigate = useNavigate()
+    let navigate = useNavigate();
 
     function verProyecto(id) {
       navigate("/project/" + id);
     }
-    
+
     return (
       <div className="col-lg-12 my-5" style={{ height: 450, width: "100%" }}>
         <h3 style={{ textAlign: "center" }}>Listado de Proyectos</h3>
@@ -380,22 +386,23 @@ function Gestion() {
           columns={[
             {
               field: "Titulo",
-              width: 200,
+              width: 170,
             },
             {
               field: "Categoria",
-              width: 150,
+              width: 135,
             },
             {
               field: "Descripcion",
-              width: 390,
+              width: 360,
             },
             {
               field: "Imagen",
-              width: 150,
+              width: 130,
               renderCell: (proyectos) => (
                 <img
-                  style={{cursor: 'pointer'}} onClick={e => verProyecto(proyectos.row.id)}
+                  style={{ cursor: "pointer" }}
+                  onClick={(e) => verProyecto(proyectos.row.id)}
                   className="img-fluid my-5 mr-3"
                   alt=""
                   src={proyectos.row.Imagen}
@@ -408,21 +415,19 @@ function Gestion() {
             },
             {
               field: "Likes",
-              width: 80,
+              width: 50,
             },
             {
-              field: "Favoritos",
-              width: 80,
+              field: "Favs",
+              width: 50,
             },
             {
               field: "Fecha",
               width: 100,
-              renderCell: (usuarios) => (
-                <div>
-                  {usuarios.row.Fecha.getDate()}/{usuarios.row.Fecha.getMonth() + 1}/
-                  {usuarios.row.Fecha.getFullYear()}
-                </div>
-              ),
+            },
+            {
+              field: "Creador",
+              width: 150,
             },
           ]}
           components={{ Toolbar: CustomToolbar }}
@@ -433,13 +438,13 @@ function Gestion() {
 
   function ProyectosxCategoria() {
     const [proyectosXcategoria, setProyectosXcategoria] = useState([
-        { categoria: "A", cantidad: 0 },
-        { categoria: "B", cantidad: 0 },
-        { categoria: "C", cantidad: 0 },
-        { categoria: "D", cantidad: 0 },
-        { categoria: "E", cantidad: 0 },
-        { categoria: "F", cantidad: 0 },
-        { categoria: "G", cantidad: 0 },
+      { categoria: "A", cantidad: 0 },
+      { categoria: "B", cantidad: 0 },
+      { categoria: "C", cantidad: 0 },
+      { categoria: "D", cantidad: 0 },
+      { categoria: "E", cantidad: 0 },
+      { categoria: "F", cantidad: 0 },
+      { categoria: "G", cantidad: 0 },
     ]);
 
     function ProyectosXCategoria(array) {
@@ -496,12 +501,13 @@ function Gestion() {
           console.error("oops, something went wrong!", err);
         }
       };
-  
+
       const iconButton = "exportIconButton";
       const filter = (node) => node.id !== iconButton;
-    
-      const exportToPng = (chart) => exportToImage(chart, "png", domtoimage.toPng);
-    
+
+      const exportToPng = (chart) =>
+        exportToImage(chart, "png", domtoimage.toPng);
+
       const exportToPdf = async (chart) => {
         const width = chart.offsetWidth;
         const height = chart.offsetHeight;
@@ -520,12 +526,12 @@ function Gestion() {
           console.error("oops, something went wrong!", err);
         }
       };
-    
+
       const options = [
         { key: "PNG", action: exportToPng, text: "Save as PNG" },
         { key: "PDF", action: exportToPdf, text: "Save as PDF" },
       ];
-    
+
       const ITEM_HEIGHT = 48;
       const paperProps = {
         style: {
@@ -533,16 +539,16 @@ function Gestion() {
           width: 150,
         },
       };
-    
+
       const [anchorEl, setAnchorEl] = useState(null);
       const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
       };
-  
+
       const handleClose = () => {
         setAnchorEl(null);
       };
-  
+
       const handleExport =
         ({ action }) =>
         () => {
@@ -550,7 +556,7 @@ function Gestion() {
           handleClose();
           action(chart);
         };
-  
+
       const open = Boolean(anchorEl);
       return (
         <Plugin name="Export" style={{ width: "100%" }}>
@@ -601,24 +607,63 @@ function Gestion() {
     }, []);
 
     return (
-        <div className="col-lg-6 mb-3 char">
-          <Paper id="rootContainerId2">
-            <Chart  data={proyectosXcategoria} className="bar">
-              <ArgumentAxis />
-              <ValueAxis max={7} />
-              <Title text="Cantidad de Proyectos por Categoría" />
-              <Animation />
-              <Exports></Exports>
-              <BarSeries valueField="cantidad" argumentField="categoria" />
-            </Chart>
-          </Paper>
+      <div className="row">
+        <div className="col-lg-8">
+          <div className="row char" id="rootContainerId2">
+            <div className="col-lg-9 mb-3">
+              <Paper>
+                <Chart data={proyectosXcategoria} className="bar">
+                  <ArgumentAxis />
+                  <ValueAxis max={7} />
+                  <Title text="Cantidad de Proyectos por Categoría" />
+                  <Animation />
+                  <Exports></Exports>
+                  <BarSeries valueField="cantidad" argumentField="categoria" />
+                </Chart>
+              </Paper>
+            </div>
+            <div className="col-lg-3 mb-3 py-4" style={{ background: "rgb(237, 237, 241)", borderRadius: "8px" }} >
+              <h6>
+                {" "}
+                <span className="text-info">A -</span> Arte Tradicional{" "}
+              </h6>
+              <h6>
+                {" "}
+                <span className="text-info">B -</span> Dibujos y Pinturas{" "}
+              </h6>
+              <h6>
+                {" "}
+                <span className="text-info">C -</span> Fotografia{" "}
+              </h6>
+              <h6>
+                {" "}
+                <span className="text-info">D -</span> Arte digital{" "}
+              </h6>
+              <h6>
+                {" "}
+                <span className="text-info">E -</span> 3D{" "}
+              </h6>
+              <h6>
+                {" "}
+                <span className="text-info">F -</span> Esculturas{" "}
+              </h6>
+              <h6>
+                {" "}
+                <span className="text-info">G -</span> Arte callejero{" "}
+              </h6>
+            </div>
+          </div>
         </div>
+        <div className="col-lg-4">
+          <Top5Usuarios></Top5Usuarios>
+        </div>
+      </div>
     );
   }
 
   function Top5Usuarios() {
     const [proyectosXUser, setProyectosXUser] = useState([]);
-    
+
     function SortArray(x, y) {
       if (x.cantidad < y.cantidad) {
         return 1;
@@ -628,7 +673,7 @@ function Gestion() {
       }
       return 0;
     }
-    
+
     const _exportPdf = () => {
       html2canvas(document.querySelector("#capture")).then((canvas) => {
         document.body.appendChild(canvas);
@@ -638,8 +683,8 @@ function Gestion() {
         pdf.save("Top5UsuariosConMasProyectos.pdf");
       });
     };
-    
-    let navigate = useNavigate()
+
+    let navigate = useNavigate();
 
     function verUsuario(uid) {
       navigate("/user/" + uid);
@@ -676,7 +721,12 @@ function Gestion() {
                     className="list-group-item list-group-item-dark"
                   >
                     <div className="d-flex justify-content-left">
-                      <Avatar style={{cursor: 'pointer'}} onClick={e => verUsuario(user.id)} alt="" src={user.img_url}></Avatar>
+                      <Avatar
+                        style={{ cursor: "pointer" }}
+                        onClick={(e) => verUsuario(user.id)}
+                        alt=""
+                        src={user.img_url}
+                      ></Avatar>
                       <p className="ml-2">
                         {user.nombre} - {user.email}. <br />
                         Cant. de proyectos: <strong>{user.cantidad}</strong>
@@ -694,27 +744,27 @@ function Gestion() {
     );
   }
 
-  function Top10ProyectosMasRecaudacion(){
+  function Top10ProyectosMasRecaudacion() {
     const [proyectos, setProyectos] = useState([]);
-  
+
     useEffect(() => {
       obtenerProyectosChar().then((res) => {
-        let project = res.sort(SortArray)
-        let vendidos = []
+        let project = res.sort(SortArray);
+        let vendidos = [];
         for (let index = 0; index < project.length; index++) {
-          if (project[index].vendido){
-            vendidos.push(project[index])
+          if (project[index].vendido) {
+            vendidos.push(project[index]);
           }
         }
-        let top10 = []
-        
+        let top10 = [];
+
         let indice = 10;
-        if (vendidos.length < 10) indice = vendidos.length
+        if (vendidos.length < 10) indice = vendidos.length;
 
         for (let index = 0; index < indice; index++) {
-          top10.push(vendidos[index])
+          top10.push(vendidos[index]);
         }
-        setProyectos(top10)
+        setProyectos(top10);
       });
     }, []);
 
@@ -728,7 +778,7 @@ function Gestion() {
       return 0;
     }
 
-    let navigate = useNavigate()
+    let navigate = useNavigate();
 
     function verProyecto(id) {
       navigate("/project/" + id);
@@ -745,28 +795,31 @@ function Gestion() {
 
     return (
       <div className="col-lg-12 my-5" style={{ height: 560, width: "100%" }}>
-        <h3 style={{ textAlign: "center" }}>Top 10 Proyectos Vendidos que Más Dinero Recaudaron</h3>
+        <h3 style={{ textAlign: "center" }}>
+          Top 10 Proyectos Vendidos que Más Dinero Recaudaron
+        </h3>
         <DataGrid
           rows={proyectos}
           columns={[
             {
               field: "Titulo",
-              width: 200,
+              width: 170,
             },
             {
               field: "Categoria",
-              width: 150,
+              width: 135,
             },
             {
               field: "Descripcion",
-              width: 390,
+              width: 360,
             },
             {
               field: "Imagen",
-              width: 150,
+              width: 130,
               renderCell: (proyectos) => (
                 <img
-                  style={{cursor: 'pointer'}} onClick={e => verProyecto(proyectos.row.id)}
+                  style={{ cursor: "pointer" }}
+                  onClick={(e) => verProyecto(proyectos.row.id)}
                   className="img-fluid my-5 mr-3"
                   alt=""
                   src={proyectos.row.Imagen}
@@ -779,21 +832,19 @@ function Gestion() {
             },
             {
               field: "Likes",
-              width: 80,
+              width: 50,
             },
             {
-              field: "Favoritos",
-              width: 80,
+              field: "Favs",
+              width: 50,
             },
             {
               field: "Fecha",
               width: 100,
-              renderCell: (usuarios) => (
-                <div>
-                  {usuarios.row.Fecha.getDate()}/{usuarios.row.Fecha.getMonth() + 1}/
-                  {usuarios.row.Fecha.getFullYear()}
-                </div>
-              ),
+            },
+            {
+              field: "Creador",
+              width: 150,
             },
           ]}
           components={{ Toolbar: CustomToolbar }}
@@ -808,11 +859,16 @@ function Gestion() {
       <div className="container-fluid px-5 mt-3 mb-5">
         <div className="row">
           <div className="col-lg-12 text-center">
-            <h1 style={{ fontWeight: "800" }}> <span className="shine">✧・°・</span> GESTIÓN  <span className="shine">・°・✦</span></h1>
+            <h1 style={{ fontWeight: "800" }}>
+              {" "}
+              <span className="shine">✧・°・</span> GESTIÓN{" "}
+              <span className="shine">・°・✦</span>
+            </h1>
+            {/* <h1 style={{ fontWeight: "800" }}> <span className="shine">[</span> GESTIÓN  <span className="shine">]</span></h1> */}
           </div>
         </div>
         <div className="row">
-            <ListadoUsuarios></ListadoUsuarios>
+          <ListadoUsuarios></ListadoUsuarios>
           <div className="col-lg-5">
             <CantidadxAño></CantidadxAño>
           </div>
@@ -822,18 +878,6 @@ function Gestion() {
         </div>
         <div className="row mt-5">
           <ProyectosxCategoria></ProyectosxCategoria>
-          <div className="col-lg-2 mb-3">
-            <h6> <span className="text-info">A -</span> Arte Tradicional </h6>
-            <h6> <span className="text-info">B -</span> Dibujos y Pinturas </h6>
-            <h6> <span className="text-info">C -</span> Fotografia </h6>
-            <h6> <span className="text-info">D -</span> Arte digital </h6>
-            <h6> <span className="text-info">E -</span> 3D </h6>
-            <h6> <span className="text-info">F -</span> Esculturas </h6>
-            <h6> <span className="text-info">G -</span> Arte callejero </h6>
-          </div>
-          <div className="col-lg-4">
-            <Top5Usuarios></Top5Usuarios>
-          </div>
         </div>
         <div className="row mb-5">
           <Top10ProyectosMasRecaudacion></Top10ProyectosMasRecaudacion>

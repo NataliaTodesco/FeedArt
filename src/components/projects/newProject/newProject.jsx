@@ -30,6 +30,7 @@ import {
 import { addTags, guardarProyecto, obtenerTags, storage } from "../../../firebaseConfig";
 import { Link, useNavigate } from "react-router-dom";
 import { useUsuario } from "../../../context/UserContext";
+import { message } from "antd";
 
 function NewProject() {
   let navigate = useNavigate();
@@ -302,6 +303,7 @@ function NewProject() {
                   setAlert(res);
                 }
               });
+              message.success("Proyecto Subido");
             } else {
               guardarProyecto(
                 titulo,
@@ -320,6 +322,7 @@ function NewProject() {
                   setAlert(res);
                 }
               });
+              message.success("Proyecto Subido");
             }
 
             for (let index = 0; index < etiquetas.length; index++) {
@@ -352,6 +355,7 @@ function NewProject() {
                   setAlert(res);
                 }
               });
+              message.success("Proyecto Subido");
 
               for (let index = 0; index < etiquetas.length; index++) {
                 if (!tagsDB.includes(etiquetas[index])){
@@ -500,7 +504,7 @@ function NewProject() {
         <div className="row mb-5">
           <div className="col-lg-12 d-flex justify-content-end">
             <Link to="/home">
-              <button className="btn btn-danger px-4 py-2 mr-3">
+              <button className="btn btn-danger px-4 py-2 mr-3" onClick={e => {message.error("Proyecto Cancelado")}}>
                 Cancelar
                 <i
                   className="bi bi-x-circle ml-2"

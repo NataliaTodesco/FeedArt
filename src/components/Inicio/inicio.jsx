@@ -29,6 +29,7 @@ function Inicio() {
           <div className="col-lg-6 text-center">
             <img className="undraw img-fluid" src={inicio} alt="" />
           </div>
+            {/* <div className="circulo-fondo"></div> */}
         </div>
         <div className="row">
           <div className="col-12 text-center">

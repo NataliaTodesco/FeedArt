@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Modal } from "antd";
+import { message, Modal } from "antd";
 import {
   addFavorites,
   addLikes,
@@ -61,6 +61,7 @@ function MisProyectos() {
         misProyectos(usuario.uid).then((res) => {
           setProyectos(res);
         });
+        message.success("Proyecto Eliminado");
       },
     });
   }
