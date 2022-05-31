@@ -55,16 +55,16 @@ function Navbar() {
           </Typography>
           <Container maxWidth="xl">
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
+              <MenuItem
                 onClick={handleOpenNavMenu}
+                className="link"
+                activeClassName="active"
+                style={{ color: "rgb(82, 79, 79)" }}
               >
-                <MenuItem className="link" activeClassName="active" style={{color: 'rgb(82, 79, 79)'}}>
-                  <MenuIcon sx={{color: 'rgb(82, 79, 79)'}} className="mr-2" /> Menú
-                </MenuItem>
-              </IconButton>
+                <MenuIcon sx={{ color: "rgb(82, 79, 79)" }} className="mr-2" />{" "}
+                Menú
+              </MenuItem>
+
               <MenuItem onClick={handleCloseNavMenu} className="mr-1">
                 <Notifications></Notifications>
               </MenuItem>

@@ -386,8 +386,8 @@ function NewProject() {
           <div className="col-lg-12 text-center">
             <h1 style={{ fontWeight: "800" }}>
               {" "}
-              <span className="shine">✧・°・</span> NUEVO PROYECTO{" "}
-              <span className="shine">・°・✦</span>
+              <span className="shine">[</span> NUEVO PROYECTO{" "}
+              <span className="shine">]</span>
             </h1>
           </div>
         </div>
