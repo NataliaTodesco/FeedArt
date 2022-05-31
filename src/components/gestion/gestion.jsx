@@ -12,7 +12,6 @@ import {
   obtenerProyectos,
   obtenerProyectosChar,
   usuariosMasProyectos,
-  proyectosxUID,
 } from "../../firebaseConfig";
 import {
   Avatar,
@@ -54,7 +53,7 @@ function Gestion() {
     obtenerUsers().then((array) => {
       setUsuarios(array);
     });
-  }, []);
+  }, [obtenerUsers]);
 
   function ListadoUsuarios() {
     let navigate = useNavigate();
@@ -890,8 +889,8 @@ function Gestion() {
           <div className="col-lg-12 text-center">
             <h1 style={{ fontWeight: "800" }}>
               {" "}
-              <span className="shine">✧・°・</span> GESTIÓN{" "}
-              <span className="shine">・°・✦</span>
+              <span className="shine">[</span> GESTIÓN{" "}
+              <span className="shine">]</span>
             </h1>
             {/* <h1 style={{ fontWeight: "800" }}> <span className="shine">[</span> GESTIÓN  <span className="shine">]</span></h1> */}
           </div>

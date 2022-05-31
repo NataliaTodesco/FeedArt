@@ -69,28 +69,40 @@ function Notifications() {
       >
         <Popover id="popover-contained">
           <Popover.Body className="list">
-            {notificaciones.map((notification, index) => {
-              return (
-                <div
-                  key={index}
-                  onClick={(e) => {
-                    actualizar(
-                      usuario.uid,
-                      notification.proyecto.id,
-                      notification.id
-                    );
-                  }}
-                  className={`${
-                    !notification.leido ? "noread" : ""
-                  } tarjeta my-3 p-2`}
-                >
-                  Tu Proyecto{" "}
-                  <strong>{notification.proyecto.datos.titulo}</strong> recibió
-                  un nuevo <strong>{notification.tipo}</strong> de{" "}
-                  <strong>{notification.user.displayName}</strong>!
-                </div>
-              );
-            })}
+            {notificaciones.length > 0 ? (
+              <div>
+                {notificaciones.map((notification, index) => {
+                  return (
+                    <div
+                      key={index}
+                      onClick={(e) => {
+                        actualizar(
+                          usuario.uid,
+                          notification.proyecto.id,
+                          notification.id
+                        );
+                      }}
+                      className={`${
+                        !notification.leido ? "noread" : ""
+                      } tarjeta my-3 p-2`}
+                    >
+                      Tu Proyecto{" "}
+                      <strong>{notification.proyecto.datos.titulo}</strong>{" "}
+                      recibió un nuevo <strong>{notification.tipo}</strong> de{" "}
+                      <strong>{notification.user.displayName}</strong>!
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div
+                className="alert alert-secondary"
+                role="alert"
+                style={{ heigth: "100%", width: '241px' }}
+              >
+                Usted no tiene ninguna <strong>Notificación</strong>
+              </div>
+            )}
           </Popover.Body>
         </Popover>
       </Overlay>
