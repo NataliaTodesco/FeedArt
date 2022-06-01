@@ -40,11 +40,14 @@ function Inicio() {
   const [search, setSearch] = useState("");
   const myContainer = useRef(null);
   const [opciones, setOpciones] = useState([]);
-  const [type, setType] = useState('todos');
+  const [type, setType] = useState("todos");
+  const [usuario, setUsuario] = useState(null);
+  const [month, setMonth] = useState(0);
+  const [year, setYear] = useState(0);
   let c = 0;
 
   useEffect(() => {
-    Proyectos(0, type);
+    Proyectos(0);
     obtenerTags().then((result) => {
       obtenerTitulos().then((res) => {
         removeDuplicates(res.concat(result));
@@ -76,38 +79,10 @@ function Inicio() {
     return arr;
   }
 
-  function Proyectos(index, tipo) {
+  function Proyectos(index) {
     if (index === 0) {
       obtenerProyectos().then((res) => {
-        let projects = [];
-
-        switch (tipo) {
-          case 'muestra':
-            res.forEach(element => {
-              if (element.datos.precio === 0)
-              projects.push(element)
-            });
-            setProyectos(projects)
-            break;
-          case 'venta':
-            res.forEach(element => {
-              if (element.datos.precio > 0 && element.datos.vendido === false)
-              projects.push(element)
-            });
-            setProyectos(projects)
-            break;
-          case 'vendido':
-            res.forEach(element => {
-              if (element.datos.precio > 0 && element.datos.vendido === true)
-              projects.push(element)
-            });
-            setProyectos(projects)
-            break;
-          default:
-            setProyectos(res);
-            break;
-        }
-
+        setProyectos(res);
       });
     } else {
       obtenerProyectosXCategoria(index).then((res) => {
@@ -169,7 +144,7 @@ function Inicio() {
               onClick={(e) => {
                 setCategoria(0);
                 setSearch("");
-                Proyectos(0, type);
+                Proyectos(0);
               }}
             >
               Todos
@@ -189,7 +164,7 @@ function Inicio() {
                     onClick={(e) => {
                       setCategoria(categoria.value);
                       setSearch("");
-                      Proyectos(categoria.value, type);
+                      Proyectos(categoria.value);
                     }}
                   >
                     {categoria.label}
@@ -316,10 +291,11 @@ function Inicio() {
 
     const [tipo, setTipo] = useState(type);
 
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(usuario);
 
-    const [anio, setAnio] = useState(0);
-    const [mes, setMes] = useState(0);
+    const [anio, setAnio] = useState(year);
+    const [mes, setMes] = useState(month);
+
     const meses = [
       "Enero",
       "Febrero",
@@ -338,11 +314,84 @@ function Inicio() {
     const handleChange = (event) => {
       setAnio(event.target.value);
     };
-    
-    function filtrar(){
+
+    function filtrar() {
+      let projects = [];
+
+      switch (tipo) {
+        case "muestra":
+          if (user != null) {
+            proyectos.forEach((element) => {
+              if (
+                element.datos.precio === 0 &&
+                element.datos.uid_creador === user.uid
+              )
+                projects.push(element);
+            });
+            setProyectos(projects);
+          } else {
+            proyectos.forEach((element) => {
+              if (element.datos.precio === 0) projects.push(element);
+            });
+            setProyectos(projects);
+          }
+          break;
+        case "venta":
+          if (user != null) {
+            proyectos.forEach((element) => {
+              if (
+                element.datos.precio > 0 &&
+                element.datos.vendido === false &&
+                element.datos.uid_creador === user.uid
+              )
+                projects.push(element);
+            });
+            setProyectos(projects);
+          } else {
+            proyectos.forEach((element) => {
+              if (element.datos.precio > 0 && element.datos.vendido === false)
+                projects.push(element);
+            });
+            setProyectos(projects);
+          }
+          break;
+        case "vendido":
+          if (user != null) {
+            proyectos.forEach((element) => {
+              if (
+                element.datos.precio > 0 &&
+                element.datos.vendido === true &&
+                element.datos.uid_creador === user.uid
+              )
+                projects.push(element);
+            });
+            setProyectos(projects);
+          } else {
+            proyectos.forEach((element) => {
+              if (element.datos.precio > 0 && element.datos.vendido === true)
+                projects.push(element);
+            });
+            setProyectos(projects);
+          }
+          break;
+        default:
+          if (user != null) {
+            proyectos.forEach((element) => {
+              if (element.datos.uid_creador === user.uid)
+                projects.push(element);
+            });
+            setProyectos(projects);
+          } else {
+            setProyectos(proyectos);
+          }
+          break;
+      }
+
       setType(tipo);
-      Proyectos(Categoria, tipo);
-      setShow(false); 
+      setUsuario(user);
+      setMonth(mes);
+      setYear(anio)
+      setShow(false);
     }
 
     return (
@@ -375,7 +424,9 @@ function Inicio() {
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
                   defaultValue={type}
-                  onChange={e => {setTipo(e.target.value)}}
+                  onChange={(e) => {
+                    setTipo(e.target.value);
+                  }}
                 >
                   <FormControlLabel
                     value="todos"
@@ -427,7 +478,10 @@ function Inicio() {
               </div>
               {/* Filtrar por Fecha */}
               <div>
-                <FormLabel className="row mt-1" id="demo-row-radio-buttons-group-label">
+                <FormLabel
+                  className="row mt-1"
+                  id="demo-row-radio-buttons-group-label"
+                >
                   Fecha
                 </FormLabel>
                 <div className="row mt-3">
@@ -461,7 +515,11 @@ function Inicio() {
                       >
                         <MenuItem value={0}>Todos</MenuItem>
                         {meses.map((mes, index) => {
-                          return <MenuItem key={index} value={index + 1}>{mes}</MenuItem>;
+                          return (
+                            <MenuItem key={index} value={index + 1}>
+                              {mes}
+                            </MenuItem>
+                          );
                         })}
                       </Select>
                     </FormControl>
@@ -469,7 +527,14 @@ function Inicio() {
                 </div>
               </div>
               <div>
-                <button onClick={e => {filtrar()}} className="btn btn-info btn-block mt-4 mb-2">Filtrar</button>
+                <button
+                  onClick={(e) => {
+                    filtrar();
+                  }}
+                  className="btn btn-info btn-block mt-4 mb-2"
+                >
+                  Filtrar
+                </button>
               </div>
             </Popover.Body>
           </Popover>

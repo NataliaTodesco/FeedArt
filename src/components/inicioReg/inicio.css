@@ -62,6 +62,12 @@
         margin-left: 0%;
     }
     .auto{
-        width: 185px;
+        width: 160px;
+    }
+    .search-input img{
+        max-height: 20px;
+    }
+    .bi-filter{
+        font-size: x-large;
     }
 }
