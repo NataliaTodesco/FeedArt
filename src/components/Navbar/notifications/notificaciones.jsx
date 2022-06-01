@@ -98,9 +98,9 @@ function Notifications() {
               <div
                 className="alert alert-secondary"
                 role="alert"
-                style={{ heigth: "100%", width: '241px' }}
+                style={{ heigth: "100%", width: '241px', marginBottom: '0' }}
               >
-                Usted no tiene ninguna <strong>Notificación</strong>
+                <strong>Sin Notificaciones</strong>
               </div>
             )}
           </Popover.Body>

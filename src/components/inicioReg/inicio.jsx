@@ -40,6 +40,10 @@ function Inicio() {
   const [search, setSearch] = useState("");
   const myContainer = useRef(null);
   const [opciones, setOpciones] = useState([]);
+  const [type, setType] = useState("todos");
+  const [usuario, setUsuario] = useState(null);
+  const [month, setMonth] = useState(0);
+  const [year, setYear] = useState(0);
   let c = 0;
 
   useEffect(() => {
@@ -285,10 +289,13 @@ function Inicio() {
       setTarget(event.target);
     };
 
-    const [user, setUser] = useState(null);
+    const [tipo, setTipo] = useState(type);
 
-    const [anio, setAnio] = useState(0);
-    const [mes, setMes] = useState(0);
+    const [user, setUser] = useState(usuario);
+
+    const [anio, setAnio] = useState(year);
+    const [mes, setMes] = useState(month);
+
     const meses = [
       "Enero",
       "Febrero",
@@ -307,6 +314,86 @@ function Inicio() {
     const handleChange = (event) => {
       setAnio(event.target.value);
     };
+
+    function filtrar() {
+      let projects = [];
+
+      switch (tipo) {
+        case "muestra":
+          if (user != null) {
+            proyectos.forEach((element) => {
+              if (
+                element.datos.precio === 0 &&
+                element.datos.uid_creador === user.uid
+              )
+                projects.push(element);
+            });
+            setProyectos(projects);
+          } else {
+            proyectos.forEach((element) => {
+              if (element.datos.precio === 0) projects.push(element);
+            });
+            setProyectos(projects);
+          }
+          break;
+        case "venta":
+          if (user != null) {
+            proyectos.forEach((element) => {
+              if (
+                element.datos.precio > 0 &&
+                element.datos.vendido === false &&
+                element.datos.uid_creador === user.uid
+              )
+                projects.push(element);
+            });
+            setProyectos(projects);
+          } else {
+            proyectos.forEach((element) => {
+              if (element.datos.precio > 0 && element.datos.vendido === false)
+                projects.push(element);
+            });
+            setProyectos(projects);
+          }
+          break;
+        case "vendido":
+          if (user != null) {
+            proyectos.forEach((element) => {
+              if (
+                element.datos.precio > 0 &&
+                element.datos.vendido === true &&
+                element.datos.uid_creador === user.uid
+              )
+                projects.push(element);
+            });
+            setProyectos(projects);
+          } else {
+            proyectos.forEach((element) => {
+              if (element.datos.precio > 0 && element.datos.vendido === true)
+                projects.push(element);
+            });
+            setProyectos(projects);
+          }
+          break;
+        default:
+          if (user != null) {
+            proyectos.forEach((element) => {
+              if (element.datos.uid_creador === user.uid)
+                projects.push(element);
+            });
+            setProyectos(projects);
+          } else {
+            setProyectos(proyectos);
+          }
+          break;
+      }
+
+      setType(tipo);
+      setUsuario(user);
+      setMonth(mes);
+      setYear(anio)
+      setShow(false);
+    }
+
     return (
       <div ref={ref}>
         <i
@@ -336,7 +423,10 @@ function Inicio() {
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
-                  defaultValue="todos"
+                  defaultValue={type}
+                  onChange={(e) => {
+                    setTipo(e.target.value);
+                  }}
                 >
                   <FormControlLabel
                     value="todos"
@@ -388,10 +478,13 @@ function Inicio() {
               </div>
               {/* Filtrar por Fecha */}
               <div>
-                <FormLabel id="demo-row-radio-buttons-group-label">
+                <FormLabel
+                  className="row mt-1"
+                  id="demo-row-radio-buttons-group-label"
+                >
                   Fecha
                 </FormLabel>
-                <div className="row mt-2">
+                <div className="row mt-3">
                   <div className="col-6">
                     <FormControl fullWidth size="small">
                       <InputLabel id="demo-simple-select-label">Año</InputLabel>
@@ -422,12 +515,26 @@ function Inicio() {
                       >
                         <MenuItem value={0}>Todos</MenuItem>
                         {meses.map((mes, index) => {
-                          return <MenuItem key={index} value={index + 1}>{mes}</MenuItem>;
+                          return (
+                            <MenuItem key={index} value={index + 1}>
+                              {mes}
+                            </MenuItem>
+                          );
                         })}
                       </Select>
                     </FormControl>
                   </div>
                 </div>
+              </div>
+              <div>
+                <button
+                  onClick={(e) => {
+                    filtrar();
+                  }}
+                  className="btn btn-info btn-block mt-4 mb-2"
+                >
+                  Filtrar
+                </button>
               </div>
             </Popover.Body>
           </Popover>
