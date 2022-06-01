@@ -58,6 +58,7 @@ export async function guardarProyecto(
       tags: tags,
       titulo: titulo,
       uid_creador: usuario.uid,
+      vendido: false,
       fecha: new Date(),
     });
     console.log(docRef);

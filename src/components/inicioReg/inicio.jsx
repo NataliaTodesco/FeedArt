@@ -40,10 +40,11 @@ function Inicio() {
   const [search, setSearch] = useState("");
   const myContainer = useRef(null);
   const [opciones, setOpciones] = useState([]);
+  const [type, setType] = useState('todos');
   let c = 0;
 
   useEffect(() => {
-    Proyectos(0);
+    Proyectos(0, type);
     obtenerTags().then((result) => {
       obtenerTitulos().then((res) => {
         removeDuplicates(res.concat(result));
@@ -75,10 +76,38 @@ function Inicio() {
     return arr;
   }
 
-  function Proyectos(index) {
+  function Proyectos(index, tipo) {
     if (index === 0) {
       obtenerProyectos().then((res) => {
-        setProyectos(res);
+        let projects = [];
+
+        switch (tipo) {
+          case 'muestra':
+            res.forEach(element => {
+              if (element.datos.precio === 0)
+              projects.push(element)
+            });
+            setProyectos(projects)
+            break;
+          case 'venta':
+            res.forEach(element => {
+              if (element.datos.precio > 0 && element.datos.vendido === false)
+              projects.push(element)
+            });
+            setProyectos(projects)
+            break;
+          case 'vendido':
+            res.forEach(element => {
+              if (element.datos.precio > 0 && element.datos.vendido === true)
+              projects.push(element)
+            });
+            setProyectos(projects)
+            break;
+          default:
+            setProyectos(res);
+            break;
+        }
+
       });
     } else {
       obtenerProyectosXCategoria(index).then((res) => {
@@ -140,7 +169,7 @@ function Inicio() {
               onClick={(e) => {
                 setCategoria(0);
                 setSearch("");
-                Proyectos(0);
+                Proyectos(0, type);
               }}
             >
               Todos
@@ -160,7 +189,7 @@ function Inicio() {
                     onClick={(e) => {
                       setCategoria(categoria.value);
                       setSearch("");
-                      Proyectos(categoria.value);
+                      Proyectos(categoria.value, type);
                     }}
                   >
                     {categoria.label}
@@ -285,6 +314,8 @@ function Inicio() {
       setTarget(event.target);
     };
 
+    const [tipo, setTipo] = useState(type);
+
     const [user, setUser] = useState(null);
 
     const [anio, setAnio] = useState(0);
@@ -307,6 +338,13 @@ function Inicio() {
     const handleChange = (event) => {
       setAnio(event.target.value);
     };
+    
+    function filtrar(){
+      setType(tipo);
+      Proyectos(Categoria, tipo);
+      setShow(false); 
+    }
+
     return (
       <div ref={ref}>
         <i
@@ -336,7 +374,8 @@ function Inicio() {
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
-                  defaultValue="todos"
+                  defaultValue={type}
+                  onChange={e => {setTipo(e.target.value)}}
                 >
                   <FormControlLabel
                     value="todos"
@@ -388,10 +427,10 @@ function Inicio() {
               </div>
               {/* Filtrar por Fecha */}
               <div>
-                <FormLabel id="demo-row-radio-buttons-group-label">
+                <FormLabel className="row mt-1" id="demo-row-radio-buttons-group-label">
                   Fecha
                 </FormLabel>
-                <div className="row mt-2">
+                <div className="row mt-3">
                   <div className="col-6">
                     <FormControl fullWidth size="small">
                       <InputLabel id="demo-simple-select-label">Año</InputLabel>
@@ -428,6 +467,9 @@ function Inicio() {
                     </FormControl>
                   </div>
                 </div>
+              </div>
+              <div>
+                <button onClick={e => {filtrar()}} className="btn btn-info btn-block mt-4 mb-2">Filtrar</button>
               </div>
             </Popover.Body>
           </Popover>
