@@ -321,68 +321,649 @@ function Inicio() {
       switch (tipo) {
         case "muestra":
           if (user != null) {
-            proyectos.forEach((element) => {
-              if (
-                element.datos.precio === 0 &&
-                element.datos.uid_creador === user.uid
-              )
-                projects.push(element);
-            });
-            setProyectos(projects);
+            switch (anio) {
+              case 2021:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio === 0 &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2021 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio === 0 &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2021
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              case 2022:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio === 0 &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2022 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio === 0 &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2022
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              default:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio === 0 &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    if (
+                      element.datos.precio === 0 &&
+                      element.datos.uid_creador === user.uid
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+            }
           } else {
-            proyectos.forEach((element) => {
-              if (element.datos.precio === 0) projects.push(element);
-            });
-            setProyectos(projects);
+            switch (anio) {
+              case 2021:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio === 0 &&
+                      fecha.getFullYear() === 2021 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio === 0 &&
+                      fecha.getFullYear() === 2021
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              case 2022:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio === 0 &&
+                      fecha.getFullYear() === 2022 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio === 0 &&
+                      fecha.getFullYear() === 2022
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              default:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio === 0 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    if (element.datos.precio === 0) projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+            }
           }
           break;
         case "venta":
           if (user != null) {
-            proyectos.forEach((element) => {
-              if (
-                element.datos.precio > 0 &&
-                element.datos.vendido === false &&
-                element.datos.uid_creador === user.uid
-              )
-                projects.push(element);
-            });
-            setProyectos(projects);
+            switch (anio) {
+              case 2021:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2021 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2021
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              case 2022:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2022 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2022
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              default:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      element.datos.uid_creador === user.uid
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+            }
           } else {
-            proyectos.forEach((element) => {
-              if (element.datos.precio > 0 && element.datos.vendido === false)
-                projects.push(element);
-            });
-            setProyectos(projects);
+            switch (anio) {
+              case 2021:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      fecha.getFullYear() === 2021 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      fecha.getFullYear() === 2021
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              case 2022:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      fecha.getFullYear() === 2022 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      fecha.getFullYear() === 2022
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              default:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === false &&
+                      element.datos.precio === 0
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+            }
           }
           break;
         case "vendido":
           if (user != null) {
-            proyectos.forEach((element) => {
-              if (
-                element.datos.precio > 0 &&
-                element.datos.vendido === true &&
-                element.datos.uid_creador === user.uid
-              )
-                projects.push(element);
-            });
-            setProyectos(projects);
+            switch (anio) {
+              case 2021:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2021 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2021
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              case 2022:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2022 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2022
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              default:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      element.datos.uid_creador === user.uid
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+            }
           } else {
-            proyectos.forEach((element) => {
-              if (element.datos.precio > 0 && element.datos.vendido === true)
-                projects.push(element);
-            });
-            setProyectos(projects);
+            switch (anio) {
+              case 2021:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      fecha.getFullYear() === 2021 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      fecha.getFullYear() === 2021
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              case 2022:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      fecha.getFullYear() === 2022 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      fecha.getFullYear() === 2022
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              default:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    if (
+                      element.datos.precio > 0 &&
+                      element.datos.vendido === true &&
+                      element.datos.precio === 0
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+            }
           }
           break;
         default:
           if (user != null) {
-            proyectos.forEach((element) => {
-              if (element.datos.uid_creador === user.uid)
-                projects.push(element);
-            });
-            setProyectos(projects);
+            switch (anio) {
+              case 2021:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2021 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2021
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              case 2022:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2022 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getFullYear() === 2022
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              default:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      element.datos.uid_creador === user.uid &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    if (element.datos.uid_creador === user.uid)
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+            }
           } else {
-            setProyectos(proyectos);
+            switch (anio) {
+              case 2021:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      fecha.getFullYear() === 2021 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (fecha.getFullYear() === 2021) projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              case 2022:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (
+                      fecha.getFullYear() === 2022 &&
+                      fecha.getMonth() + 1 === mes
+                    )
+                      projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (fecha.getFullYear() === 2022) projects.push(element);
+                  });
+                  setProyectos(projects);
+                }
+                break;
+              default:
+                if (mes !== 0) {
+                  proyectos.forEach((element) => {
+                    let fecha = new Date(element.datos.fecha.toMillis());
+
+                    if (fecha.getMonth() + 1 === mes) projects.push(element);
+                  });
+                  setProyectos(projects);
+                } else {
+                  setProyectos(proyectos);
+                }
+                break;
+            }
           }
           break;
       }
@@ -390,7 +971,7 @@ function Inicio() {
       setType(tipo);
       setUsuario(user);
       setMonth(mes);
-      setYear(anio)
+      setYear(anio);
       setShow(false);
     }
 
