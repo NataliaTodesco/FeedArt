@@ -170,9 +170,14 @@ body {
   transition-delay: 1.05s;
 }
 
-.proyecto:hover .bar {
+.fecha{
+  font-size: small;
+}
+
+.proyecto:hover .bar, .proyecto:hover .fecha {
   width: 0;
   height: 0;
+  font-size: 0;
   background: transparent;
 }
 

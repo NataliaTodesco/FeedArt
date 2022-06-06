@@ -73,23 +73,46 @@ function Notifications() {
               <div>
                 {notificaciones.map((notification, index) => {
                   return (
-                    <div
-                      key={index}
-                      onClick={(e) => {
-                        actualizar(
-                          usuario.uid,
-                          notification.proyecto.id,
-                          notification.id
-                        );
-                      }}
-                      className={`${
-                        !notification.leido ? "noread" : ""
-                      } tarjeta my-3 p-2`}
-                    >
-                      Tu Proyecto{" "}
-                      <strong>{notification.proyecto.datos.titulo}</strong>{" "}
-                      recibió un nuevo <strong>{notification.tipo}</strong> de{" "}
-                      <strong>{notification.user.displayName}</strong>!
+                    <div>
+                      {notification.tipo !== "Comprado" ? (
+                        <div
+                          key={index}
+                          onClick={(e) => {
+                            actualizar(
+                              usuario.uid,
+                              notification.proyecto.id,
+                              notification.id
+                            );
+                          }}
+                          className={`${
+                            !notification.leido ? "noread" : ""
+                          } tarjeta my-3 p-2`}
+                        >
+                          Tu Proyecto{" "}
+                          <strong>{notification.proyecto.datos.titulo}</strong>{" "}
+                          recibió un nuevo <strong>{notification.tipo}</strong>{" "}
+                          de <strong>{notification.user.displayName}</strong>!
+                        </div>
+                      ) : (
+                        <div
+                          key={index}
+                          onClick={(e) => {
+                            actualizar(
+                              usuario.uid,
+                              notification.proyecto.id,
+                              notification.id
+                            );
+                          }}
+                          className={`${
+                            !notification.leido ? "noread" : ""
+                          } tarjeta my-3 p-2`}
+                        >
+                          Tu Proyecto{" "}
+                          <strong>{notification.proyecto.datos.titulo}</strong>{" "}
+                          fue <strong>{notification.tipo}</strong>{" "}
+                          por <strong>{notification.user.displayName}</strong>!
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -98,7 +121,7 @@ function Notifications() {
               <div
                 className="alert alert-secondary"
                 role="alert"
-                style={{ heigth: "100%", width: '241px', marginBottom: '0' }}
+                style={{ heigth: "100%", width: "241px", marginBottom: "0" }}
               >
                 <strong>Sin Notificaciones</strong>
               </div>
