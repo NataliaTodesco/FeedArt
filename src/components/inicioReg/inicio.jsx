@@ -44,6 +44,7 @@ function Inicio() {
   const [usuario, setUsuario] = useState(null);
   const [month, setMonth] = useState(0);
   const [year, setYear] = useState(0);
+  const [Projects, setProjects] = useState([]);
   let c = 0;
 
   useEffect(() => {
@@ -83,10 +84,12 @@ function Inicio() {
     if (index === 0) {
       obtenerProyectos().then((res) => {
         setProyectos(res);
+        setProjects(res);
       });
     } else {
       obtenerProyectosXCategoria(index).then((res) => {
         setProyectos(res);
+        setProjects(res);
       });
     }
   }
@@ -145,6 +148,10 @@ function Inicio() {
                 setCategoria(0);
                 setSearch("");
                 Proyectos(0);
+                setType("todos");
+                setUsuario(null);
+                setMonth(0);
+                setYear(0);
               }}
             >
               Todos
@@ -165,6 +172,10 @@ function Inicio() {
                       setCategoria(categoria.value);
                       setSearch("");
                       Proyectos(categoria.value);
+                      setType("todos");
+                      setUsuario(null);
+                      setMonth(0);
+                      setYear(0);
                     }}
                   >
                     {categoria.label}
@@ -324,7 +335,7 @@ function Inicio() {
             switch (anio) {
               case 2021:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -337,7 +348,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -352,7 +363,7 @@ function Inicio() {
                 break;
               case 2022:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -365,7 +376,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -380,7 +391,7 @@ function Inicio() {
                 break;
               default:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -392,7 +403,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     if (
                       element.datos.precio === 0 &&
                       element.datos.uid_creador === user.uid
@@ -407,7 +418,7 @@ function Inicio() {
             switch (anio) {
               case 2021:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -419,7 +430,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -433,7 +444,7 @@ function Inicio() {
                 break;
               case 2022:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -445,7 +456,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -459,7 +470,7 @@ function Inicio() {
                 break;
               default:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -470,8 +481,8 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
-                    if (element.datos.precio === 0) projects.push(element);
+                  Projects.forEach((element) => {
+                    if (element.datos.precio == 0) projects.push(element);
                   });
                   setProyectos(projects);
                 }
@@ -484,7 +495,7 @@ function Inicio() {
             switch (anio) {
               case 2021:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -498,7 +509,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -514,7 +525,7 @@ function Inicio() {
                 break;
               case 2022:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -528,7 +539,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -544,7 +555,7 @@ function Inicio() {
                 break;
               default:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -557,7 +568,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     if (
                       element.datos.precio > 0 &&
                       element.datos.vendido === false &&
@@ -573,7 +584,7 @@ function Inicio() {
             switch (anio) {
               case 2021:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -586,7 +597,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -601,7 +612,7 @@ function Inicio() {
                 break;
               case 2022:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -614,7 +625,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -629,7 +640,7 @@ function Inicio() {
                 break;
               default:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -641,11 +652,10 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     if (
                       element.datos.precio > 0 &&
-                      element.datos.vendido === false &&
-                      element.datos.precio === 0
+                      element.datos.vendido === false
                     )
                       projects.push(element);
                   });
@@ -660,7 +670,7 @@ function Inicio() {
             switch (anio) {
               case 2021:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -674,7 +684,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -690,7 +700,7 @@ function Inicio() {
                 break;
               case 2022:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -704,7 +714,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -720,7 +730,7 @@ function Inicio() {
                 break;
               default:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -733,7 +743,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     if (
                       element.datos.precio > 0 &&
                       element.datos.vendido === true &&
@@ -749,7 +759,7 @@ function Inicio() {
             switch (anio) {
               case 2021:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -762,7 +772,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -777,7 +787,7 @@ function Inicio() {
                 break;
               case 2022:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -790,7 +800,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -805,7 +815,7 @@ function Inicio() {
                 break;
               default:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -817,11 +827,10 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     if (
                       element.datos.precio > 0 &&
-                      element.datos.vendido === true &&
-                      element.datos.precio === 0
+                      element.datos.vendido === true
                     )
                       projects.push(element);
                   });
@@ -836,7 +845,7 @@ function Inicio() {
             switch (anio) {
               case 2021:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -848,7 +857,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -862,7 +871,7 @@ function Inicio() {
                 break;
               case 2022:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -874,7 +883,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -888,7 +897,7 @@ function Inicio() {
                 break;
               default:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -899,7 +908,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     if (element.datos.uid_creador === user.uid)
                       projects.push(element);
                   });
@@ -911,7 +920,7 @@ function Inicio() {
             switch (anio) {
               case 2021:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -922,7 +931,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (fecha.getFullYear() === 2021) projects.push(element);
@@ -932,7 +941,7 @@ function Inicio() {
                 break;
               case 2022:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (
@@ -943,7 +952,7 @@ function Inicio() {
                   });
                   setProyectos(projects);
                 } else {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (fecha.getFullYear() === 2022) projects.push(element);
@@ -953,14 +962,14 @@ function Inicio() {
                 break;
               default:
                 if (mes !== 0) {
-                  proyectos.forEach((element) => {
+                  Projects.forEach((element) => {
                     let fecha = new Date(element.datos.fecha.toMillis());
 
                     if (fecha.getMonth() + 1 === mes) projects.push(element);
                   });
                   setProyectos(projects);
                 } else {
-                  setProyectos(proyectos);
+                  setProyectos(Projects);
                 }
                 break;
             }
@@ -998,7 +1007,7 @@ function Inicio() {
               {/* Filtrar por Tipo */}
               <FormControl>
                 <FormLabel id="demo-row-radio-buttons-group-label">
-                  Tipo
+                  Estado
                 </FormLabel>
                 <RadioGroup
                   row
@@ -1060,8 +1069,7 @@ function Inicio() {
               {/* Filtrar por Fecha */}
               <div>
                 <FormLabel
-                  className="row mt-1"
-                  id="demo-row-radio-buttons-group-label"
+                  className="row mt-1 selectFecha"
                 >
                   Fecha
                 </FormLabel>
@@ -1135,7 +1143,7 @@ function Inicio() {
         <div style={{ minHeight: "50vh" }}>
           {proyectos.length === 0 ? (
             <div className="alert alert-secondary" role="alert">
-              No se encontró ningún proyecto de esta <strong>Categoría</strong>
+              No se encontró ningún proyecto
             </div>
           ) : (
             <div
@@ -1184,6 +1192,37 @@ function Inicio() {
                           subtitle={verUser(proyecto.datos.uid_creador)}
                           className="mb-1 bar"
                           style={{ borderRadius: "0 0 8px 8px" }}
+                          actionIcon={
+                            <div className="text-light mr-1 fecha">
+                              {proyecto.datos.precio > 0 &&
+                              !proyecto.datos.vendido ? (
+                                <p>{proyecto.datos.precio} USD</p>
+                              ) : (
+                                <div>
+                                  {proyecto.datos.precio > 0 &&
+                                  proyecto.datos.vendido ? (
+                                    <p>Vendido</p>
+                                  ) : (
+                                    <p>Muestra</p>
+                                  )}
+                                </div>
+                              )}
+                              <br />
+                              <p className="mt-1" style={{ marginBottom: "0" }}>
+                                {new Date(
+                                  proyecto.datos.fecha.toMillis()
+                                ).getDate()}
+                                /
+                                {new Date(
+                                  proyecto.datos.fecha.toMillis()
+                                ).getMonth() + 1}
+                                /
+                                {new Date(
+                                  proyecto.datos.fecha.toMillis()
+                                ).getFullYear()}
+                              </p>
+                            </div>
+                          }
                         />
                       </ImageListItem>
                     );
@@ -1228,6 +1267,37 @@ function Inicio() {
                           subtitle={verUser(proyecto.datos.uid_creador)}
                           className="mb-1 bar"
                           style={{ borderRadius: "0 0 8px 8px" }}
+                          actionIcon={
+                            <div className="text-light mr-1 fecha">
+                              {proyecto.datos.precio > 0 &&
+                              !proyecto.datos.vendido ? (
+                                <p>{proyecto.datos.precio} USD</p>
+                              ) : (
+                                <div>
+                                  {proyecto.datos.precio > 0 &&
+                                  proyecto.datos.vendido ? (
+                                    <p>Vendido</p>
+                                  ) : (
+                                    <p>Muestra</p>
+                                  )}
+                                </div>
+                              )}
+                              <br />
+                              <p className="mt-1" style={{ marginBottom: "0" }}>
+                                {new Date(
+                                  proyecto.datos.fecha.toMillis()
+                                ).getDate()}
+                                /
+                                {new Date(
+                                  proyecto.datos.fecha.toMillis()
+                                ).getMonth() + 1}
+                                /
+                                {new Date(
+                                  proyecto.datos.fecha.toMillis()
+                                ).getFullYear()}
+                              </p>
+                            </div>
+                          }
                         />
                       </ImageListItem>
                     );
@@ -1237,14 +1307,10 @@ function Inicio() {
                       {c === proyectos.length ? (
                         <div className="row">
                           <div className="col-lg-12">
-                            <div
-                              className="alert alert-secondary"
-                              role="alert"
-                              style={{ heigth: "100%" }}
-                            >
+                            <p style={{ heigth: "100%" }}>
                               No se encontró ningún proyecto que coincida con la
                               búsqueda en esta categoría
-                            </div>
+                            </p>
                           </div>
                         </div>
                       ) : (

@@ -71,3 +71,9 @@
         font-size: x-large;
     }
 }
+
+@media (max-width: 575px) {
+    .selectFecha{
+        margin-left: 1%;
+    }
+}

@@ -135,6 +135,7 @@ export async function proyectosxUID(uid) {
       rows: 2,
       cols: 2,
       featured: true,
+      datos: doc.data()
     };
     proyectos.push(proyecto);
   });
@@ -253,6 +254,10 @@ export async function obtenerProyectosChar() {
       "/" +
       fecha.getFullYear();
     let creador = "";
+    let estado = '';
+    if (doc.data().precio > 0 && doc.data().vendido) estado = 'Vendido'
+    else if (doc.data().precio === 0) estado = 'Muestra'
+    else estado = 'En Venta'
 
     projects.push({
       id: doc.id,
@@ -266,6 +271,8 @@ export async function obtenerProyectosChar() {
       Favs: doc.data().favs,
       Fecha: fec,
       vendido: doc.data().vendido,
+      Estado: estado,
+      Comentarios: doc.data().comentarios.length
     });
   });
 

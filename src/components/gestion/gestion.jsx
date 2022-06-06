@@ -12,6 +12,7 @@ import {
   obtenerProyectos,
   obtenerProyectosChar,
   usuariosMasProyectos,
+  proyectosxUID
 } from "../../firebaseConfig";
 import {
   Avatar,
@@ -21,6 +22,9 @@ import {
   Select,
   Menu,
   IconButton,
+  TextField,
+  FormLabel,
+  Autocomplete,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import JsPDF from "jspdf";
@@ -31,6 +35,8 @@ import {
   LineSeries,
   BarSeries,
   Title,
+  PieSeries,
+  Legend,
 } from "@devexpress/dx-react-chart-material-ui";
 import {
   Plugin,
@@ -429,6 +435,14 @@ function Gestion() {
               field: "Creador",
               width: 150,
             },
+            {
+              field: "Estado",
+              width: 70,
+            },
+            // {
+            //   field: "Comentarios",
+            //   width: 150,
+            // },
           ]}
           components={{ Toolbar: CustomToolbar }}
         />
@@ -487,6 +501,12 @@ function Gestion() {
       setProyectosXcategoria(element);
     }
 
+    useEffect(() => {
+      obtenerProyectos().then((res) => {
+        ProyectosXCategoria(res);
+      });
+    }, []);
+    
     const Exports = () => {
       const exportToImage = async (chart, format, exportFunc) => {
         try {
@@ -599,13 +619,7 @@ function Gestion() {
         </Plugin>
       );
     };
-
-    useEffect(() => {
-      obtenerProyectos().then((res) => {
-        ProyectosXCategoria(res);
-      });
-    }, []);
-
+    
     return (
       <div className="row">
         <div className="col-lg-8">
@@ -679,7 +693,6 @@ function Gestion() {
 
     const _exportPdf = () => {
       html2canvas(document.querySelector("#capture")).then((canvas) => {
-        document.body.appendChild(canvas);
         const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF();
         pdf.addImage(imgData, "PNG", 0, 0);
@@ -849,9 +862,408 @@ function Gestion() {
               field: "Creador",
               width: 150,
             },
+            {
+              field: "Estado",
+              width: 70,
+            },
+            // {
+            //   field: "Comentarios",
+            //   width: 150,
+            // },
           ]}
           components={{ Toolbar: CustomToolbar }}
         />
+      </div>
+    );
+  }
+
+  function ProyectosxTipoxUsuario() {
+    const [data, setData] = useState([
+      { country: "Muestra: " + 0, area: 0 },
+      { country: "En Venta: " + 0, area: 0 },
+      { country: "Vendido: " + 0, area: 0 },
+    ]);
+
+    useEffect(() => {
+      filtro(usuarios[14])
+    }, []);
+
+    async function filtro(usuario){
+      await proyectosxUID(usuario.id).then(res => {
+        let muestra = 0;
+        let venta = 0;
+        let vendido = 0;
+
+        res.forEach(element => {
+          if (element.datos.precio === 0) muestra++
+          else if (element.datos.precio > 0 && element.datos.vendido) vendido++
+          else venta++
+        });
+
+        setData([
+          { country: "Muestra: " + muestra, area: muestra },
+          { country: "En Venta: " + venta, area: venta },
+          { country: "Vendido: " + vendido, area: vendido },
+        ])
+      })
+    }
+
+    const Exports = () => {
+      const exportToImage = async (chart, format, exportFunc) => {
+        try {
+          const dataUrl = await exportFunc(chart, { filter });
+          const link = document.createElement("a");
+          document.body.appendChild(link);
+          link.download = `ProyectosxTipoxUsuario.${format}`;
+          link.href = dataUrl;
+          link.click();
+          link.remove();
+        } catch (err) {
+          console.error("oops, something went wrong!", err);
+        }
+      };
+
+      const iconButton = "exportIconButton";
+      const filter = (node) => node.id !== iconButton;
+
+      const exportToPng = (chart) =>
+        exportToImage(chart, "png", domtoimage.toPng);
+
+      const exportToPdf = async (chart) => {
+        const width = chart.offsetWidth;
+        const height = chart.offsetHeight;
+        try {
+          const dataUrl = await domtoimage.toJpeg(chart, { filter });
+          const doc = new JsPDF({
+            orientation: "landscape",
+            unit: "px",
+            format: [width, height],
+          });
+          const pdfWidth = doc.internal.pageSize.getWidth();
+          const pdfHeight = doc.internal.pageSize.getHeight();
+          doc.addImage(dataUrl, "JPEG", 0, 0, pdfWidth, pdfHeight);
+          doc.save("ProyectosxCategoría");
+        } catch (err) {
+          console.error("oops, something went wrong!", err);
+        }
+      };
+
+      const options = [
+        { key: "PNG", action: exportToPng, text: "Save as PNG" },
+        { key: "PDF", action: exportToPdf, text: "Save as PDF" },
+      ];
+
+      const ITEM_HEIGHT = 48;
+      const paperProps = {
+        style: {
+          maxHeight: ITEM_HEIGHT * 4.5,
+          width: 150,
+        },
+      };
+
+      const [anchorEl, setAnchorEl] = useState(null);
+      const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+      };
+
+      const handleClose = () => {
+        setAnchorEl(null);
+      };
+
+      const handleExport =
+        ({ action }) =>
+        () => {
+          const chart = document.querySelector(`#rootContainerId3`);
+          handleClose();
+          action(chart);
+        };
+
+    const [user, setUser] = useState(usuarios[14]);
+
+
+      const open = Boolean(anchorEl);
+      return (
+        <Plugin name="Export">
+          <Template name="top" className="row">
+            <TemplatePlaceholder />
+            <IconButton
+              id={iconButton}
+              onClick={handleClick}
+              sx={{
+                width: 50,
+                height: 50,
+              }}
+              size="large"
+              style={{ marginBottom: '10px'}}
+            > 
+              <MoreVertIcon />
+            </IconButton> 
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              PaperProps={paperProps}
+            >
+              {options.map((option) => (
+                <MenuItem key={option.key} onClick={handleExport(option)}>
+                  {option.text}
+                </MenuItem>
+              ))}
+            </Menu>
+            <FormControl
+              sx={{ m: 1, minWidth: '70%' }}
+              className="mb-3 ml-3"
+            >
+                <Autocomplete
+                  fullWidth
+                  aria-labelledby="user"
+                  disablePortal
+                  defaultValue={user}
+                  onChange={(event, newValue) => {
+                    setUser(newValue);
+                    filtro(newValue)
+                  }}
+                  className="my-2 "
+                  id="size-small-standard"
+                  size="small"
+                  options={usuarios}
+                  getOptionLabel={(option) =>
+                    option.Nombre + " - " + option.Email
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="standard"
+                      label="Usuario"
+                      placeholder="Buscar por usuario..."
+                    />
+                  )}
+                />
+            </FormControl>
+          </Template>
+        </Plugin>
+      );
+    };
+
+    return (
+      <div className="col-lg-6 mt-5 mb-4">
+        <h3 className="text-center">Proyectos por Estado por Usuario</h3>
+        <Paper className="pt-2">
+          <Chart data={data} id='rootContainerId3' style={{background: 'white'}}>
+            <Exports />
+            <PieSeries valueField="area" argumentField="country" />
+            <Legend />
+          </Chart>
+        </Paper>
+      </div>
+    );
+  }
+
+  function VentasxCategoria() {
+    const _exportPdf = () => {
+      html2canvas(document.querySelector("#ventasxcategoria")).then(
+        (canvas) => {
+          const imgData = canvas.toDataURL("image/png");
+          const pdf = new jsPDF();
+          pdf.addImage(imgData, "PNG", 0, 0);
+          pdf.save("VentasPorCategoria.pdf");
+        }
+      );
+    };
+
+    const [proyectosXcategoria, setProyectosXcategoria] = useState([
+      { categoria: "A", cantidad: 0 },
+      { categoria: "B", cantidad: 0 },
+      { categoria: "C", cantidad: 0 },
+      { categoria: "D", cantidad: 0 },
+      { categoria: "E", cantidad: 0 },
+      { categoria: "F", cantidad: 0 },
+      { categoria: "G", cantidad: 0 },
+    ]);
+
+    function ProyectosXCategoria(array) {
+      let element = [
+        { categoria: "A", cantidad: 0, total: 0 },
+        { categoria: "B", cantidad: 0, total: 0 },
+        { categoria: "C", cantidad: 0, total: 0 },
+        { categoria: "D", cantidad: 0, total: 0 },
+        { categoria: "E", cantidad: 0, total: 0 },
+        { categoria: "F", cantidad: 0, total: 0 },
+        { categoria: "G", cantidad: 0, total: 0 },
+      ];
+
+      for (let index = 0; index < array.length; index++) {
+        switch (array[index].datos.categoria) {
+          case 1:
+            element[0].cantidad = element[0].cantidad + 1;
+            break;
+          case 2:
+            element[1].cantidad = element[1].cantidad + 1;
+            break;
+          case 3:
+            element[2].cantidad = element[2].cantidad + 1;
+            break;
+          case 4:
+            element[3].cantidad = element[3].cantidad + 1;
+            break;
+          case 5:
+            element[4].cantidad = element[4].cantidad + 1;
+            break;
+          case 6:
+            element[5].cantidad = element[5].cantidad + 1;
+            break;
+          default:
+            element[6].cantidad = element[6].cantidad + 1;
+            break;
+        }
+        if (array[index].datos.vendido){
+          switch (array[index].datos.categoria) {
+            case 1:
+              element[0].total = element[0].total + 1;
+              break;
+            case 2:
+              element[1].total = element[1].total + 1;
+              break;
+            case 3:
+              element[2].total = element[2].total + 1;
+              break;
+            case 4:
+              element[3].total = element[3].total + 1;
+              break;
+            case 5:
+              element[4].total = element[4].total + 1;
+              break;
+            case 6:
+              element[5].total = element[5].total + 1;
+              break;
+            default:
+              element[6].total = element[6].total + 1;
+              break;
+          }
+        }
+      }
+
+      setProyectosXcategoria(element);
+    }
+
+    useEffect(() => {
+      obtenerProyectos().then((res) => {
+        ProyectosXCategoria(res);
+      });
+    }, []);
+
+    return (
+      <div
+        className="col-lg-6 mb-4"
+      >
+        <a className="float-right" onClick={() => _exportPdf()}>
+          <i className="bi bi-download mr-2" style={{ fontSize: "large" }}></i>
+          Guardar como PDF
+        </a>
+        <br /> <br />
+        <div id="ventasxcategoria">
+          <h3 style={{ textAlign: "center" }}>Cant. de Ventas por Categoría</h3>
+          <div className="px-4 py-5" style={{ background: "white", borderRadius: "5px" }}>
+            <h6>Arte Tradicional</h6>
+            <p className="float-right mb-2 ml-1">{proyectosXcategoria[0].cantidad}</p>
+            <div className="progress mb-3">
+              <div
+                className="progress-bar progress-bar-striped"
+                role="progressbar"
+                style={{ width: Math.round(proyectosXcategoria[0].total*100/proyectosXcategoria[0].cantidad)+'%' }}
+                aria-valuenow={Math.round(proyectosXcategoria[0].total*100/proyectosXcategoria[0].cantidad)}
+                aria-valuemin="0"
+                aria-valuemax={proyectosXcategoria[0].cantidad}
+              >
+                {proyectosXcategoria[0].total}
+              </div>
+            </div>
+            <h6>Dibujos y Pinturas</h6>
+            <p className="float-right mb-2 ml-1">{proyectosXcategoria[1].cantidad}</p>
+            <div className="progress mb-3">
+              <div
+                className="progress-bar bg-secondary progress-bar-striped"
+                role="progressbar"
+                style={{ width: Math.round(proyectosXcategoria[1].total*100/proyectosXcategoria[1].cantidad)+'%' }}
+                aria-valuenow={Math.round(proyectosXcategoria[1].total*100/proyectosXcategoria[1].cantidad)}
+                aria-valuemin="0"
+                aria-valuemax={proyectosXcategoria[1].cantidad}
+              >
+                {proyectosXcategoria[1].total}
+              </div>
+            </div>
+            <h6>Fotografía</h6>
+            <p className="float-right mb-2 ml-1">{proyectosXcategoria[2].cantidad}</p>
+            <div className="progress mb-3">
+              <div
+                className="progress-bar bg-dark progress-bar-striped"
+                role="progressbar"
+                style={{ width: Math.round(proyectosXcategoria[2].total*100/proyectosXcategoria[2].cantidad)+'%' }}
+                aria-valuenow={Math.round(proyectosXcategoria[2].total*100/proyectosXcategoria[2].cantidad)}
+                aria-valuemin="0"
+                aria-valuemax={proyectosXcategoria[2].cantidad}
+              >
+                {proyectosXcategoria[2].total}
+              </div>
+            </div>
+            <h6>Arte Digital</h6>
+            <p className="float-right mb-2 ml-1">{proyectosXcategoria[3].cantidad}</p>
+            <div className="progress mb-3">
+              <div
+                className="progress-bar bg-danger progress-bar-striped"
+                role="progressbar"
+                style={{ width: Math.round(proyectosXcategoria[3].total*100/proyectosXcategoria[3].cantidad)+'%' }}
+                aria-valuenow={Math.round(proyectosXcategoria[3].total*100/proyectosXcategoria[3].cantidad)}
+                aria-valuemin="0"
+                aria-valuemax={proyectosXcategoria[3].cantidad}
+              >
+                {proyectosXcategoria[3].total}
+              </div>
+            </div>
+            <h6>3D</h6>
+            <p className="float-right mb-2 ml-1">{proyectosXcategoria[4].cantidad}</p>
+            <div className="progress mb-3">
+              <div
+                className="progress-bar bg-warning progress-bar-striped"
+                role="progressbar"
+                style={{ width: Math.round((proyectosXcategoria[4].total*100)/proyectosXcategoria[4].cantidad)+'%' }}
+                aria-valuenow={Math.round(proyectosXcategoria[4].total*100/proyectosXcategoria[4].cantidad)}
+                aria-valuemin="0"
+                aria-valuemax={proyectosXcategoria[4].cantidad}
+              >
+                {proyectosXcategoria[4].total}
+              </div>
+            </div>
+            <h6>Esculturas</h6>
+            <p className="float-right mb-2 ml-1">{proyectosXcategoria[5].cantidad}</p>
+            <div className="progress mb-3">
+              <div
+                className="progress-bar bg-info progress-bar-striped"
+                role="progressbar"
+                style={{ width: Math.round(proyectosXcategoria[5].total*100/proyectosXcategoria[5].cantidad)+'%' }}
+                aria-valuenow={Math.round(proyectosXcategoria[5].total*100/proyectosXcategoria[5].cantidad)}
+                aria-valuemin="0"
+                aria-valuemax={proyectosXcategoria[5].cantidad}
+              >
+                {proyectosXcategoria[5].total}
+              </div>
+            </div>
+            <h6>Arte Callejero</h6>
+            <p className="float-right mb-2 ml-1">{proyectosXcategoria[6].cantidad}</p>
+            <div className="progress mb-3">
+              <div
+                className="progress-bar bg-success progress-bar-striped"
+                role="progressbar"
+                style={{ width: Math.round(proyectosXcategoria[6].total*100/proyectosXcategoria[6].cantidad)+'%' }}
+                aria-valuenow={Math.round(proyectosXcategoria[6].total*100/proyectosXcategoria[6].cantidad)}
+                aria-valuemin="0"
+                aria-valuemax={proyectosXcategoria[6].cantidad}
+              >
+                {proyectosXcategoria[6].total}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -876,15 +1288,18 @@ function Gestion() {
               handleMenuClicked(e);
             }}
             className="contextMenu d-flex justify-content-center align-items-center"
-          ><i class="bi bi-list text-light" style={{fontSize: 'larger'}}></i></div>
+          >
+            <i className="bi bi-list text-light" style={{ fontSize: "larger" }}></i>
+          </div>
         </div>
       </>
     );
   }
+
   return (
     <div className="gestion">
       <Navbar></Navbar>
-      <div className="container-fluid px-5 mt-3 mb-5">
+      <div className="container-fluid px-4 mt-3 mb-5">
         <div className="row">
           <div className="col-lg-12 text-center">
             <h1 style={{ fontWeight: "800" }}>
@@ -892,7 +1307,6 @@ function Gestion() {
               <span className="shine">[</span> GESTIÓN{" "}
               <span className="shine">]</span>
             </h1>
-            {/* <h1 style={{ fontWeight: "800" }}> <span className="shine">[</span> GESTIÓN  <span className="shine">]</span></h1> */}
           </div>
         </div>{" "}
         <div className="row" id="users">
@@ -909,6 +1323,10 @@ function Gestion() {
         </div>
         <div className="row mb-5" id="shopping">
           <Top10ProyectosMasRecaudacion></Top10ProyectosMasRecaudacion>
+        </div>
+        <div className="row">
+          <ProyectosxTipoxUsuario />
+          <VentasxCategoria />
         </div>
       </div>
       <ContextMenu />

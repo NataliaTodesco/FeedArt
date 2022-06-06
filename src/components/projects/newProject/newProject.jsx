@@ -286,24 +286,32 @@ function NewProject() {
           if (precio !== "") {
             setShowAlert(false);
             if (vender) {
-              guardarProyecto(
-                titulo,
-                descripcion,
-                categoria,
-                foto,
-                etiquetas,
-                precio,
-                usuario,
-                "USD"
-              ).then((res) => {
-                if (res === "") {
-                  navigate("/home");
-                } else {
-                  setShowAlert(true);
-                  setAlert(res);
-                }
-              });
-              message.success("Proyecto Subido");
+              if (precio <= 0){
+                setAlert(
+                  'El precio debe ser mayor a 0'
+                );
+                setShowAlert(true);
+              }
+              else {
+                guardarProyecto(
+                  titulo,
+                  descripcion,
+                  categoria,
+                  foto,
+                  etiquetas,
+                  precio,
+                  usuario,
+                  "USD"
+                ).then((res) => {
+                  if (res === "") {
+                    navigate("/home");
+                  } else {
+                    setShowAlert(true);
+                    setAlert(res);
+                  }
+                });
+                message.success("Proyecto Subido");
+              }
             } else {
               guardarProyecto(
                 titulo,

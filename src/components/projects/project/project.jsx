@@ -169,6 +169,7 @@ function Proyecto() {
       const success = () => {
         message.success("¡Compra realizada con éxito!");
         setVendido(true);
+        addNotification(id, 'Comprado', usuario)
       };
 
       return (
@@ -176,7 +177,9 @@ function Proyecto() {
           <PayPalButton
             options={{
               clientId:
-                "AS3T_m64SF8mvaVEGqam0_SQsfpO7c_SpAa6NufjUcVr05Nyb3G9SpVTY6DePN8JUGrNIBqG0laFOJ8Q",
+                //Live "AWwVouriJtFDZGm81rWS1XhPcFWcCtp4LlIcMnfs8zkGFUBdIshahIL3BZqkuDStgSYzXOnw22LwKVv0",
+                // Sandbox "AS3T_m64SF8mvaVEGqam0_SQsfpO7c_SpAa6NufjUcVr05Nyb3G9SpVTY6DePN8JUGrNIBqG0laFOJ8Q",
+                'ATPgLnuTb0AI3gY4TlK9ARCkl5kEMwVQA_Nvu_uyHYO2b5i6UfyyDa8FDseBpFZelRg3yTeo8cHa2SQY',
               currency: "USD",
             }}
             amount={proyecto.datos.precio}

@@ -273,16 +273,24 @@ function EditProject() {
           if (precio !== "") {
             setShowAlert(false);
             if (vender) {
-            actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,precio, 'USD').then(res =>{
-              if (res === ""){
-                navigate('/project/'+id)
-                message.success("Proyecto Modificado");
+              if (precio <= 0){
+                setAlert(
+                  'El precio debe ser mayor a 0'
+                );
+                setShowAlert(true);
               }
-              else {
-                setShowAlert(true)
-                setAlert(res)
+              else{
+                actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,precio, 'USD').then(res =>{
+                  if (res === ""){
+                    navigate('/project/'+id)
+                    message.success("Proyecto Modificado");
+                  }
+                  else {
+                    setShowAlert(true)
+                    setAlert(res)
+                  }
+                })
               }
-            })
           } else {
             actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,0, 'USD').then(res =>{
               if (res === ""){
