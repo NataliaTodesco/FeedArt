@@ -290,6 +290,11 @@ function EditProject() {
                     setAlert(res)
                   }
                 })
+                for (let index = 0; index < etiquetas.length; index++) {
+                  if (tagsDB.includes(etiquetas[index]) === false){
+                    addTags(etiquetas[index])
+                  }
+                }
               }
           } else {
             actualizarProyecto(id,titulo,descripcion,categoria,foto,etiquetas,0, 'USD').then(res =>{
@@ -302,7 +307,13 @@ function EditProject() {
                 setAlert(res)
               }
             })
+            for (let index = 0; index < etiquetas.length; index++) {
+              if (tagsDB.includes(etiquetas[index]) === false){
+                addTags(etiquetas[index])
+              }
+            }
           }
+          
           } else {
             if (vender) {
               setAlert(
@@ -368,7 +379,7 @@ function EditProject() {
       <div className="container my-3">
         <div className="row">
           <div className="col-lg-12 text-center">
-            <h1 style={{ fontWeight: "800" }}> <span className="shine">✧・°・</span> EDITAR PROYECTO  <span className="shine">・°・✦</span></h1>
+            <h1 style={{ fontWeight: "800" }}> <span className="shine">[</span> EDITAR PROYECTO  <span className="shine">]</span></h1>
           </div>
         </div>
         <div className="row" style={{ marginTop: "-1%" }}>

@@ -311,6 +311,12 @@ function NewProject() {
                   }
                 });
                 message.success("Proyecto Subido");
+                
+            for (let index = 0; index < etiquetas.length; index++) {
+              if (tagsDB.includes(etiquetas[index]) === false){
+                addTags(etiquetas[index])
+              }
+            }
               }
             } else {
               guardarProyecto(
@@ -331,13 +337,14 @@ function NewProject() {
                 }
               });
               message.success("Proyecto Subido");
-            }
-
+              
             for (let index = 0; index < etiquetas.length; index++) {
-              if (!tagsDB.includes(etiquetas[index])){
+              if (tagsDB.includes(etiquetas[index]) === false){
                 addTags(etiquetas[index])
               }
             }
+            }
+
           } else {
             if (vender) {
               setAlert(
