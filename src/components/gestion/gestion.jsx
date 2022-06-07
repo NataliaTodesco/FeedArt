@@ -23,7 +23,6 @@ import {
   Menu,
   IconButton,
   TextField,
-  FormLabel,
   Autocomplete,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
@@ -404,7 +403,7 @@ function Gestion() {
             },
             {
               field: "Imagen",
-              width: 130,
+              width: 110,
               renderCell: (proyectos) => (
                 <img
                   style={{ cursor: "pointer" }}
@@ -433,11 +432,11 @@ function Gestion() {
             },
             {
               field: "Creador",
-              width: 150,
+              width: 140,
             },
             {
               field: "Estado",
-              width: 70,
+              width: 80,
             },
             // {
             //   field: "Comentarios",
@@ -831,7 +830,7 @@ function Gestion() {
             },
             {
               field: "Imagen",
-              width: 130,
+              width: 110,
               renderCell: (proyectos) => (
                 <img
                   style={{ cursor: "pointer" }}
@@ -860,11 +859,11 @@ function Gestion() {
             },
             {
               field: "Creador",
-              width: 150,
+              width: 140,
             },
             {
               field: "Estado",
-              width: 70,
+              width: 80,
             },
             // {
             //   field: "Comentarios",

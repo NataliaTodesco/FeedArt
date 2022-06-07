@@ -367,13 +367,15 @@ export async function obtenerTitulos() {
   return projects;
 }
 
-export function addTags(tag) {
+export async function addTags(tag) {
   try {
-    return setDoc(doc(db, "tags"), {
-      tag,
+    await addDoc(collection(db, "tags"), {
+      tag: tag,
     });
+    return "";
   } catch (e) {
     console.error("Error adding document: ", e);
+    return e;
   }
 }
 
