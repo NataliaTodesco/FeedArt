@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Footer from "../footer/footer";
 import Navbar from "../Navbar/navbar";
 import "./gestion.css";
@@ -12,7 +12,7 @@ import {
   obtenerProyectos,
   obtenerProyectosChar,
   usuariosMasProyectos,
-  proyectosxUID
+  proyectosxUID,
 } from "../../firebaseConfig";
 import {
   Avatar,
@@ -49,6 +49,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useUsuario } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { Overlay } from "react-bootstrap";
 
 function Gestion() {
   const [usuarios, setUsuarios] = useState([]);
@@ -59,6 +60,7 @@ function Gestion() {
       setUsuarios(array);
     });
   }, [obtenerUsers]);
+
 
   function ListadoUsuarios() {
     let navigate = useNavigate();
@@ -368,6 +370,15 @@ function Gestion() {
       });
     }, []);
 
+    function verUser(uid){
+      let nombre = ' - '
+      for (let i = 0; i < usuarios.length; i++) {
+        if (uid === usuarios[i].UID)
+          return usuarios[i].Nombre
+      }
+      return nombre
+    }
+
     function CustomToolbar() {
       return (
         <GridToolbarContainer>
@@ -384,7 +395,7 @@ function Gestion() {
     }
 
     return (
-      <div className="col-lg-12 my-5" style={{ height: 450, width: "100%" }}>
+      <div className="col-lg-12 my-5" style={{ height: 550, width: "100%" }}>
         <h3 style={{ textAlign: "center" }}>Listado de Proyectos</h3>
         <DataGrid
           rows={proyectos}
@@ -436,7 +447,14 @@ function Gestion() {
             },
             {
               field: "Estado",
-              width: 80,
+              width: 90,
+            },
+            {
+              field: "Comprador",
+              width: 140,
+              renderCell: (proyectos) => (
+                <p>{verUser(proyectos.row.Comprador)}</p>
+              )
             },
             // {
             //   field: "Comentarios",
@@ -505,7 +523,7 @@ function Gestion() {
         ProyectosXCategoria(res);
       });
     }, []);
-    
+
     const Exports = () => {
       const exportToImage = async (chart, format, exportFunc) => {
         try {
@@ -618,7 +636,7 @@ function Gestion() {
         </Plugin>
       );
     };
-    
+
     return (
       <div className="row">
         <div className="col-lg-8">
@@ -783,6 +801,15 @@ function Gestion() {
       });
     }, []);
 
+    function verUser(uid){
+      let nombre = ' - '
+      for (let i = 0; i < usuarios.length; i++) {
+        if (uid === usuarios[i].UID)
+          return usuarios[i].Nombre
+      }
+      return nombre
+    }
+
     function SortArray(x, y) {
       if (x.Precio < y.Precio) {
         return 1;
@@ -809,7 +836,7 @@ function Gestion() {
     }
 
     return (
-      <div className="col-lg-12 my-5" style={{ height: 560, width: "100%" }}>
+      <div className="col-lg-12 my-5" style={{ height: 600, width: "100%" }}>
         <h3 style={{ textAlign: "center" }}>
           Top 10 Proyectos Vendidos que Más Dinero Recaudaron
         </h3>
@@ -863,7 +890,14 @@ function Gestion() {
             },
             {
               field: "Estado",
-              width: 80,
+              width: 90,
+            },
+            {
+              field: "Comprador",
+              width: 140,
+              renderCell: (proyectos) => (
+                <p>{verUser(proyectos.row.Comprador)}</p>
+              )
             },
             // {
             //   field: "Comentarios",
@@ -877,6 +911,7 @@ function Gestion() {
   }
 
   function ProyectosxTipoxUsuario() {
+    const [masCant] = useState(usuarios[14]);
     const [data, setData] = useState([
       { country: "Muestra: " + 0, area: 0 },
       { country: "En Venta: " + 0, area: 0 },
@@ -884,27 +919,27 @@ function Gestion() {
     ]);
 
     useEffect(() => {
-      filtro(usuarios[14])
-    }, []);
+      filtro(masCant)
+    }, [masCant]);
 
-    async function filtro(usuario){
-      await proyectosxUID(usuario.id).then(res => {
+    async function filtro(usuario) {
+      await proyectosxUID(usuario.id).then((res) => {
         let muestra = 0;
         let venta = 0;
         let vendido = 0;
 
-        res.forEach(element => {
-          if (element.datos.precio === 0) muestra++
-          else if (element.datos.precio > 0 && element.datos.vendido) vendido++
-          else venta++
+        res.forEach((element) => {
+          if (element.datos.precio === 0) muestra++;
+          else if (element.datos.precio > 0 && element.datos.vendido) vendido++;
+          else venta++;
         });
 
         setData([
           { country: "Muestra: " + muestra, area: muestra },
           { country: "En Venta: " + venta, area: venta },
           { country: "Vendido: " + vendido, area: vendido },
-        ])
-      })
+        ]);
+      });
     }
 
     const Exports = () => {
@@ -977,8 +1012,7 @@ function Gestion() {
           action(chart);
         };
 
-    const [user, setUser] = useState(usuarios[14]);
-
+      const [user, setUser] = useState(masCant);
 
       const open = Boolean(anchorEl);
       return (
@@ -993,10 +1027,10 @@ function Gestion() {
                 height: 50,
               }}
               size="large"
-              style={{ marginBottom: '10px'}}
-            > 
+              style={{ marginBottom: "10px" }}
+            >
               <MoreVertIcon />
-            </IconButton> 
+            </IconButton>
             <Menu
               anchorEl={anchorEl}
               open={open}
@@ -1009,35 +1043,32 @@ function Gestion() {
                 </MenuItem>
               ))}
             </Menu>
-            <FormControl
-              sx={{ m: 1, minWidth: '70%' }}
-              className="mb-3 ml-3"
-            >
-                <Autocomplete
-                  fullWidth
-                  aria-labelledby="user"
-                  disablePortal
-                  defaultValue={user}
-                  onChange={(event, newValue) => {
-                    setUser(newValue);
-                    filtro(newValue)
-                  }}
-                  className="my-2 "
-                  id="size-small-standard"
-                  size="small"
-                  options={usuarios}
-                  getOptionLabel={(option) =>
-                    option.Nombre + " - " + option.Email
-                  }
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant="standard"
-                      label="Usuario"
-                      placeholder="Buscar por usuario..."
-                    />
-                  )}
-                />
+            <FormControl sx={{ m: 1, minWidth: "70%" }} className="mb-3 ml-3">
+              <Autocomplete
+                fullWidth
+                aria-labelledby="user"
+                disablePortal
+                defaultValue={user}
+                onChange={(event, newValue) => {
+                  setUser(newValue);
+                  filtro(newValue);
+                }}
+                className="my-2 "
+                id="size-small-standard"
+                size="small"
+                options={usuarios}
+                getOptionLabel={(option) =>
+                  option.Nombre + " - " + option.Email
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    label="Usuario"
+                    placeholder="Buscar por usuario..."
+                  />
+                )}
+              />
             </FormControl>
           </Template>
         </Plugin>
@@ -1048,7 +1079,11 @@ function Gestion() {
       <div className="col-lg-6 mt-5 mb-4">
         <h3 className="text-center">Proyectos por Estado por Usuario</h3>
         <Paper className="pt-2">
-          <Chart data={data} id='rootContainerId3' style={{background: 'white'}}>
+          <Chart
+            data={data}
+            id="rootContainerId3"
+            style={{ background: "white" }}
+          >
             <Exports />
             <PieSeries valueField="area" argumentField="country" />
             <Legend />
@@ -1115,7 +1150,7 @@ function Gestion() {
             element[6].cantidad = element[6].cantidad + 1;
             break;
         }
-        if (array[index].datos.vendido){
+        if (array[index].datos.vendido) {
           switch (array[index].datos.categoria) {
             case 1:
               element[0].total = element[0].total + 1;
@@ -1152,9 +1187,7 @@ function Gestion() {
     }, []);
 
     return (
-      <div
-        className="col-lg-6 mb-4"
-      >
+      <div className="col-lg-6 mb-4">
         <a className="float-right" onClick={() => _exportPdf()}>
           <i className="bi bi-download mr-2" style={{ fontSize: "large" }}></i>
           Guardar como PDF
@@ -1162,15 +1195,29 @@ function Gestion() {
         <br /> <br />
         <div id="ventasxcategoria">
           <h3 style={{ textAlign: "center" }}>Cant. de Ventas por Categoría</h3>
-          <div className="px-4 py-5" style={{ background: "white", borderRadius: "5px" }}>
+          <div
+            className="px-4 py-5"
+            style={{ background: "white", borderRadius: "5px" }}
+          >
             <h6>Arte Tradicional</h6>
-            <p className="float-right mb-2 ml-1">{proyectosXcategoria[0].cantidad}</p>
+            <p className="float-right mb-2 ml-1">
+              {proyectosXcategoria[0].cantidad}
+            </p>
             <div className="progress mb-3">
               <div
                 className="progress-bar progress-bar-striped"
                 role="progressbar"
-                style={{ width: Math.round(proyectosXcategoria[0].total*100/proyectosXcategoria[0].cantidad)+'%' }}
-                aria-valuenow={Math.round(proyectosXcategoria[0].total*100/proyectosXcategoria[0].cantidad)}
+                style={{
+                  width:
+                    Math.round(
+                      (proyectosXcategoria[0].total * 100) /
+                        proyectosXcategoria[0].cantidad
+                    ) + "%",
+                }}
+                aria-valuenow={Math.round(
+                  (proyectosXcategoria[0].total * 100) /
+                    proyectosXcategoria[0].cantidad
+                )}
                 aria-valuemin="0"
                 aria-valuemax={proyectosXcategoria[0].cantidad}
               >
@@ -1178,13 +1225,24 @@ function Gestion() {
               </div>
             </div>
             <h6>Dibujos y Pinturas</h6>
-            <p className="float-right mb-2 ml-1">{proyectosXcategoria[1].cantidad}</p>
+            <p className="float-right mb-2 ml-1">
+              {proyectosXcategoria[1].cantidad}
+            </p>
             <div className="progress mb-3">
               <div
                 className="progress-bar bg-secondary progress-bar-striped"
                 role="progressbar"
-                style={{ width: Math.round(proyectosXcategoria[1].total*100/proyectosXcategoria[1].cantidad)+'%' }}
-                aria-valuenow={Math.round(proyectosXcategoria[1].total*100/proyectosXcategoria[1].cantidad)}
+                style={{
+                  width:
+                    Math.round(
+                      (proyectosXcategoria[1].total * 100) /
+                        proyectosXcategoria[1].cantidad
+                    ) + "%",
+                }}
+                aria-valuenow={Math.round(
+                  (proyectosXcategoria[1].total * 100) /
+                    proyectosXcategoria[1].cantidad
+                )}
                 aria-valuemin="0"
                 aria-valuemax={proyectosXcategoria[1].cantidad}
               >
@@ -1192,13 +1250,24 @@ function Gestion() {
               </div>
             </div>
             <h6>Fotografía</h6>
-            <p className="float-right mb-2 ml-1">{proyectosXcategoria[2].cantidad}</p>
+            <p className="float-right mb-2 ml-1">
+              {proyectosXcategoria[2].cantidad}
+            </p>
             <div className="progress mb-3">
               <div
                 className="progress-bar bg-dark progress-bar-striped"
                 role="progressbar"
-                style={{ width: Math.round(proyectosXcategoria[2].total*100/proyectosXcategoria[2].cantidad)+'%' }}
-                aria-valuenow={Math.round(proyectosXcategoria[2].total*100/proyectosXcategoria[2].cantidad)}
+                style={{
+                  width:
+                    Math.round(
+                      (proyectosXcategoria[2].total * 100) /
+                        proyectosXcategoria[2].cantidad
+                    ) + "%",
+                }}
+                aria-valuenow={Math.round(
+                  (proyectosXcategoria[2].total * 100) /
+                    proyectosXcategoria[2].cantidad
+                )}
                 aria-valuemin="0"
                 aria-valuemax={proyectosXcategoria[2].cantidad}
               >
@@ -1206,13 +1275,24 @@ function Gestion() {
               </div>
             </div>
             <h6>Arte Digital</h6>
-            <p className="float-right mb-2 ml-1">{proyectosXcategoria[3].cantidad}</p>
+            <p className="float-right mb-2 ml-1">
+              {proyectosXcategoria[3].cantidad}
+            </p>
             <div className="progress mb-3">
               <div
                 className="progress-bar bg-danger progress-bar-striped"
                 role="progressbar"
-                style={{ width: Math.round(proyectosXcategoria[3].total*100/proyectosXcategoria[3].cantidad)+'%' }}
-                aria-valuenow={Math.round(proyectosXcategoria[3].total*100/proyectosXcategoria[3].cantidad)}
+                style={{
+                  width:
+                    Math.round(
+                      (proyectosXcategoria[3].total * 100) /
+                        proyectosXcategoria[3].cantidad
+                    ) + "%",
+                }}
+                aria-valuenow={Math.round(
+                  (proyectosXcategoria[3].total * 100) /
+                    proyectosXcategoria[3].cantidad
+                )}
                 aria-valuemin="0"
                 aria-valuemax={proyectosXcategoria[3].cantidad}
               >
@@ -1220,13 +1300,24 @@ function Gestion() {
               </div>
             </div>
             <h6>3D</h6>
-            <p className="float-right mb-2 ml-1">{proyectosXcategoria[4].cantidad}</p>
+            <p className="float-right mb-2 ml-1">
+              {proyectosXcategoria[4].cantidad}
+            </p>
             <div className="progress mb-3">
               <div
                 className="progress-bar bg-warning progress-bar-striped"
                 role="progressbar"
-                style={{ width: Math.round((proyectosXcategoria[4].total*100)/proyectosXcategoria[4].cantidad)+'%' }}
-                aria-valuenow={Math.round(proyectosXcategoria[4].total*100/proyectosXcategoria[4].cantidad)}
+                style={{
+                  width:
+                    Math.round(
+                      (proyectosXcategoria[4].total * 100) /
+                        proyectosXcategoria[4].cantidad
+                    ) + "%",
+                }}
+                aria-valuenow={Math.round(
+                  (proyectosXcategoria[4].total * 100) /
+                    proyectosXcategoria[4].cantidad
+                )}
                 aria-valuemin="0"
                 aria-valuemax={proyectosXcategoria[4].cantidad}
               >
@@ -1234,13 +1325,24 @@ function Gestion() {
               </div>
             </div>
             <h6>Esculturas</h6>
-            <p className="float-right mb-2 ml-1">{proyectosXcategoria[5].cantidad}</p>
+            <p className="float-right mb-2 ml-1">
+              {proyectosXcategoria[5].cantidad}
+            </p>
             <div className="progress mb-3">
               <div
                 className="progress-bar bg-info progress-bar-striped"
                 role="progressbar"
-                style={{ width: Math.round(proyectosXcategoria[5].total*100/proyectosXcategoria[5].cantidad)+'%' }}
-                aria-valuenow={Math.round(proyectosXcategoria[5].total*100/proyectosXcategoria[5].cantidad)}
+                style={{
+                  width:
+                    Math.round(
+                      (proyectosXcategoria[5].total * 100) /
+                        proyectosXcategoria[5].cantidad
+                    ) + "%",
+                }}
+                aria-valuenow={Math.round(
+                  (proyectosXcategoria[5].total * 100) /
+                    proyectosXcategoria[5].cantidad
+                )}
                 aria-valuemin="0"
                 aria-valuemax={proyectosXcategoria[5].cantidad}
               >
@@ -1248,13 +1350,24 @@ function Gestion() {
               </div>
             </div>
             <h6>Arte Callejero</h6>
-            <p className="float-right mb-2 ml-1">{proyectosXcategoria[6].cantidad}</p>
+            <p className="float-right mb-2 ml-1">
+              {proyectosXcategoria[6].cantidad}
+            </p>
             <div className="progress mb-3">
               <div
                 className="progress-bar bg-success progress-bar-striped"
                 role="progressbar"
-                style={{ width: Math.round(proyectosXcategoria[6].total*100/proyectosXcategoria[6].cantidad)+'%' }}
-                aria-valuenow={Math.round(proyectosXcategoria[6].total*100/proyectosXcategoria[6].cantidad)}
+                style={{
+                  width:
+                    Math.round(
+                      (proyectosXcategoria[6].total * 100) /
+                        proyectosXcategoria[6].cantidad
+                    ) + "%",
+                }}
+                aria-valuenow={Math.round(
+                  (proyectosXcategoria[6].total * 100) /
+                    proyectosXcategoria[6].cantidad
+                )}
                 aria-valuemin="0"
                 aria-valuemax={proyectosXcategoria[6].cantidad}
               >
@@ -1281,14 +1394,79 @@ function Gestion() {
           <a href="#shopping">Ventas</a>
         </nav>
 
-        <div className="floating">
+        <div className="floating ml-5">
           <div
             onClick={(e) => {
               handleMenuClicked(e);
             }}
             className="contextMenu d-flex justify-content-center align-items-center"
           >
-            <i className="bi bi-list text-light" style={{ fontSize: "larger" }}></i>
+            <i
+              className="bi bi-list text-light"
+              style={{ fontSize: "larger" }}
+            ></i>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  function InfoButton() {
+    const [show, setShow] = useState(false);
+    const target = useRef(null);
+
+    return (
+      <>
+        <Overlay target={target.current} show={show} placement="top-start">
+          {({ placement, arrowProps, show: _show, popper, ...props }) => (
+            <div
+              {...props}
+              style={{
+                position: "absolute",
+                backgroundColor: "rgb(0,0,0,.9)",
+                padding: "2px 10px",
+                color: "white",
+                borderRadius: 3,
+                zIndex: 10,
+                ...props.style,
+              }}
+            >
+              <div className="p-3 text-left" style={{width: '315px'}}>
+                <h6 className="text-light">Listados: </h6>
+                <p>
+                  Los datos pueden filtrarse y ordenarse por todos los campos
+                  del listado un filtro por vez.
+                  <br />
+                  <br />
+                  Al seleccionar las imagenes en el listado será redirigido al
+                  proyecto o usuario seleccionado.
+                  <br />
+                  <br />
+                  Al filtrar por fecha podra:
+                  <li> Ingresar la fecha entera.</li>
+                  <li> Ingresar "/(nro)" para filtrar por año.</li>
+                  <li> Ingresar "/(nro)/" para filtrar por mes.</li>
+                  <li>
+                    {" "}
+                    Ingresar "(nro)/" y seleccionar el operador "Starts with"
+                    para filtrar por día.
+                  </li>
+                  <br />
+                  Al filtrar por imagen usted estaría filtrando por la URL de la
+                  misma.
+                </p>
+              </div>
+            </div>
+          )}
+        </Overlay>
+
+        <div className="floating">
+          <div
+            className="contextMenu d-flex justify-content-center align-items-center"
+            ref={target}
+            onClick={() => setShow(!show)}
+          >
+            <i class="bi bi-info text-light"></i>
           </div>
         </div>
       </>
@@ -1329,6 +1507,7 @@ function Gestion() {
         </div>
       </div>
       <ContextMenu />
+      <InfoButton />
       <Footer></Footer>
       {/* <button className='btn btn-info' onClick={() => window.print()}>Imprimir</button> */}
     </div>

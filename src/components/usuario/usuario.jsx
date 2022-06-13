@@ -27,12 +27,22 @@ function Usuario() {
   const [editar, setEditar] = useState(false);
   const [state, setState] = useState(0);
   const [cant, setCant] = useState(0);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     setNombre(usuario.displayName);
     setUrl(usuario.photoURL);
     proyectosxUID(usuario.uid).then((res) => {
       setCant(res.length);
+
+      let recaudacion = 0;
+
+      res.forEach(element => {
+        if (element.datos.vendido)
+          recaudacion += Number(element.datos.precio);
+      });
+
+      setTotal(recaudacion)
     });
   }, [usuario]);
 
@@ -237,19 +247,28 @@ function Usuario() {
                 <h5 style={{ color: "white" }} class="card-title">
                   Fecha de Creación:
                 </h5>
-                <p class="card-text">
+                <h6 class="card-text text-light">
                   {usuario.fecha.getDate()}/{usuario.fecha.getMonth() + 1}/
                   {usuario.fecha.getFullYear()}
-                </p>
+                </h6>
               </div>
             </div>
             <div
-              class="card text-left my-4"
+              class="card text-left mt-4"
               style={{ backgroundColor: "#ccc5b9", color: "black" }}
             >
               <div class="card-body">
                 <h5 class="card-title">Cant. de Proyectos:</h5>
-                <p class="card-text">{cant}</p>
+                <h6 class="card-text">{cant}</h6>
+              </div>
+            </div>
+            <div
+              class="card text-left my-4"
+              style={{ backgroundColor: "var(--rojo)", color: "white" }}
+            >
+              <div class="card-body">
+                <h5 class="card-title" style={{ color: "white" }}>Total Recaudado:</h5>
+                <h6 class="card-text text-light">{total} USD</h6>
               </div>
             </div>
           </div>

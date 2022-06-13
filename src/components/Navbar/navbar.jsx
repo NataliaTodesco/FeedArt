@@ -86,51 +86,51 @@ function Navbar() {
                   display: { xs: "block", md: "none" },
                 }}
               >
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <NavLink className="link" activeClassName="active" to="/home">
+                <NavLink className="link" activeClassName="active" to="/home">
+                  <MenuItem onClick={handleCloseNavMenu}>
                     <i className="bi bi-house-fill"></i> Inicio
-                  </NavLink>
-                </MenuItem>
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <NavLink className="link" activeClassName="active" to="/list">
+                  </MenuItem>
+                </NavLink>
+                <NavLink className="link" activeClassName="active" to="/list">
+                  <MenuItem onClick={handleCloseNavMenu}>
                     <i className="bi bi-list-stars"></i>
                     Mis Listas
-                  </NavLink>
-                </MenuItem>
-                <MenuItem onClick={handleCloseNavMenu}>
+                  </MenuItem>
+                </NavLink>
+                <NavLink
+                  className="link"
+                  activeClassName="active"
+                  to="/shopping"
+                >
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <i className="bi bi-bag-heart-fill"></i>
+                    Compra / Venta
+                  </MenuItem>
+                </NavLink>
+                {usuario.uid === "qA2c3TwTAKUc9160fsJlMtDSVgl1" ? (
                   <NavLink
                     className="link"
                     activeClassName="active"
-                    to="/shopping"
+                    to="/admin"
                   >
-                    <i className="bi bi-bag-heart-fill"></i>
-                    Compra / Venta
-                  </NavLink>
-                </MenuItem>
-                {usuario.uid === "qA2c3TwTAKUc9160fsJlMtDSVgl1" ? (
-                  <MenuItem onClick={handleCloseNavMenu}>
-                    <NavLink
-                      className="link"
-                      activeClassName="active"
-                      to="/admin"
-                    >
+                    <MenuItem onClick={handleCloseNavMenu}>
                       <i className="bi bi-clipboard-data-fill"></i>
                       Gestión
-                    </NavLink>
-                  </MenuItem>
+                    </MenuItem>
+                  </NavLink>
                 ) : (
                   <span></span>
                 )}
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <NavLink
-                    className="link"
-                    activeClassName="active"
-                    to="/new-project"
-                  >
+                <NavLink
+                  className="link"
+                  activeClassName="active"
+                  to="/new-project"
+                >
+                  <MenuItem onClick={handleCloseNavMenu}>
                     <i className="bi bi-plus-circle-fill"></i>
                     Nuevo Proyecto
-                  </NavLink>
-                </MenuItem>
+                  </MenuItem>
+                </NavLink>
                 <NavLink
                   className="link d-flex justify-content-center"
                   to="/user"
