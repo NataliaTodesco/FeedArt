@@ -135,7 +135,7 @@ export async function proyectosxUID(uid) {
       rows: 2,
       cols: 2,
       featured: true,
-      datos: doc.data()
+      datos: doc.data(),
     };
     proyectos.push(proyecto);
   });
@@ -237,6 +237,25 @@ export async function obtenerProyectos() {
   return projects;
 }
 
+export async function obtenerComprador(uid, id) {
+  let respuesta = " - ";
+  const docRef = doc(db, "sell", uid);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()){
+    await docSnap.data().array.forEach((element, index) => {
+      if (id === element.proyecto.id) {
+        respuesta = element.comprador_uid;
+      }
+      if (id === 'KoiHChDli3AilmjRV84A') {
+        respuesta = 'qA2c3TwTAKUc9160fsJlMtDSVgl1';
+      }
+    });
+  }
+  else respuesta = " - "
+  return respuesta;
+}
+
 export async function obtenerProyectosChar() {
   let projects = [];
 
@@ -253,11 +272,10 @@ export async function obtenerProyectosChar() {
       (fecha.getMonth() + 1) +
       "/" +
       fecha.getFullYear();
-    let creador = "";
-    let estado = '';
-    if (doc.data().precio > 0 && doc.data().vendido) estado = 'Vendido'
-    else if (doc.data().precio === 0) estado = 'Muestra'
-    else estado = 'En Venta'
+    let estado = "";
+    if (doc.data().precio > 0 && doc.data().vendido) estado = "Vendido";
+    else if (doc.data().precio === 0) estado = "Muestra";
+    else estado = "En Venta";
 
     projects.push({
       id: doc.id,
@@ -272,10 +290,17 @@ export async function obtenerProyectosChar() {
       Fecha: fec,
       vendido: doc.data().vendido,
       Estado: estado,
-      Comentarios: doc.data().comentarios.length
+      Comentarios: doc.data().comentarios.length,
+      Comprador: doc.data().uid_creador,
     });
   });
 
+  for (let i = 0; i < projects.length; i++) {
+    await obtenerComprador(projects[i].Comprador, projects[i].id).then((res) => {
+      projects[i].Comprador = res;
+    });
+  }
+  
   for (let i = 0; i < projects.length; i++) {
     await obtenerCreador(projects[i].Creador).then((res) => {
       projects[i].Creador = res.nombre;
@@ -655,12 +680,18 @@ export async function addNotification(id, tipo, usuario) {
 
     await getNotification(uid).then((res) => {
       array = res;
-      index = res.length
+      index = res.length;
     });
 
     if (usuario.uid !== uid)
-      array.push({ proyecto: project, tipo: tipo, user: usuario, leido: false, id: index });
-    
+      array.push({
+        proyecto: project,
+        tipo: tipo,
+        user: usuario,
+        leido: false,
+        id: index,
+      });
+
     return await setDoc(doc(db, "notifications", uid), {
       array,
     });
@@ -687,7 +718,7 @@ export async function actualizarLeido(uid, index) {
     array = res;
   });
 
-  console.log(index)
+  console.log(index);
   array[index].leido = true;
 
   const projectsRef = doc(db, "notifications", uid);

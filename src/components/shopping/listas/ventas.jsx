@@ -81,6 +81,8 @@ function Ventas() {
                     Entregado
                   </label>
                 </div>
+                <h6>Proyecto:</h6>
+                <p>{proyecto.proyecto.datos.titulo}</p>
                 <h6>Comprador:</h6>
                 <p>{proyecto.comprador.shipping.name.full_name}</p>
                 <h6>Email</h6>

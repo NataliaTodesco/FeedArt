@@ -10,23 +10,12 @@ import { Link } from "react-router-dom";
 import { getCompra } from "../../../firebaseConfig";
 import { useUsuario } from "../../../context/UserContext";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import { Modal } from "react-bootstrap";
 
 function Compra() {
   const { usuario, obtenerUsers } = useUsuario();
   const [usuarios, setUsuarios] = useState([]);
   const [proyectos, setProyectos] = useState([]);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
 
   useEffect(() => {
     getCompra(usuario.uid).then((res) => {
@@ -49,6 +38,63 @@ function Compra() {
     for (let i = 0; i < usuarios.length; i++) {
       if (uid === usuarios[i].uid) return usuarios[i].nombre;
     }
+  }
+
+  function ModalCompra({ proyecto, index }) {
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    return (
+      <>
+        <div
+          style={{ cursor: "pointer" }}
+          onClick={handleShow}
+          title="Información de la Venta"
+          className="portfolio-item__link"
+        >
+          <LocalShippingIcon className="material-icons"></LocalShippingIcon>
+        </div>
+
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Body>
+            <Typography sx={{ p: 2 }}>
+              {proyecto.entregado ? (
+                <h5>
+                  <span className="badge badge-success">Entregado</span>
+                </h5>
+              ) : (
+                <h5>
+                  <span className="badge badge-danger">No Entregado</span>
+                </h5>
+              )}
+              <h6>Proyecto:</h6>
+              <p>{proyecto.proyecto.datos.titulo}</p>
+              <h6>Vendedor:</h6>
+              <p>{verUser(proyecto.proyecto.datos.uid_creador)}</p>
+              <h6>Dirección de entrega: </h6>
+              <p>
+                {proyecto.comprador.shipping.address.address_line_1},{" "}
+                {proyecto.comprador.shipping.address.admin_area_1} -{" "}
+                {proyecto.comprador.shipping.address.country_code}
+              </p>
+              <h6>Fecha de Compra:</h6>
+              <p>
+                {new Date(proyecto.fecha).getDate()}/
+                {new Date(proyecto.fecha).getMonth() + 1}/
+                {new Date(proyecto.fecha).getFullYear()}
+              </p>
+              <h6>Monto:</h6>
+              <p>{proyecto.comprador.amount.value} USD</p>
+              <button className="btn btn-secondary float-right" onClick={handleClose}>
+                Cerrar
+              </button>
+            </Typography>
+          </Modal.Body>
+        </Modal>
+      </>
+    );
   }
 
   return (
@@ -86,95 +132,11 @@ function Compra() {
                         </Link>
                       </div>
                       <div className="portfolio-item__link-block">
-                        <div
-                          style={{ cursor: "pointer" }}
-                          onClick={handleClick}
-                          title="Información de la Venta"
-                          className="portfolio-item__link"
-                        >
-                          <LocalShippingIcon className="material-icons"></LocalShippingIcon>
-                        </div>
+                        <ModalCompra
+                          proyecto={proyecto}
+                          index={index}
+                        ></ModalCompra>
                       </div>
-                      <Popover
-                        id={id}
-                        open={open}
-                        anchorEl={anchorEl}
-                        onClose={handleClose}
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "left",
-                        }}
-                      >
-                        <Typography sx={{ p: 2 }}>
-                          {proyecto.entregado ? (
-                            <div>
-                              <h5>
-                                <span className="badge badge-success">
-                                  Entregado
-                                </span>
-                              </h5>
-                              <h6>Dirección de entrega: </h6>
-                              <p>
-                                {
-                                  proyecto.comprador.shipping.address
-                                    .address_line_1
-                                }
-                                ,{" "}
-                                {
-                                  proyecto.comprador.shipping.address
-                                    .admin_area_1
-                                }{" "}
-                                -{" "}
-                                {
-                                  proyecto.comprador.shipping.address
-                                    .country_code
-                                }
-                              </p>
-                              <h6>Fecha de Compra:</h6>
-                              <p>
-                                {new Date(proyecto.fecha).getDate()}/
-                                {new Date(proyecto.fecha).getMonth() + 1}/
-                                {new Date(proyecto.fecha).getFullYear()}
-                              </p>
-                              <h6>Monto:</h6>
-                              <p>{proyecto.comprador.amount.value} USD</p>
-                            </div>
-                          ) : (
-                            <div>
-                              <h5>
-                                <span className="badge badge-danger">
-                                  No Entregado
-                                </span>
-                              </h5>
-                              <h6>Dirección de entrega: </h6>
-                              <p>
-                                {
-                                  proyecto.comprador.shipping.address
-                                    .address_line_1
-                                }
-                                ,{" "}
-                                {
-                                  proyecto.comprador.shipping.address
-                                    .admin_area_1
-                                }{" "}
-                                -{" "}
-                                {
-                                  proyecto.comprador.shipping.address
-                                    .country_code
-                                }
-                              </p>
-                              <h6>Fecha de Compra:</h6>
-                              <p>
-                                {new Date(proyecto.fecha).getDate()}/
-                                {new Date(proyecto.fecha).getMonth() + 1}/
-                                {new Date(proyecto.fecha).getFullYear()}
-                              </p>
-                              <h6>Monto:</h6>
-                              <p>{proyecto.comprador.amount.value} USD</p>
-                            </div>
-                          )}
-                        </Typography>
-                      </Popover>
                     </div>
                   </div>
                 </div>

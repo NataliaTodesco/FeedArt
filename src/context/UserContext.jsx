@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { db } from "../firebaseConfig";
+import { db, obtenerCantidad } from "../firebaseConfig";
 import {
   getAuth,
   onAuthStateChanged,
@@ -85,9 +85,16 @@ export function UsuarioProvider(props) {
         Email: doc.data().email,
         UID: doc.data().uid,
         fecha: fecha,
-        Fecha: fec
+        Fecha: fec,
+        cantidad: 0,
       });
     });
+
+    for (let i = 0; i < users.length; i++) {
+      await obtenerCantidad(users[i].id).then((res) => {
+        users[i].cantidad = res;
+      });
+    }
 
     return users;
   }
