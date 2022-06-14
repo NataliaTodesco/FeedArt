@@ -192,6 +192,9 @@ function Proyecto() {
               success();
               console.log({ details, data });
             }}
+            onCancel={() => {
+              message.error("Compra Cancelada");
+            }}
           />
         </div>
       );
