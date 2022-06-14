@@ -61,7 +61,6 @@ function Gestion() {
     });
   }, [obtenerUsers]);
 
-
   function ListadoUsuarios() {
     let navigate = useNavigate();
 
@@ -911,15 +910,35 @@ function Gestion() {
   }
 
   function ProyectosxTipoxUsuario() {
-    const [masCant] = useState(usuarios[14]);
+    const [masCant, setMasCant] = useState(usuarios[14]);
     const [data, setData] = useState([
       { country: "Muestra: " + 0, area: 0 },
       { country: "En Venta: " + 0, area: 0 },
       { country: "Vendido: " + 0, area: 0 },
     ]);
+    const [user, setUser] = useState(masCant);
+
+    function SortArray(x, y) {
+      if (x.cantidad < y.cantidad) {
+        return 1;
+      }
+      if (x.cantidad > y.cantidad) {
+        return -1;
+      }
+      return 0;
+    }
 
     useEffect(() => {
-      filtro(masCant)
+      usuariosMasProyectos().then((res) => {
+        let orden = res.sort(SortArray);
+        usuarios.forEach(element => {
+          if (element.id === orden[0].id){
+            setMasCant(element)
+            setUser(element)
+            filtro(element)
+          }
+        });
+      });
     }, [masCant]);
 
     async function filtro(usuario) {
@@ -1012,7 +1031,6 @@ function Gestion() {
           action(chart);
         };
 
-      const [user, setUser] = useState(masCant);
 
       const open = Boolean(anchorEl);
       return (
