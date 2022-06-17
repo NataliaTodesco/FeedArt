@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/NataliaTodesco/FeedArt/static/css/main.48745a73.css",
-    "main.js": "/NataliaTodesco/FeedArt/static/js/main.ec3b75ec.js",
+    "main.js": "/NataliaTodesco/FeedArt/static/js/main.4f0177c1.js",
     "static/js/703.588aa973.chunk.js": "/NataliaTodesco/FeedArt/static/js/703.588aa973.chunk.js",
     "static/js/513.73bdd5eb.chunk.js": "/NataliaTodesco/FeedArt/static/js/513.73bdd5eb.chunk.js",
     "static/media/7.png": "/NataliaTodesco/FeedArt/static/media/7.603dcd7f3e0b9566ac87.png",
@@ -19,12 +19,12 @@
     "static/media/logoMancha.svg": "/NataliaTodesco/FeedArt/static/media/logoMancha.199c33f844ac97b60f4cd227d0729ef7.svg",
     "index.html": "/NataliaTodesco/FeedArt/index.html",
     "main.48745a73.css.map": "/NataliaTodesco/FeedArt/static/css/main.48745a73.css.map",
-    "main.ec3b75ec.js.map": "/NataliaTodesco/FeedArt/static/js/main.ec3b75ec.js.map",
+    "main.4f0177c1.js.map": "/NataliaTodesco/FeedArt/static/js/main.4f0177c1.js.map",
     "703.588aa973.chunk.js.map": "/NataliaTodesco/FeedArt/static/js/703.588aa973.chunk.js.map",
     "513.73bdd5eb.chunk.js.map": "/NataliaTodesco/FeedArt/static/js/513.73bdd5eb.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.48745a73.css",
-    "static/js/main.ec3b75ec.js"
+    "static/js/main.4f0177c1.js"
   ]
 }
