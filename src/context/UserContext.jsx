@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { db, obtenerCantidad } from "../firebaseConfig";
+import {
+  borrarComentario,
+  db,
+  obtenerCantidad,
+  obtenerComentarios,
+  obtenerProyectos,
+} from "../firebaseConfig";
 import {
   getAuth,
   onAuthStateChanged,
@@ -10,6 +16,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
+  sendPasswordResetEmail
 } from "firebase/auth";
 import {
   collection,
@@ -20,7 +27,7 @@ import {
   deleteDoc,
   where,
   query,
-  orderBy
+  orderBy,
 } from "firebase/firestore";
 
 const UsuarioContext = React.createContext();
@@ -28,12 +35,12 @@ const UsuarioContext = React.createContext();
 export function UsuarioProvider(props) {
   const auth = getAuth();
   const [usuario, setUsuario] = useState({});
-  
+
   useEffect(() => {
-    if (auth.currentUser){
-        setUsuario(auth.currentUser)
-    }
-  }, [auth.currentUser]);
+    let storage = localStorage.getItem("storage");
+    storage = JSON.parse(storage);
+    setUsuario(storage);
+  }, []);
 
   async function guardarUser(email, img_url, nombre, uid, fecha, token) {
     try {
@@ -43,7 +50,7 @@ export function UsuarioProvider(props) {
         nombre: nombre,
         uid: uid,
         fecha: fecha,
-        token: token
+        token: token,
       });
       console.log(docRef);
     } catch (e) {
@@ -77,7 +84,12 @@ export function UsuarioProvider(props) {
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       let fecha = new Date(doc.data().fecha.toMillis());
-      let fec = fecha.getDate()+'/'+(fecha.getMonth() + 1)+'/'+fecha.getFullYear();
+      let fec =
+        fecha.getDate() +
+        "/" +
+        (fecha.getMonth() + 1) +
+        "/" +
+        fecha.getFullYear();
       users.push({
         id: doc.id,
         Imagen: doc.data().img_url,
@@ -122,14 +134,15 @@ export function UsuarioProvider(props) {
           email: user.email,
           photoURL: img_url,
           displayName: nombre,
-          token: user.accessToken
+          token: user.accessToken,
         };
-        
+
         const fecha = new Date();
         guardarUser(email, img_url, nombre, user.uid, fecha, user.accessToken);
 
+        saveStorage(save);
         setUsuario(save);
-        recuperarUser(user)
+        recuperarUser(user);
         return "";
       })
       .catch((error) => {
@@ -151,11 +164,12 @@ export function UsuarioProvider(props) {
           email: user.email,
           photoURL: user.photoURL,
           displayName: user.displayName,
-          token: token
+          token: token,
         };
+        saveStorage(save);
         setUsuario(save);
         guardarUserConGoogle(save);
-        recuperarUser(user)
+        recuperarUser(user);
         return "";
       })
       .catch((error) => {
@@ -175,11 +189,16 @@ export function UsuarioProvider(props) {
           photoURL: doc.data().img_url,
           displayName: doc.data().nombre,
           token: user.accessToken,
-          fecha: fecha
+          fecha: fecha,
         };
+        saveStorage(save);
         setUsuario(save);
       }
     });
+  }
+
+  function saveStorage(storage) {
+    localStorage.storage = JSON.stringify(storage);
   }
 
   async function logInConMail(email, password) {
@@ -191,9 +210,10 @@ export function UsuarioProvider(props) {
           email: user.email,
           photoURL: user.photoURL,
           displayName: user.displayName,
-          token: user.accessToken
+          token: user.accessToken,
         };
 
+        saveStorage(save);
         setUsuario(save);
         recuperarUser(user);
         return "";
@@ -248,10 +268,28 @@ export function UsuarioProvider(props) {
         deleteDoc(doc(db, "favs", user.uid));
         deleteDoc(doc(db, "likes", user.uid));
         eliminarDoc(user.uid);
+        logOut();
       })
       .catch((error) => {
         console.log(error.errorMessage);
       });
+  }
+
+  async function borrarUsuario(uid) {
+    deleteDoc(doc(db, "users", uid));
+    deleteDoc(doc(db, "favs", uid));
+    deleteDoc(doc(db, "likes", uid));
+    eliminarDoc(uid);
+    await obtenerProyectos().then((res) => {
+      res.forEach((element) => {
+        for (let index = 0; index < element.datos.comentarios.length; index++) {
+          if (element.datos.comentarios[index].uid === uid) {
+            eliminarComentario(element.id, index);
+          }
+        }
+      });
+    });
+    deleteUser(uid);
   }
 
   async function eliminarDoc(uid) {
@@ -269,33 +307,85 @@ export function UsuarioProvider(props) {
     signOut(auth)
       .then(() => {})
       .catch((error) => {});
+    localStorage.removeItem("storage");
   }
-  
-  const value = useMemo(() => {
-      return ({
-          usuario,
-          obtenerUsers,
-          actualizarUser,
-          logUpConMail,
-          logInConGoogle,
-          logInConMail,
-          obtenerUsuario,
-          obtenerPerfil,
-          actualizarPerfil,
-          borrarUser,
-          eliminarDoc,
-          logOut
+
+  async function asignarPermiso(id) {
+    try {
+      await setDoc(doc(db, "admins", id), {
+        id: id,
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+
+  async function quitarPermiso(id) {
+    await deleteDoc(doc(db, "admins", id));
+  }
+
+  async function eliminarComentario(id, indice) {
+    let coments = [];
+
+    await obtenerComentarios(id).then((res) => {
+      coments = res;
+    });
+    coments.splice(indice, 1);
+
+    borrarComentario(id, coments);
+  }
+
+  async function obtenerAdmins() {
+    let admins = [];
+    const querySnapshot = await getDocs(collection(db, "admins"));
+    querySnapshot.forEach((doc) => {
+      admins.push(doc.id);
+    });
+    return admins;
+  }
+
+  async function reset(email) {
+    const auth = getAuth();
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        return 'Consulte su correo!'
       })
-  }, [usuario])
-  return <UsuarioContext.Provider value={value} {...props} />
+      .catch((error) => {
+        const errorMessage = error.message;
+        console.log(errorMessage)
+      });
+  }
+
+  const value = useMemo(() => {
+    return {
+      usuario,
+      obtenerUsers,
+      actualizarUser,
+      logUpConMail,
+      logInConGoogle,
+      logInConMail,
+      obtenerUsuario,
+      obtenerPerfil,
+      actualizarPerfil,
+      borrarUser,
+      eliminarDoc,
+      logOut,
+      borrarUsuario,
+      asignarPermiso,
+      quitarPermiso,
+      obtenerAdmins,
+      reset
+    };
+  }, [usuario]);
+  return <UsuarioContext.Provider value={value} {...props} />;
 }
 
 export function useUsuario() {
-    const context = React.useContext(UsuarioContext);
-    if (!context){
-        throw new Error('UseUsuario debe estar dentro del proveedor UsuarioContext')
-    }
-    return context;
+  const context = React.useContext(UsuarioContext);
+  if (!context) {
+    throw new Error(
+      "UseUsuario debe estar dentro del proveedor UsuarioContext"
+    );
+  }
+  return context;
 }
-
-

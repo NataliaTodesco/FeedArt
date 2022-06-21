@@ -14,6 +14,7 @@ import {
   addDoc,
   getDoc,
 } from "firebase/firestore";
+import axios from "axios";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAs53lxwaD6wZuLqXcpzF-G_yE-E40Funk",
@@ -74,7 +75,7 @@ export async function consultarProyecto(id) {
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    return { id: docSnap.id, datos: docSnap.data() };
+    return { id: docSnap.id, datos: docSnap.data()};
   } else {
     // doc.data() will be undefined in this case
     console.log("No such document!");

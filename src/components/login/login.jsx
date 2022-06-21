@@ -19,11 +19,11 @@ import {
 } from "firebase/storage";
 import "antd/dist/antd.css";
 import { useNavigate } from "react-router-dom";
-import { Alert } from "antd";
+import { Alert, message } from "antd";
 import { useUsuario } from '../../context/UserContext'
 
 function Login() {
-  const { logInConMail, logUpConMail, logInConGoogle } = useUsuario()
+  const { logInConMail, logUpConMail, logInConGoogle, reset } = useUsuario()
   const [alerta, setAlerta] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [state, setState] = useState(0);
@@ -56,6 +56,17 @@ function Login() {
       ...values,
       registrar: !values.registrar,
     });
+  };
+
+  const Restaurar = () => {
+    if (values.mail !== ""){
+      reset(values.mail).then(res => {
+        message.success('Consulte su correo')
+      }).catch(e => {
+        message.error(e)
+      })
+    }
+    else message.error('Complete el campo "Email"')
   };
 
   const handleMouseDownPassword = (event) => {
@@ -374,6 +385,10 @@ function Login() {
                     <p className="subtitulo">
                       ¿Todavía no tienes una cuenta?{" "}
                       <span onClick={Registrar}> Registrate </span>
+                    </p>
+                    <p className="subtitulo">
+                      ¿Olvidaste tu contraseña?{" "}
+                      <span className="span" onClick={Restaurar}> Restaurar </span>
                     </p>
                   </div>
                 </div>

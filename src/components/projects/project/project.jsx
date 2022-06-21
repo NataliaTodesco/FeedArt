@@ -23,15 +23,6 @@ import Footer from "../../footer/footer";
 import Navbar from "../../Navbar/navbar";
 import Comentario from "./comentarios/comentarios";
 import "./project.css";
-import { message } from "antd";
-import { PayPalButton } from "react-paypal-button-v2";
-import {
-  actualizarVendido,
-  addCompra,
-  addVenta,
-  getCompra,
-  getVenta,
-} from "../../../firebaseConfig";
 
 function Proyecto() {
   const { id } = useParams();
@@ -51,6 +42,7 @@ function Proyecto() {
       img_url: "",
       precio: 0,
       uid_creador: "",
+      fecha: '',
     },
   });
   const [creador, setCreador] = useState({
@@ -129,75 +121,50 @@ function Proyecto() {
             className="mt-2 "
           />
         ))}
+
+        {proyecto.datos.fecha !== '' ? (
+          <h5 className="mt-2 ml-1">
+            Fecha:{" "}
+            <span className="badge badge-info">
+              {new Date(proyecto.datos.fecha.toMillis()).getDate()}/
+              {new Date(proyecto.datos.fecha.toMillis()).getMonth() + 1}/
+              {new Date(proyecto.datos.fecha.toMillis()).getFullYear()}
+            </span>
+          </h5>
+        ) : (
+          <span></span>
+        )}
       </div>
     );
   }
 
   function Compra() {
-    function Pagar({ proyecto, creador }) {
-      async function guardarVenta(details) {
-        actualizarVendido(proyecto.id);
-        let venta = [];
-        await getVenta(creador.uid).then((res) => {
-          venta = res;
-        });
-        venta.push({
+    async function llamada() {
+      try {
+        let _datos = {
+          precio: proyecto.datos.precio,
+          email: creador.email,
+          usuario: usuario,
           proyecto: proyecto,
-          entregado: false,
-          comprador: details.purchase_units[0],
-          comprador_uid: usuario.uid,
-          fecha: details.update_time,
-        });
-        addVenta(venta, creador.uid);
+        };
+  
+        const response = await fetch(
+          // `http://localhost:3000/create-order/`,
+          `https://feedart-api.herokuapp.com/create-order/`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: JSON.stringify(_datos),
+          }
+        );
+        const { data } = await response.json();
+  
+        window.location.href = data.links[1].href;
+      } catch (error) {
+        console.log(error);
       }
-
-      async function guardarCompra(details) {
-        let compra = [];
-        await getCompra(usuario.uid).then((res) => {
-          compra = res;
-        });
-        compra.push({
-          proyecto: proyecto,
-          entregado: false,
-          comprador: details.purchase_units[0],
-          comprador_uid: usuario.uid,
-          fecha: details.update_time,
-        });
-        addCompra(compra, usuario.uid);
-      }
-
-      const success = () => {
-        message.success("¡Compra realizada con éxito!");
-        setVendido(true);
-        addNotification(id, 'Comprado', usuario)
-      };
-
-      return (
-        <div>
-          <PayPalButton
-            options={{
-              clientId:
-                //Live "AWwVouriJtFDZGm81rWS1XhPcFWcCtp4LlIcMnfs8zkGFUBdIshahIL3BZqkuDStgSYzXOnw22LwKVv0",
-                // Sandbox "AS3T_m64SF8mvaVEGqam0_SQsfpO7c_SpAa6NufjUcVr05Nyb3G9SpVTY6DePN8JUGrNIBqG0laFOJ8Q",
-                'ATPgLnuTb0AI3gY4TlK9ARCkl5kEMwVQA_Nvu_uyHYO2b5i6UfyyDa8FDseBpFZelRg3yTeo8cHa2SQY',
-              currency: "USD",
-            }}
-            amount={proyecto.datos.precio}
-            payee={{
-              email_address: creador.email,
-            }}
-            onSuccess={(details, data) => {
-              guardarVenta(details);
-              guardarCompra(details);
-              success();
-              console.log({ details, data });
-            }}
-            onCancel={() => {
-              message.error("Compra Cancelada");
-            }}
-          />
-        </div>
-      );
     }
 
     return (
@@ -223,11 +190,39 @@ function Proyecto() {
                 ></i>
               </span>
             ) : (
-              <Pagar
-                proyecto={proyecto}
-                creador={creador}
-                setVendido={vendido}
-              ></Pagar>
+              // <Pagar
+              //   proyecto={proyecto}
+              //   creador={creador}
+              //   setVendido={vendido}
+              // ></Pagar>
+              <button
+                id="checkout"
+                className="btn btn-warning btn-block"
+                style={{ background: "#ffc439" }}
+                onClick={(e) => {
+                  llamada();
+                  // navigate('/pagos/'+id)
+                }}
+              >
+                <span
+                  style={{
+                    fontWeight: "800",
+                    color: "#003087",
+                    fontSize: "large",
+                  }}
+                >
+                  <i>Pay</i>
+                </span>
+                <span
+                  style={{
+                    fontWeight: "800",
+                    color: "#009cde",
+                    fontSize: "large",
+                  }}
+                >
+                  <i>Pal</i>
+                </span>
+              </button>
             )}
           </div>
         )}
@@ -261,7 +256,7 @@ function Proyecto() {
           likes.push(project);
           addLikes(likes, usuario.uid);
         });
-        addNotification(id, 'Me Gusta', usuario)
+        addNotification(id, "Me Gusta", usuario);
       }
     }
 
@@ -290,7 +285,7 @@ function Proyecto() {
           favs.push(project);
           addFavorites(favs, usuario.uid);
         });
-        addNotification( id, 'Favorito', usuario)
+        addNotification(id, "Favorito", usuario);
       }
     }
 
