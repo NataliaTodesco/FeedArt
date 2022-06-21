@@ -50,22 +50,70 @@ import html2canvas from "html2canvas";
 import { useUsuario } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Overlay } from "react-bootstrap";
+import { message } from "antd";
 
 function Gestion() {
   const [usuarios, setUsuarios] = useState([]);
-  const { obtenerUsers } = useUsuario();
+  const [admins, setAdmins] = useState([]);
+  const {
+    obtenerUsers,
+    borrarUsuario,
+    asignarPermiso,
+    quitarPermiso,
+    usuario,
+    obtenerAdmins,
+  } = useUsuario();
 
   useEffect(() => {
     obtenerUsers().then((array) => {
       setUsuarios(array);
     });
-  }, [obtenerUsers]);
+    obtenerAdmins().then((res) => {
+      setAdmins(res);
+    });
+  }, [obtenerUsers, obtenerAdmins]);
 
   function ListadoUsuarios() {
     let navigate = useNavigate();
 
     function verUsuario(uid) {
       navigate("/user/" + uid);
+    }
+
+    async function eliminarUser(id) {
+      await borrarUsuario(id);
+      await obtenerUsers().then((array) => {
+        setUsuarios(array);
+      });
+      message.success("Usuario Eliminado");
+    }
+
+    async function permiso(id) {
+      asignarPermiso(id);
+      message.success("Permiso Asignado");
+      await obtenerAdmins().then((res) => {
+        setAdmins(res);
+      });
+    }
+
+    async function quitar(id) {
+      quitarPermiso(id);
+      message.success("Permiso Removido");
+      await obtenerAdmins().then((res) => {
+        setAdmins(res);
+      });
+    }
+
+    function habilitar(id) {
+      let res = false;
+
+      admins.forEach((element) => {
+        if (element === id) {
+          res = true;
+        }
+      });
+
+      return res;
     }
 
     const columns = [
@@ -87,7 +135,54 @@ function Gestion() {
       { field: "Email", width: 270 },
       {
         field: "Fecha",
-        width: 150,
+        width: 100,
+      },
+      {
+        field: "Acciones",
+        width: 80,
+        renderCell: (usuarios) => (
+          <strong>
+            <div>
+              {usuarios.row.id !== "qA2c3TwTAKUc9160fsJlMtDSVgl1" && usuario.uid !== usuarios.row.id ? (
+                <i
+                  class="bi bi-trash-fill ml-1 mr-3"
+                  style={{ fontSize: "large", cursor: "pointer" }}
+                  onClick={(e) => {
+                    eliminarUser(usuarios.row.id);
+                  }}
+                ></i>
+              ) : (
+                <span />
+              )}
+              {usuarios.row.id !== "qA2c3TwTAKUc9160fsJlMtDSVgl1" &&
+              usuario.uid !== usuarios.row.id &&
+              habilitar(usuarios.row.id) === false ? (
+                <i
+                  class="bi bi-plus-circle-fill"
+                  style={{ fontSize: "large", cursor: "pointer" }}
+                  onClick={(e) => {
+                    permiso(usuarios.row.id);
+                  }}
+                ></i>
+              ) : (
+                <span />
+              )}
+              {usuarios.row.id !== "qA2c3TwTAKUc9160fsJlMtDSVgl1" &&
+              usuario.uid !== usuarios.row.id &&
+              habilitar(usuarios.row.id) ? (
+                <i
+                  class="bi bi-dash-circle-fill"
+                  style={{ fontSize: "large", cursor: "pointer" }}
+                  onClick={(e) => {
+                    quitar(usuarios.row.id);
+                  }}
+                ></i>
+              ) : (
+                <span />
+              )}
+            </div>
+          </strong>
+        ),
       },
     ];
 
@@ -369,13 +464,12 @@ function Gestion() {
       });
     }, []);
 
-    function verUser(uid){
-      let nombre = ' - '
+    function verUser(uid) {
+      let nombre = " - ";
       for (let i = 0; i < usuarios.length; i++) {
-        if (uid === usuarios[i].UID)
-          return usuarios[i].Nombre
+        if (uid === usuarios[i].UID) return usuarios[i].Nombre;
       }
-      return nombre
+      return nombre;
     }
 
     function CustomToolbar() {
@@ -453,7 +547,7 @@ function Gestion() {
               width: 140,
               renderCell: (proyectos) => (
                 <p>{verUser(proyectos.row.Comprador)}</p>
-              )
+              ),
             },
             // {
             //   field: "Comentarios",
@@ -800,13 +894,12 @@ function Gestion() {
       });
     }, []);
 
-    function verUser(uid){
-      let nombre = ' - '
+    function verUser(uid) {
+      let nombre = " - ";
       for (let i = 0; i < usuarios.length; i++) {
-        if (uid === usuarios[i].UID)
-          return usuarios[i].Nombre
+        if (uid === usuarios[i].UID) return usuarios[i].Nombre;
       }
-      return nombre
+      return nombre;
     }
 
     function SortArray(x, y) {
@@ -896,7 +989,7 @@ function Gestion() {
               width: 140,
               renderCell: (proyectos) => (
                 <p>{verUser(proyectos.row.Comprador)}</p>
-              )
+              ),
             },
             // {
             //   field: "Comentarios",
@@ -931,11 +1024,11 @@ function Gestion() {
     useEffect(() => {
       usuariosMasProyectos().then((res) => {
         let orden = res.sort(SortArray);
-        usuarios.forEach(element => {
-          if (element.id === orden[0].id){
-            setMasCant(element)
-            setUser(element)
-            filtro(element)
+        usuarios.forEach((element) => {
+          if (element.id === orden[0].id) {
+            setMasCant(element);
+            setUser(element);
+            filtro(element);
           }
         });
       });
@@ -1030,7 +1123,6 @@ function Gestion() {
           handleClose();
           action(chart);
         };
-
 
       const open = Boolean(anchorEl);
       return (
@@ -1449,7 +1541,7 @@ function Gestion() {
                 ...props.style,
               }}
             >
-              <div className="p-3 text-left" style={{width: '315px'}}>
+              <div className="p-3 text-left" style={{ width: "315px" }}>
                 <h6 className="text-light">Listados: </h6>
                 <p>
                   Los datos pueden filtrarse y ordenarse por todos los campos

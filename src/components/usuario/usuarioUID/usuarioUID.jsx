@@ -6,10 +6,8 @@ import Navbar from "../../Navbar/navbar";
 import {
   ImageListItem,
   ImageListItemBar,
-  IconButton,
   ImageList,
 } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
 import { Avatar } from "antd";
 
 function UsuarioUID() {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import inicio from "../../img/inicio.svg";
 import logo from "../../img/logoMancha.svg";
 import "./inicio.css";

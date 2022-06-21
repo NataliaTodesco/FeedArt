@@ -44,7 +44,7 @@
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
-    line-height: 136.5%;
+    line-height: 80.5%;
     letter-spacing: 0.08em;
 
     color: #6B6A6A;
@@ -52,6 +52,11 @@
 
 .login .subtitulo span{
     color: var(--celeste);
+    cursor: pointer;
+}
+
+.login .subtitulo .span{
+    color: #dd4545;
     cursor: pointer;
 }
 

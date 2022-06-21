@@ -17,11 +17,14 @@ import Gestion from "./components/gestion/gestion";
 import UsuarioUID from "./components/usuario/usuarioUID/usuarioUID";
 import EditProject from "./components/projects/editProject/editProject";
 import Shopping from "./components/shopping/shopping";
+import Completo from "./components/shopping/transaccion/transaccion";
 import Terminos from "./components/footer/t&c"
 import Contact from "./components/footer/contact"
 
 function Routes() {
   const { usuario } = useUsuario();
+  let storage = localStorage.getItem("storage");
+  storage = JSON.parse(storage);
 
   function PrivateRoutes({ path, element, ...rest }) {
     if (usuario && usuario.uid) {
@@ -32,7 +35,7 @@ function Routes() {
   }
 
   function RequireAuth({ children }) {  
-    if (!usuario.uid) {
+    if (storage == null) {
       return <Navigate to="/login" />;
     }
   
@@ -40,7 +43,7 @@ function Routes() {
   }
 
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <Switch>
         <Route path="/" element={<Inicio></Inicio>}></Route>
         <Route path="/login" element={<Login></Login>}></Route>
@@ -55,6 +58,7 @@ function Routes() {
         <Route path="/shopping" element={<RequireAuth><Shopping /></RequireAuth>} />
         <Route path="/t&c" element={<Terminos></Terminos>} />
         <Route path="/contact" element={<Contact></Contact>} />
+        <Route path="/completo/:id/:address1/:area1/:country/:email/:uid" element={<Completo></Completo>} />
       </Switch>
     </Router>
   );

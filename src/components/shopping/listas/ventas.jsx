@@ -17,6 +17,18 @@ function Ventas() {
   const [usuarios, setUsuarios] = useState([]);
   const [proyectos, setProyectos] = useState([]);
 
+  function verUser(uid) {
+    for (let i = 0; i < usuarios.length; i++) {
+      if (uid === usuarios[i].uid) return usuarios[i].nombre;
+    }
+  }
+
+  function verEmail(uid) {
+    for (let i = 0; i < usuarios.length; i++) {
+      if (uid === usuarios[i].uid) return usuarios[i].email;
+    }
+  }
+
   function actualizarEntrega(project, index, entregado) {
     let ventas = proyectos;
     ventas[index].entregado = entregado;
@@ -84,9 +96,9 @@ function Ventas() {
                 <h6>Proyecto:</h6>
                 <p>{proyecto.proyecto.datos.titulo}</p>
                 <h6>Comprador:</h6>
-                <p>{proyecto.comprador.shipping.name.full_name}</p>
+                <p>{verUser(proyecto.comprador_uid)}</p>
                 <h6>Email</h6>
-                <p>{proyecto.comprador.payee.email_address}</p>
+                <p>{verEmail(proyecto.comprador_uid)}</p>
                 <h6>Dirección de entrega: </h6>
                 <p>
                   {proyecto.comprador.shipping.address.address_line_1},{" "}

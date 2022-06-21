@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../img/logoHorizontal.svg";
 import "./navbar.css";
@@ -19,7 +19,14 @@ import Notifications from "./notifications/notificaciones";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { logOut, usuario } = useUsuario();
+  const { logOut, usuario, obtenerAdmins } = useUsuario();
+  const [admins, setAdmins] = useState([]);
+
+  useEffect(() => {
+    obtenerAdmins().then(res => {
+      setAdmins(res)
+    })
+  }, [obtenerAdmins]);
 
   function log_Out() {
     logOut();
@@ -107,7 +114,7 @@ function Navbar() {
                     Compra / Venta
                   </MenuItem>
                 </NavLink>
-                {usuario.uid === "qA2c3TwTAKUc9160fsJlMtDSVgl1" ? (
+                {admins.includes(usuario.uid) ? (
                   <NavLink
                     className="link"
                     activeClassName="active"
@@ -183,7 +190,7 @@ function Navbar() {
                   Compra / Venta
                 </NavLink>
               </MenuItem>
-              {usuario.uid === "qA2c3TwTAKUc9160fsJlMtDSVgl1" ? (
+              {admins.includes(usuario.uid) ? (
                 <MenuItem onClick={handleCloseNavMenu}>
                   <NavLink
                     className="link"
