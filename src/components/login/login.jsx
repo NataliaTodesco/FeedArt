@@ -179,7 +179,7 @@ function Login() {
               onChange={(e) => onUpload(e)}
             />
             <label className="custom-file-label" htmlFor="inputGroupFile04">
-              Elegir Imagen...
+              *Elegir Imagen...
             </label>
           </div>
         </div>
@@ -386,10 +386,10 @@ function Login() {
                       ¿Todavía no tienes una cuenta?{" "}
                       <span onClick={Registrar}> Registrate </span>
                     </p>
-                    <p className="subtitulo">
+                    {/* <p className="subtitulo">
                       ¿Olvidaste tu contraseña?{" "}
                       <span className="span" onClick={Restaurar}> Restaurar </span>
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               ) : (
@@ -414,7 +414,7 @@ function Login() {
                       id="standard-basic"
                       value={values.nombre}
                       onChange={handleChange("nombre")}
-                      label="Nombre"
+                      label="*Nombre"
                       variant="standard"
                     />
                     <TextField
@@ -423,13 +423,13 @@ function Login() {
                       id="standard-basic"
                       value={values.mail}
                       onChange={handleChange("mail")}
-                      label="Email"
+                      label="*Email"
                       variant="standard"
                     />
 
                     <FormControl className="mb-5" variant="standard">
                       <InputLabel htmlFor="standard-adornment-password">
-                        Contraseña
+                        *Contraseña
                       </InputLabel>
                       <Input
                         id="standard-adornment-password"

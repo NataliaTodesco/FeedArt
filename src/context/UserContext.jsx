@@ -16,7 +16,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import {
   collection,
@@ -143,7 +143,10 @@ export function UsuarioProvider(props) {
         saveStorage(save);
         setUsuario(save);
         recuperarUser(user);
-        return "";
+        return obtenerEliminados().then((res) => {
+          if (res.includes(user.email)) return "Usuario Eliminado";
+          else return "";
+        });
       })
       .catch((error) => {
         const errorMessage = error.message;
@@ -170,7 +173,10 @@ export function UsuarioProvider(props) {
         setUsuario(save);
         guardarUserConGoogle(save);
         recuperarUser(user);
-        return "";
+        return obtenerEliminados().then((res) => {
+          if (res.includes(user.email)) return "Usuario Eliminado";
+          else return "";
+        });
       })
       .catch((error) => {
         const errorMessage = error.message;
@@ -216,7 +222,10 @@ export function UsuarioProvider(props) {
         saveStorage(save);
         setUsuario(save);
         recuperarUser(user);
-        return "";
+        return obtenerEliminados().then((res) => {
+          if (res.includes(user.email)) return "Usuario Eliminado";
+          else return "";
+        });
       })
       .catch((error) => {
         const errorMessage = error.message;
@@ -275,7 +284,7 @@ export function UsuarioProvider(props) {
       });
   }
 
-  async function borrarUsuario(uid) {
+  async function borrarUsuario(uid, email) {
     deleteDoc(doc(db, "users", uid));
     deleteDoc(doc(db, "favs", uid));
     deleteDoc(doc(db, "likes", uid));
@@ -289,6 +298,7 @@ export function UsuarioProvider(props) {
         }
       });
     });
+    eliminados(email);
     deleteUser(uid);
   }
 
@@ -348,12 +358,31 @@ export function UsuarioProvider(props) {
     const auth = getAuth();
     sendPasswordResetEmail(auth, email)
       .then(() => {
-        return 'Consulte su correo!'
+        return "Consulte su correo!";
       })
       .catch((error) => {
         const errorMessage = error.message;
-        console.log(errorMessage)
+        console.log(errorMessage);
       });
+  }
+
+  async function eliminados(email) {
+    try {
+      await setDoc(doc(db, "eliminados", email), {
+        email,
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+
+  async function obtenerEliminados() {
+    let array = [];
+    const querySnapshot = await getDocs(collection(db, "eliminados"));
+    querySnapshot.forEach((doc) => {
+      array.push(doc.id);
+    });
+    return array;
   }
 
   const value = useMemo(() => {
@@ -374,7 +403,9 @@ export function UsuarioProvider(props) {
       asignarPermiso,
       quitarPermiso,
       obtenerAdmins,
-      reset
+      reset,
+      eliminados,
+      obtenerEliminados,
     };
   }, [usuario]);
   return <UsuarioContext.Provider value={value} {...props} />;

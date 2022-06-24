@@ -50,7 +50,8 @@ import html2canvas from "html2canvas";
 import { useUsuario } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Overlay } from "react-bootstrap";
-import { message } from "antd";
+import { message, Modal } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 function Gestion() {
   const [usuarios, setUsuarios] = useState([]);
@@ -80,12 +81,22 @@ function Gestion() {
       navigate("/user/" + uid);
     }
 
-    async function eliminarUser(id) {
-      await borrarUsuario(id);
-      await obtenerUsers().then((array) => {
-        setUsuarios(array);
+    async function eliminarUser(id, email) {
+      Modal.confirm({
+        title: "Eliminar",
+        icon: <ExclamationCircleOutlined />,
+        content:
+          "¿Estas seguro de que deseas eliminar este Usuario?",
+        okText: "Eliminar",
+        cancelText: "Cancelar",
+        async onOk() {
+          await borrarUsuario(id, email);
+          await obtenerUsers().then((array) => {
+            setUsuarios(array);
+          });
+          message.success("Usuario Eliminado");
+        },
       });
-      message.success("Usuario Eliminado");
     }
 
     async function permiso(id) {
@@ -143,12 +154,13 @@ function Gestion() {
         renderCell: (usuarios) => (
           <strong>
             <div>
-              {usuarios.row.id !== "qA2c3TwTAKUc9160fsJlMtDSVgl1" && usuario.uid !== usuarios.row.id ? (
+              {usuarios.row.id !== "qA2c3TwTAKUc9160fsJlMtDSVgl1" &&
+              usuario.uid !== usuarios.row.id ? (
                 <i
                   class="bi bi-trash-fill ml-1 mr-3"
                   style={{ fontSize: "large", cursor: "pointer" }}
                   onClick={(e) => {
-                    eliminarUser(usuarios.row.id);
+                    eliminarUser(usuarios.row.id, usuarios.row.Email);
                   }}
                 ></i>
               ) : (

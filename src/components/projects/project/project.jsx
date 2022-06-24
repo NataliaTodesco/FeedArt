@@ -42,7 +42,7 @@ function Proyecto() {
       img_url: "",
       precio: 0,
       uid_creador: "",
-      fecha: '',
+      fecha: "",
     },
   });
   const [creador, setCreador] = useState({
@@ -57,13 +57,18 @@ function Proyecto() {
   const [like, setLike] = useState(false);
   const [fav, setFav] = useState(false);
 
+  const [noDisp, setNoDisp] = useState(true);
+
   function obtenerProyecto() {
     consultarProyecto(id).then((res) => {
-      setProyecto(res);
-      obtenerCreador(res.datos.uid_creador).then((res) => {
-        setCreador(res);
-      });
-      setVendido(res.datos.vendido);
+      if (res !== "No Existe") {
+        setNoDisp(false);
+        setProyecto(res);
+        obtenerCreador(res.datos.uid_creador).then((res) => {
+          setCreador(res);
+        });
+        setVendido(res.datos.vendido);
+      } else setNoDisp(true);
     });
   }
 
@@ -122,7 +127,7 @@ function Proyecto() {
           />
         ))}
 
-        {proyecto.datos.fecha !== '' ? (
+        {proyecto.datos.fecha !== "" ? (
           <h5 className="mt-2 ml-1">
             Fecha:{" "}
             <span className="badge badge-info">
@@ -147,7 +152,7 @@ function Proyecto() {
           usuario: usuario,
           proyecto: proyecto,
         };
-  
+
         const response = await fetch(
           // `http://localhost:3000/create-order/`,
           `https://feedart-api.herokuapp.com/create-order/`,
@@ -160,7 +165,7 @@ function Proyecto() {
           }
         );
         const { data } = await response.json();
-  
+
         window.location.href = data.links[1].href;
       } catch (error) {
         console.log(error);
@@ -338,28 +343,36 @@ function Proyecto() {
   return (
     <div className="projectid">
       <Navbar></Navbar>
-      <div className="project container-fluid my-3">
-        <div className="row">
-          <div className="col-lg-12 text-center">
-            <h1 style={{ fontWeight: "800" }}>{proyecto.datos.titulo}</h1>
+      {noDisp ? (
+        <div className="container my-5 px-5" style={{minHeight: '53vh'}}>
+          <div className="alert alert-danger text-center" role="alert">
+            Proyecto No Disponible
           </div>
         </div>
-        <div className="row" style={{ marginTop: "-1%" }}>
-          <div className="col-lg-3 col-md-4">
-            <Usuario />
-            <div className="mt-1 pl-2 mb-4">
-              <Tags />
-              <Compra />
+      ) : (
+        <div className="project container-fluid my-3">
+          <div className="row">
+            <div className="col-lg-12 text-center">
+              <h1 style={{ fontWeight: "800" }}>{proyecto.datos.titulo}</h1>
             </div>
           </div>
-          <div className="col-lg-6 col-md-8">
-            <Proyecto />
-          </div>
-          <div className="col-lg-3 col-md-6">
-            <Comentario id={id} proyecto={proyecto}></Comentario>
+          <div className="row" style={{ marginTop: "-1%" }}>
+            <div className="col-lg-3 col-md-4">
+              <Usuario />
+              <div className="mt-1 pl-2 mb-4">
+                <Tags />
+                <Compra />
+              </div>
+            </div>
+            <div className="col-lg-6 col-md-8">
+              <Proyecto />
+            </div>
+            <div className="col-lg-3 col-md-6">
+              <Comentario id={id} proyecto={proyecto}></Comentario>
+            </div>
           </div>
         </div>
-      </div>
+      )}
       <Footer></Footer>
     </div>
   );
