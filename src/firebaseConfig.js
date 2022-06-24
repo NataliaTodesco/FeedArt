@@ -78,7 +78,7 @@ export async function consultarProyecto(id) {
     return { id: docSnap.id, datos: docSnap.data()};
   } else {
     // doc.data() will be undefined in this case
-    console.log("No such document!");
+    return 'No Existe'
   }
 }
 

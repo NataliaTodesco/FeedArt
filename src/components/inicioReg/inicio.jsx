@@ -1152,7 +1152,7 @@ function Inicio() {
                 maxWidth: "100%",
               }}
             >
-              <ImageList variant="masonry" cols={FuntionResize()} gap={8}>
+              <ImageList variant="masonry" cols={FuntionResize()} gap={8} style={{overflow: 'hidden'}}>
                 {proyectos.map((proyecto, index) => {
                   if (search === "")
                     return (

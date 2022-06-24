@@ -18,6 +18,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import selfie from "../../img/news.svg";
+import userEvent from "@testing-library/user-event";
 
 function Usuario() {
   const { borrarUser, actualizarPerfil, usuario } = useUsuario();
@@ -37,12 +38,11 @@ function Usuario() {
 
       let recaudacion = 0;
 
-      res.forEach(element => {
-        if (element.datos.vendido)
-          recaudacion += Number(element.datos.precio);
+      res.forEach((element) => {
+        if (element.datos.vendido) recaudacion += Number(element.datos.precio);
       });
 
-      setTotal(recaudacion)
+      setTotal(recaudacion);
     });
   }, [usuario]);
 
@@ -226,31 +226,38 @@ function Usuario() {
                     icon={<EditOutlined />}
                     size={"large"}
                   />
-                  <Button
-                    onClick={eliminar}
-                    type="primary"
-                    shape="round"
-                    icon={<DeleteOutlined />}
-                    danger
-                    size={"large"}
-                  />
+                  {usuario.uid !== "qA2c3TwTAKUc9160fsJlMtDSVgl1" ? (
+                    <Button
+                      onClick={eliminar}
+                      type="primary"
+                      shape="round"
+                      icon={<DeleteOutlined />}
+                      danger
+                      size={"large"}
+                    />
+                  ) : (
+                    <span />
+                  )}
                 </div>
               )}
             </div>
           </div>
           <div className="col-lg-3">
-            <div
-              class="card text-left"
-              style={{ backgroundColor: "#003049" }}
-            >
+            <div class="card text-left" style={{ backgroundColor: "#003049" }}>
               <div class="card-body">
                 <h5 style={{ color: "white" }} class="card-title">
                   Fecha de Creación:
                 </h5>
-                <h6 class="card-text text-light">
-                  {usuario.fecha.getDate()}/{usuario.fecha.getMonth() + 1}/
-                  {usuario.fecha.getFullYear()}
-                </h6>
+                {usuario.fecha !== undefined ? (
+                  <h6 class="card-text text-light">
+                    {usuario.fecha.getDate()}/{usuario.fecha.getMonth() + 1}/
+                    {usuario.fecha.getFullYear()}
+                  </h6>
+                ) : (
+                  <h6 class="card-text text-light">
+                    -
+                  </h6>
+                )}
               </div>
             </div>
             <div
@@ -267,7 +274,9 @@ function Usuario() {
               style={{ backgroundColor: "var(--rojo)", color: "white" }}
             >
               <div class="card-body">
-                <h5 class="card-title" style={{ color: "white" }}>Total Recaudado:</h5>
+                <h5 class="card-title" style={{ color: "white" }}>
+                  Total Recaudado:
+                </h5>
                 <h6 class="card-text text-light">{total} USD</h6>
               </div>
             </div>

@@ -129,7 +129,7 @@ function Contact() {
                 <input
                   type="hidden"
                   name="_next"
-                  value="https://feedart.netlify.app"
+                  value="https://feedart-3bdc9.web.app/contact"
                 />
                 <input type="hidden" name="_captcha" value="false" />
                 <div>

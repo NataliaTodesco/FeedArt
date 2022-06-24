@@ -4,6 +4,7 @@ import confirmado from "../../../img/confirmado.svg";
 import {
   actualizarVendido,
   addCompra,
+  addNotification,
   addVenta,
   consultarProyecto,
   getCompra,
@@ -14,9 +15,14 @@ import { useUsuario } from "../../../context/UserContext";
 
 function Transaccion() {
   const { id, email, address1, area1, country, uid } = useParams();
+  const [usuarios, setUsuarios] = useState([]);
   const [volver, setVolver] = useState(false);
+  const {obtenerUsers} = useUsuario();
 
   useEffect(() => {
+    obtenerUsers().then((array) => {
+      setUsuarios(array);
+    });
     obtenerDatos();
   }, []);
 
@@ -55,6 +61,17 @@ function Transaccion() {
     });
   }
 
+  function verUser(uid) {
+    let user = {uid: '',displayName:''};
+    for (let i = 0; i < usuarios.length; i++) {
+      if (uid === usuarios[i].UID) return {
+        uid: uid,
+        displayName: usuarios[i].Nombre
+      };
+    }
+    return user;
+  }
+  
   async function guardarVenta(details, usuario, proyecto) {
     try {
       actualizarVendido(proyecto.id);
@@ -77,6 +94,8 @@ function Transaccion() {
         console.log(e)
       );
       console.log("addVenta");
+      let user = verUser(usuario)
+      addNotification(id, "Comprado", user);
       setVolver(true);
     } catch (error) {
       console.log(error);
