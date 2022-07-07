@@ -416,6 +416,7 @@ function Login() {
                       onChange={handleChange("nombre")}
                       label="*Nombre"
                       variant="standard"
+                      autoComplete="off"
                     />
                     <TextField
                       className="mb-5"
@@ -425,6 +426,7 @@ function Login() {
                       onChange={handleChange("mail")}
                       label="*Email"
                       variant="standard"
+                      autoComplete="off"
                     />
 
                     <FormControl className="mb-5" variant="standard">
@@ -435,6 +437,7 @@ function Login() {
                         id="standard-adornment-password"
                         type={values.showPassword ? "text" : "password"}
                         value={values.password}
+                        autoComplete="off"
                         onChange={handleChange("password")}
                         endAdornment={
                           <InputAdornment position="end">

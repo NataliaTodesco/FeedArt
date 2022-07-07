@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-  IconButton,
   ImageListItem,
   ImageListItemBar,
-  Popover,
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -13,9 +11,11 @@ import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { Modal } from "react-bootstrap";
 
 function Compra() {
-  const { usuario, obtenerUsers } = useUsuario();
+  const { usuario, obtenerUsers, obtenerEliminadosData, obtenerDeleteData } = useUsuario();
   const [usuarios, setUsuarios] = useState([]);
   const [proyectos, setProyectos] = useState([]);
+  const [eliminados, setEliminados] = useState([]);
+  const [deleteU, setDeleteU] = useState([]);
 
   useEffect(() => {
     getCompra(usuario.uid).then((res) => {
@@ -32,11 +32,43 @@ function Compra() {
       });
       setUsuarios(users);
     });
-  }, [obtenerUsers, usuario.uid]);
+    obtenerEliminadosData().then(res => {
+      setEliminados(res)
+    })
+    obtenerDeleteData().then(res => {
+      setDeleteU(res)
+    })
+  }, [obtenerUsers, usuario.uid, obtenerEliminadosData, obtenerDeleteData]);
 
   function verUser(uid) {
     for (let i = 0; i < usuarios.length; i++) {
       if (uid === usuarios[i].uid) return usuarios[i].nombre;
+    }
+    for (let index = 0; index < eliminados.length; index++) {
+      if (eliminados[index].uid === uid){
+        return eliminados[index].nombre
+      }
+    }
+    for (let index = 0; index < deleteU.length; index++) {
+      if (deleteU[index].uid === uid){
+        return deleteU[index].nombre
+      }
+    }
+  }
+
+  function verEmail(uid){
+    for (let i = 0; i < usuarios.length; i++) {
+      if (uid === usuarios[i].uid) return usuarios[i].email;
+    }
+    for (let index = 0; index < eliminados.length; index++) {
+      if (eliminados[index].uid === uid){
+        return eliminados[index].email
+      }
+    }
+    for (let index = 0; index < deleteU.length; index++) {
+      if (deleteU[index].uid === uid){
+        return deleteU[index].email
+      }
     }
   }
 
@@ -73,6 +105,8 @@ function Compra() {
               <p>{proyecto.proyecto.datos.titulo}</p>
               <h6>Vendedor:</h6>
               <p>{verUser(proyecto.proyecto.datos.uid_creador)}</p>
+              <h6>Email Vendedor:</h6>
+              <p>{verEmail(proyecto.proyecto.datos.uid_creador)}</p>
               <h6>Dirección de entrega: </h6>
               <p>
                 {proyecto.comprador.shipping.address.address_line_1},{" "}

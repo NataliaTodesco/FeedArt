@@ -106,7 +106,7 @@ function UsuarioUID() {
                     overflowY: "scroll",
                   }}
                 >
-                  <ImageList variant="masonry" cols={FuntionResize()} gap={8}>
+                  <ImageList variant="masonry" cols={FuntionResize()} gap={8} style={{overflow: 'hidden'}}>
                     {itemData.map((item) => (
                       <ImageListItem className="proyecto" key={item.img}>
                         <div className="portfolio-item portfolio-item--eff1">

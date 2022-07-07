@@ -44,9 +44,9 @@ function Terminos() {
               comercio electrónico y de los pagos digitales. <br />
               <br />
               Los servicios que ofrece FeedArt en el sitio{" "}
-              <a href="https://feedart.netlify.app/ ">
+              <a href="https://feedart-3bdc9.web.app/">
                 {" "}
-                https://feedart.netlify.app/{" "}
+                https://feedart-3bdc9.web.app{" "}
               </a>{" "}
               (de ahora en más: “Sitio”) están diseñados para formar un
               ecosistema que permita a las personas compartir,vender, comprar,
