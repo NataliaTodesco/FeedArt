@@ -56,6 +56,8 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 function Gestion() {
   const [usuarios, setUsuarios] = useState([]);
   const [admins, setAdmins] = useState([]);
+  const [eliminados, setEliminados] = useState([]);
+  const [deleteU, setDeleteU] = useState([]);
   const {
     obtenerUsers,
     borrarUsuario,
@@ -63,6 +65,8 @@ function Gestion() {
     quitarPermiso,
     usuario,
     obtenerAdmins,
+    obtenerEliminadosData,
+    obtenerDeleteData
   } = useUsuario();
 
   useEffect(() => {
@@ -72,7 +76,13 @@ function Gestion() {
     obtenerAdmins().then((res) => {
       setAdmins(res);
     });
-  }, [obtenerUsers, obtenerAdmins]);
+    obtenerEliminadosData().then(res => {
+      setEliminados(res)
+    })
+    obtenerDeleteData().then(res => {
+      setDeleteU(res)
+    })
+  }, [obtenerUsers, obtenerAdmins,obtenerEliminadosData, obtenerDeleteData]);
 
   function ListadoUsuarios() {
     let navigate = useNavigate();
@@ -81,7 +91,7 @@ function Gestion() {
       navigate("/user/" + uid);
     }
 
-    async function eliminarUser(id, email) {
+    async function eliminarUser(id, email, nombre) {
       Modal.confirm({
         title: "Eliminar",
         icon: <ExclamationCircleOutlined />,
@@ -90,7 +100,7 @@ function Gestion() {
         okText: "Eliminar",
         cancelText: "Cancelar",
         async onOk() {
-          await borrarUsuario(id, email);
+          await borrarUsuario(id, email, nombre);
           await obtenerUsers().then((array) => {
             setUsuarios(array);
           });
@@ -160,7 +170,7 @@ function Gestion() {
                   class="bi bi-trash-fill ml-1 mr-3"
                   style={{ fontSize: "large", cursor: "pointer" }}
                   onClick={(e) => {
-                    eliminarUser(usuarios.row.id, usuarios.row.Email);
+                    eliminarUser(usuarios.row.id, usuarios.row.Email, usuarios.row.Nombre);
                   }}
                 ></i>
               ) : (
@@ -480,6 +490,16 @@ function Gestion() {
       let nombre = " - ";
       for (let i = 0; i < usuarios.length; i++) {
         if (uid === usuarios[i].UID) return usuarios[i].Nombre;
+      }
+      for (let index = 0; index < eliminados.length; index++) {
+        if (eliminados[index].uid === uid){
+          return eliminados[index].nombre
+        }
+      }
+      for (let index = 0; index < deleteU.length; index++) {
+        if (deleteU[index].uid === uid){
+          return deleteU[index].nombre
+        }
       }
       return nombre;
     }
@@ -911,6 +931,16 @@ function Gestion() {
       for (let i = 0; i < usuarios.length; i++) {
         if (uid === usuarios[i].UID) return usuarios[i].Nombre;
       }
+      for (let index = 0; index < eliminados.length; index++) {
+        if (eliminados[index].uid === uid){
+          return eliminados[index].nombre
+        }
+      }
+      for (let index = 0; index < deleteU.length; index++) {
+        if (deleteU[index].uid === uid){
+          return deleteU[index].nombre
+        }
+      }
       return nombre;
     }
 
@@ -1015,7 +1045,7 @@ function Gestion() {
   }
 
   function ProyectosxTipoxUsuario() {
-    const [masCant, setMasCant] = useState(usuarios[14]);
+    const [masCant, setMasCant] = useState(usuarios[7]);
     const [data, setData] = useState([
       { country: "Muestra: " + 0, area: 0 },
       { country: "En Venta: " + 0, area: 0 },

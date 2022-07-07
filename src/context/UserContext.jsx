@@ -126,32 +126,40 @@ export function UsuarioProvider(props) {
   }
 
   async function logUpConMail(email, password, img_url, nombre) {
-    return createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        const save = {
-          uid: user.uid,
-          email: user.email,
-          photoURL: img_url,
-          displayName: nombre,
-          token: user.accessToken,
-        };
+    return obtenerEliminados().then((res) => {
+      if (res.includes(email)) return "Usuario Eliminado";
+      else
+        return createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            const save = {
+              uid: user.uid,
+              email: user.email,
+              photoURL: img_url,
+              displayName: nombre,
+              token: user.accessToken,
+            };
 
-        const fecha = new Date();
-        guardarUser(email, img_url, nombre, user.uid, fecha, user.accessToken);
+            const fecha = new Date();
+            guardarUser(
+              email,
+              img_url,
+              nombre,
+              user.uid,
+              fecha,
+              user.accessToken
+            );
 
-        saveStorage(save);
-        setUsuario(save);
-        recuperarUser(user);
-        return obtenerEliminados().then((res) => {
-          if (res.includes(user.email)) return "Usuario Eliminado";
-          else return "";
-        });
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        return errorMessage;
-      });
+            saveStorage(save);
+            setUsuario(save);
+            recuperarUser(user);
+            return "";
+          })
+          .catch((error) => {
+            const errorMessage = error.message;
+            return errorMessage;
+          });
+    });
   }
 
   async function logInConGoogle() {
@@ -169,13 +177,15 @@ export function UsuarioProvider(props) {
           displayName: user.displayName,
           token: token,
         };
-        saveStorage(save);
-        setUsuario(save);
-        guardarUserConGoogle(save);
-        recuperarUser(user);
         return obtenerEliminados().then((res) => {
           if (res.includes(user.email)) return "Usuario Eliminado";
-          else return "";
+          else {
+            saveStorage(save);
+            setUsuario(save);
+            guardarUserConGoogle(save);
+            recuperarUser(user);
+            return "";
+          }
         });
       })
       .catch((error) => {
@@ -277,6 +287,16 @@ export function UsuarioProvider(props) {
         deleteDoc(doc(db, "favs", user.uid));
         deleteDoc(doc(db, "likes", user.uid));
         eliminarDoc(user.uid);
+        obtenerProyectos().then((res) => {
+          res.forEach((element) => {
+            for (let index = 0; index < element.datos.comentarios.length; index++) {
+              if (element.datos.comentarios[index].uid === user.uid) {
+                eliminarComentario(element.id, index);
+              }
+            }
+          });
+        });
+        guardarEliminados(user.email, user.displayName, user.uid);
         logOut();
       })
       .catch((error) => {
@@ -284,7 +304,7 @@ export function UsuarioProvider(props) {
       });
   }
 
-  async function borrarUsuario(uid, email) {
+  async function borrarUsuario(uid, email, nombre) {
     deleteDoc(doc(db, "users", uid));
     deleteDoc(doc(db, "favs", uid));
     deleteDoc(doc(db, "likes", uid));
@@ -298,7 +318,7 @@ export function UsuarioProvider(props) {
         }
       });
     });
-    eliminados(email);
+    eliminados(email, nombre, uid);
     deleteUser(uid);
   }
 
@@ -366,10 +386,20 @@ export function UsuarioProvider(props) {
       });
   }
 
-  async function eliminados(email) {
+  async function eliminados(email,nombre,uid) {
     try {
       await setDoc(doc(db, "eliminados", email), {
-        email,
+        email,nombre,uid
+      });
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+
+  async function guardarEliminados(email,nombre,uid) {
+    try {
+      await setDoc(doc(db, "delete", email), {
+        email,nombre,uid
       });
     } catch (e) {
       console.error("Error adding document: ", e);
@@ -381,6 +411,24 @@ export function UsuarioProvider(props) {
     const querySnapshot = await getDocs(collection(db, "eliminados"));
     querySnapshot.forEach((doc) => {
       array.push(doc.id);
+    });
+    return array;
+  }
+
+  async function obtenerEliminadosData() {
+    let array = [];
+    const querySnapshot = await getDocs(collection(db, "eliminados"));
+    querySnapshot.forEach((doc) => {
+      array.push(doc.data());
+    });
+    return array;
+  }
+
+  async function obtenerDeleteData() {
+    let array = [];
+    const querySnapshot = await getDocs(collection(db, "delete"));
+    querySnapshot.forEach((doc) => {
+      array.push(doc.data());
     });
     return array;
   }
@@ -406,6 +454,8 @@ export function UsuarioProvider(props) {
       reset,
       eliminados,
       obtenerEliminados,
+      obtenerEliminadosData,
+      obtenerDeleteData
     };
   }, [usuario]);
   return <UsuarioContext.Provider value={value} {...props} />;

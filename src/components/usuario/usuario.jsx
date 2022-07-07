@@ -250,8 +250,10 @@ function Usuario() {
                 </h5>
                 {usuario.fecha !== undefined ? (
                   <h6 class="card-text text-light">
-                    {usuario.fecha.getDate()}/{usuario.fecha.getMonth() + 1}/
-                    {usuario.fecha.getFullYear()}
+                    {new Date(usuario.fecha).getDate()}/{new Date(usuario.fecha).getMonth() + 1}/
+                    {new Date(usuario.fecha).getFullYear()}
+                    {/* {usuario.fecha.getDate()}/{usuario.fecha.getMonth() + 1}/
+                    {usuario.fecha.getFullYear()} */}
                   </h6>
                 ) : (
                   <h6 class="card-text text-light">

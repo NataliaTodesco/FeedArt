@@ -13,19 +13,25 @@ import { Modal } from "react-bootstrap";
 import { message } from "antd";
 
 function Ventas() {
-  const { usuario, obtenerUsers } = useUsuario();
+  const { usuario, obtenerUsers, obtenerEliminadosData, obtenerDeleteData } = useUsuario();
   const [usuarios, setUsuarios] = useState([]);
   const [proyectos, setProyectos] = useState([]);
-
-  function verUser(uid) {
-    for (let i = 0; i < usuarios.length; i++) {
-      if (uid === usuarios[i].uid) return usuarios[i].nombre;
-    }
-  }
+  const [eliminados, setEliminados] = useState([]);
+  const [deleteU, setDeleteU] = useState([]);
 
   function verEmail(uid) {
     for (let i = 0; i < usuarios.length; i++) {
       if (uid === usuarios[i].uid) return usuarios[i].email;
+    }
+    for (let index = 0; index < eliminados.length; index++) {
+      if (eliminados[index].uid === uid){
+        return eliminados[index].email
+      }
+    }
+    for (let index = 0; index < deleteU.length; index++) {
+      if (deleteU[index].uid === uid){
+        return deleteU[index].email
+      }
     }
   }
 
@@ -146,12 +152,28 @@ function Ventas() {
       });
       setUsuarios(users)
     })
-  }, [usuario.uid, obtenerUsers]);
+    obtenerEliminadosData().then(res => {
+      setEliminados(res)
+    })
+    obtenerDeleteData().then(res => {
+      setDeleteU(res)
+    })
+  }, [usuario.uid, obtenerUsers,obtenerEliminadosData,obtenerDeleteData]);
 
   function verUser(uid){
     for (let i = 0; i < usuarios.length; i++) {
       if (uid === usuarios[i].uid)
         return usuarios[i].nombre
+    }
+    for (let index = 0; index < eliminados.length; index++) {
+      if (eliminados[index].uid === uid){
+        return eliminados[index].nombre
+      }
+    }
+    for (let index = 0; index < deleteU.length; index++) {
+      if (deleteU[index].uid === uid){
+        return deleteU[index].nombre
+      }
     }
   }
 
