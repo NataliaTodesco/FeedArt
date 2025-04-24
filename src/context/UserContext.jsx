@@ -433,6 +433,7 @@ export function UsuarioProvider(props) {
     return array;
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const value = useMemo(() => {
     return {
       usuario,
@@ -457,29 +458,8 @@ export function UsuarioProvider(props) {
       obtenerEliminadosData,
       obtenerDeleteData
     };
-  }, [
-    usuario,
-    obtenerUsers,
-    actualizarUser,
-    logUpConMail,
-    logInConGoogle,
-    logInConMail,
-    obtenerUsuario,
-    obtenerPerfil,
-    actualizarPerfil,
-    borrarUser,
-    eliminarDoc,
-    logOut,
-    borrarUsuario,
-    asignarPermiso,
-    quitarPermiso,
-    obtenerAdmins,
-    reset,
-    eliminados,
-    obtenerEliminados,
-    obtenerEliminadosData,
-    obtenerDeleteData
-  ]);  
+  }, [usuario]);
+  return <UsuarioContext.Provider value={value} {...props} />;
 }
 
 export function useUsuario() {
