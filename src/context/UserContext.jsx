@@ -457,8 +457,29 @@ export function UsuarioProvider(props) {
       obtenerEliminadosData,
       obtenerDeleteData
     };
-  }, [usuario]);
-  return <UsuarioContext.Provider value={value} {...props} />;
+  }, [
+    usuario,
+    obtenerUsers,
+    actualizarUser,
+    logUpConMail,
+    logInConGoogle,
+    logInConMail,
+    obtenerUsuario,
+    obtenerPerfil,
+    actualizarPerfil,
+    borrarUser,
+    eliminarDoc,
+    logOut,
+    borrarUsuario,
+    asignarPermiso,
+    quitarPermiso,
+    obtenerAdmins,
+    reset,
+    eliminados,
+    obtenerEliminados,
+    obtenerEliminadosData,
+    obtenerDeleteData
+  ]);  
 }
 
 export function useUsuario() {
