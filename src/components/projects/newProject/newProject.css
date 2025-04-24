@@ -1,10 +1,5 @@
 .newProject{
   background-color: rgb(237, 237, 241);
-  min-height: 100vh;
-}
-
-.newProject .container{
-  min-height: 72.6vh;
 }
 
 .newProject .upload-btn-wrapper {
