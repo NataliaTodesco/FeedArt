@@ -30,6 +30,8 @@ import {
   orderBy,
 } from "firebase/firestore";
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 const UsuarioContext = React.createContext();
 
 export function UsuarioProvider(props) {
