@@ -3,6 +3,11 @@
     background-color: var(--celeste);
 }
 
+.user .container{
+    min-height: 76vh;
+}
+
 .user{
     background-color: rgb(237, 237, 241);
+    min-height: 100vh;
 }
