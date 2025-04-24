@@ -53,6 +53,11 @@
     width: 215px;
 }
 
+.banner {
+    height: auto;
+    width: 100vw !important;
+}
+
 @media (max-width: 530px) {
     .banner {
         height: 0;

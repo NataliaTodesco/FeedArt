@@ -6,3 +6,7 @@
 .user{
     background-color: rgb(237, 237, 241);
 }
+
+.user .container {
+    min-height: 76vh;
+}

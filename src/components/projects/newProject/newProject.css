@@ -7,6 +7,10 @@
     overflow: hidden;
     display: inline-block;
   }
+
+  .newProject .container {
+    min-height: 70vh;
+}
   
 .newProject .upload-btn-wrapper .btn {
     border: 2px solid var(--azul);
